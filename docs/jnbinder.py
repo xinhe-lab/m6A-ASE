@@ -2,6 +2,7 @@ import os
 import glob
 import re
 import json
+from hashlib import sha1
 from dateutil.parser import parse
 
 def is_date(string):
@@ -867,7 +868,7 @@ def update_gitignore():
         flag = False
     if flag:
       with open('.gitignore', 'a') as f:
-        f.write('\n**/.sos\n**/.ipynb_checkpoints\ndocs/__pycache__')
+        f.write('\n**/.sos\n**/.ipynb_checkpoints\n**/__pycache__')
 
 def make_template(conf, dirs, outdir):
     with open('{}/index.tpl'.format(outdir), 'w') as f:
@@ -1080,3 +1081,17 @@ def make_empty_nb(name):
  "nbformat": 4,
  "nbformat_minor": 2
 }''' % name
+
+def protect_page(page, page_tpl, password):
+    # page: docs/{name}
+    page_dir, page_file = os.path.split(page)
+    page_file = '/'.join(page.split('/')[1:])
+    secret = page_dir + '/' + sha1((password + page_file).encode()).hexdigest() + '.html'
+    content = open(page).readlines()
+    content.insert(5, '<meta name="robots" content="noindex">\n')
+    with open(secret, 'w') as f:
+        f.write(''.join(content))
+    content = open(page_tpl).readlines()
+    with open(page, 'w') as f:
+        f.write(''.join(content).replace("TPL_PLACEHOLDER", page_file))
+    return os.path.basename(secret)
