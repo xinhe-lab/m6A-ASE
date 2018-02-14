@@ -178,10 +178,12 @@ body {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Fisher-Exact-test-for-m6A-peak/nonpeak-and-RBP-binding-sites">Fisher Exact test for m6A peak/nonpeak and RBP binding sites<a class="anchor-link" href="#Fisher-Exact-test-for-m6A-peak/nonpeak-and-RBP-binding-sites">&#182;</a></h1><p>Data <a href="smb://helabdata1.uchicago.edu/m6aqtl/peakcalling/WASP201712_metApeakFisher_merged/JointPeak_merged/">cloud drive</a></p>
-<h4 id="Use-merged/unmerged-m6A-peak-and-unmerged-nonpeak,-obtain-their-intersections-with-RBP-binding-sites-respectively.">Use merged/unmerged m6A peak and unmerged nonpeak, obtain their intersections with RBP binding sites respectively.<a class="anchor-link" href="#Use-merged/unmerged-m6A-peak-and-unmerged-nonpeak,-obtain-their-intersections-with-RBP-binding-sites-respectively.">&#182;</a></h4><h4 id="Perform-Fisher's-exact-test-for-each-RBP:">Perform Fisher's exact test for each RBP:<a class="anchor-link" href="#Perform-Fisher's-exact-test-for-each-RBP:">&#182;</a></h4><p>(1) the number of intersection with m6A peaks</p>
-<p>(2) the total number of intersection with peaks minus (1)</p>
-<p>(3) the number of intersection with nonpeaks</p>
-<p>(4) the total number of intersection with nonpeaks minus (3)</p>
+<h4 id="Use-merged/unmerged-m6A-peak-and-unmerged-nonpeak,-obtain-their-intersections-with-RBP-binding-sites-respectively.">Use merged/unmerged m6A peak and unmerged nonpeak, obtain their intersections with RBP binding sites respectively.<a class="anchor-link" href="#Use-merged/unmerged-m6A-peak-and-unmerged-nonpeak,-obtain-their-intersections-with-RBP-binding-sites-respectively.">&#182;</a></h4><h4 id="Perform-Fisher's-exact-test-for-each-RBP:">Perform Fisher's exact test for each RBP:<a class="anchor-link" href="#Perform-Fisher's-exact-test-for-each-RBP:">&#182;</a></h4><ol>
+<li>the number of intersection with m6A peaks</li>
+<li>the total number of intersection with peaks minus (1)</li>
+<li>the number of intersection with nonpeaks</li>
+<li>the total number of intersection with nonpeaks minus (3)</li>
+</ol>
 <h4 id="Check-the-test-statistics-for-potential-m6A-binding-proteins-(YTHDF,-HNRNP,-FMRP,-IGF2BP,-G3BP)">Check the test statistics for potential m6A binding proteins (YTHDF, HNRNP, FMRP, IGF2BP, G3BP)<a class="anchor-link" href="#Check-the-test-statistics-for-potential-m6A-binding-proteins-(YTHDF,-HNRNP,-FMRP,-IGF2BP,-G3BP)">&#182;</a></h4><p>There are no RBPs that contains keywords "YTHDF" or "G3BP". Only "HNRNP", "FMR1" and "IGF2BP" are found, including 'IGF2BP3', 'HNRNPUL1', 'HNRNPA1', 'HNRNPM', 'IGF2BP1', "FMR1", 'HNRNPK', 'HNRNPU', 'IGF2BP2', 'HNRNPC'.</p>
 <h4 id="Perform-Fisher's-exact-test-for-each-microRNA">Perform Fisher's exact test for each microRNA<a class="anchor-link" href="#Perform-Fisher's-exact-test-for-each-microRNA">&#182;</a></h4><p>microRNA blockCount can be 1 or 2. If blockCount is 2, blockSize and blockStarts contain two numbers, binding sites in one block are not continuous.</p>
 <p>For rows whose blockCount is 2, split the row into two rows according to blockSize and blockStarts.</p>
@@ -240,9 +242,10 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Merged-m6A-peaks">Merged m6A peaks<a class="anchor-link" href="#Merged-m6A-peaks">&#182;</a></h3><p>First convert excel to bed, and export bed file.</p>
-<p>Only need to do it once. bed file must be tab separated, false index, column "chr" rename to "# chr".</p>
-<p>Then sort it and use bedtools to obtain intersect with RBP in bash.</p>
+<h3 id="Merged-m6A-peaks">Merged m6A peaks<a class="anchor-link" href="#Merged-m6A-peaks">&#182;</a></h3><ol>
+<li>First convert excel to bed, and export bed file. Only need to do it once. bed file must be tab separated, false index, column "chr" rename to "# chr".</li>
+<li>Then sort it and use bedtools to obtain intersect with RBP in bash.</li>
+</ol>
 
 </div>
 </div>
@@ -420,7 +423,8 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Use-&quot;bedtools&quot;-in-bash-under-the-depository-~/Documents/m6A/Data/metApeakFisher">Use "bedtools" in bash under the depository ~/Documents/m6A/Data/metApeakFisher<a class="anchor-link" href="#Use-&quot;bedtools&quot;-in-bash-under-the-depository-~/Documents/m6A/Data/metApeakFisher">&#182;</a></h3>
+<h3 id="Use-&quot;bedtools&quot;-in-bash-under-the-depository">Use "bedtools" in bash under the depository<a class="anchor-link" href="#Use-&quot;bedtools&quot;-in-bash-under-the-depository">&#182;</a></h3><p><code>~/Documents/m6A/Data/metApeakFisher</code></p>
+
 <pre><code>sort -k1,1 -k2,2n unmerged_peaks_metApeak.bed &gt; peaks.bed
 sort -k1,1 -k2,2n unmerged_nonpeaks_metApeak.bed &gt; nonpeaks.bed
 bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.bed -s &gt; peak.intersect.RBP.bed
@@ -1645,9 +1649,11 @@ Counter({&#39;7&#39;: 19242, &#39;8&#39;: 9695, &#39;6,1&#39;: 10, &#39;1,6&#39;
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Split-rows-with-two-blockSize/blockStart,-to-set-blockCount-to-1-for-every-row.">Split rows with two blockSize/blockStart, to set blockCount to 1 for every row.<a class="anchor-link" href="#Split-rows-with-two-blockSize/blockStart,-to-set-blockCount-to-1-for-every-row.">&#182;</a></h4><p>For rows with 2-blockstart sites, split blockSize and blockStarts into two rows.</p>
-<p>"start": original start + interval betweem two blockstart sites</p>
-<p>"end": start from last step + blockSize</p>
+<h4 id="Split-rows-with-two-blockSize/blockStart,-to-set-blockCount-to-1-for-every-row.">Split rows with two blockSize/blockStart, to set blockCount to 1 for every row.<a class="anchor-link" href="#Split-rows-with-two-blockSize/blockStart,-to-set-blockCount-to-1-for-every-row.">&#182;</a></h4><ol>
+<li>For rows with 2-blockstart sites, split blockSize and blockStarts into two rows.</li>
+<li>"start": original start + interval betweem two blockstart sites</li>
+<li>"end": start from last step + blockSize</li>
+</ol>
 
 </div>
 </div>
@@ -1747,7 +1753,8 @@ Counter({&#39;7&#39;: 19242, &#39;8&#39;: 9695, &#39;6,1&#39;: 10, &#39;1,6&#39;
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Use-bedtools-to-obtain-intersect-of-peak/nonpeak-with-miRNA">Use bedtools to obtain intersect of peak/nonpeak with miRNA<a class="anchor-link" href="#Use-bedtools-to-obtain-intersect-of-peak/nonpeak-with-miRNA">&#182;</a></h3>
+<h3 id="Use-bedtools-to-obtain-intersect-of-peak/nonpeak-with-miRNA">Use bedtools to obtain intersect of peak/nonpeak with miRNA<a class="anchor-link" href="#Use-bedtools-to-obtain-intersect-of-peak/nonpeak-with-miRNA">&#182;</a></h3><p><code>~/Documents/m6A/Data/metApeakFisher</code></p>
+
 <pre><code>bedtools intersect -a ../miRNA.bed -b peaks.bed -s &gt; peak.intersect.miRNA.bed
 bedtools intersect -a ../miRNA.bed -b peaks.merged.bed -s &gt; peak.merged.intersect.miRNA.bed
 bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miRNA.bed</code></pre>
@@ -3626,7 +3633,7 @@ bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miR
 </div>
 <hr>
 &copy 2016-2017 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/e2728e61236d72dcea7072c7285846c32539142f/analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.ipynb"><code>analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.ipynb</code></a> committed by Min Qiao on Wed Feb 14 17:02:58 2018 <a href="http://github.com/gaow/m6a/commit/e2728e61236d72dcea7072c7285846c32539142f">revision 1, e2728e6</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/2b5c97337fb665c5a2d43068a845e6e46b4d9447/analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.ipynb"><code>analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.ipynb</code></a> committed by Min Qiao on Wed Feb 14 17:51:08 2018 <a href="http://github.com/gaow/m6a/commit/2b5c97337fb665c5a2d43068a845e6e46b4d9447">revision 2, 2b5c973</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
