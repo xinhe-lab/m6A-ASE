@@ -1,0 +1,3633 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs-1.1/textmate.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs-1.1/highlight.js"></script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/toc2.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>');
+            }
+            $("#toc-header").hide();
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>M6A</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">M6A</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/m6a"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Fisher-Exact-test-for-m6A-peak/nonpeak-and-RBP-binding-sites">Fisher Exact test for m6A peak/nonpeak and RBP binding sites<a class="anchor-link" href="#Fisher-Exact-test-for-m6A-peak/nonpeak-and-RBP-binding-sites">&#182;</a></h1><p>Data <a href="smb://helabdata1.uchicago.edu/m6aqtl/peakcalling/WASP201712_metApeakFisher_merged/JointPeak_merged/">cloud drive</a></p>
+<h4 id="Use-merged/unmerged-m6A-peak-and-unmerged-nonpeak,-obtain-their-intersections-with-RBP-binding-sites-respectively.">Use merged/unmerged m6A peak and unmerged nonpeak, obtain their intersections with RBP binding sites respectively.<a class="anchor-link" href="#Use-merged/unmerged-m6A-peak-and-unmerged-nonpeak,-obtain-their-intersections-with-RBP-binding-sites-respectively.">&#182;</a></h4><h4 id="Perform-Fisher's-exact-test-for-each-RBP:">Perform Fisher's exact test for each RBP:<a class="anchor-link" href="#Perform-Fisher's-exact-test-for-each-RBP:">&#182;</a></h4><p>(1) the number of intersection with m6A peaks</p>
+<p>(2) the total number of intersection with peaks minus (1)</p>
+<p>(3) the number of intersection with nonpeaks</p>
+<p>(4) the total number of intersection with nonpeaks minus (3)</p>
+<h4 id="Check-the-test-statistics-for-potential-m6A-binding-proteins-(YTHDF,-HNRNP,-FMRP,-IGF2BP,-G3BP)">Check the test statistics for potential m6A binding proteins (YTHDF, HNRNP, FMRP, IGF2BP, G3BP)<a class="anchor-link" href="#Check-the-test-statistics-for-potential-m6A-binding-proteins-(YTHDF,-HNRNP,-FMRP,-IGF2BP,-G3BP)">&#182;</a></h4><p>There are no RBPs that contains keywords "YTHDF" or "G3BP". Only "HNRNP", "FMR1" and "IGF2BP" are found, including 'IGF2BP3', 'HNRNPUL1', 'HNRNPA1', 'HNRNPM', 'IGF2BP1', "FMR1", 'HNRNPK', 'HNRNPU', 'IGF2BP2', 'HNRNPC'.</p>
+<h4 id="Perform-Fisher's-exact-test-for-each-microRNA">Perform Fisher's exact test for each microRNA<a class="anchor-link" href="#Perform-Fisher's-exact-test-for-each-microRNA">&#182;</a></h4><p>microRNA blockCount can be 1 or 2. If blockCount is 2, blockSize and blockStarts contain two numbers, binding sites in one block are not continuous.</p>
+<p>For rows whose blockCount is 2, split the row into two rows according to blockSize and blockStarts.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pybedtools</span> <span class="k">import</span> <span class="n">BedTool</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">fisher</span> <span class="k">import</span> <span class="n">pvalue</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/Documents/m6A/&quot;</span><span class="p">)</span>
+<span class="n">input_m6A_peak</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/unmerged_peaks_metApeak.bed&quot;</span>
+<span class="n">input_m6A_peak_merged</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/joint_merged_peaks_counts.xlsx&quot;</span>
+<span class="n">input_m6A_nonpeak</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/unmerged_nonpeaks_metApeak.bed&quot;</span>
+<span class="n">input_RBP</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/all.RBP.intersect.hg19.bed&quot;</span>
+<span class="n">input_intersect_peak</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/peak.intersect.RBP.bed&quot;</span>
+<span class="n">input_intersect_nonpeak</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/nonpeak.intersect.RBP.bed&quot;</span>
+<span class="n">input_intersect_peak_merged</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/peak.merged.intersect.RBP.bed&quot;</span>
+<span class="n">output_m6A_peak_merged</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/joint_merged_peaks_counts.bed&quot;</span>
+<span class="c1"># microRNA</span>
+<span class="n">input_miRNA</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/miRNA_target_in_YRI_LCLs.bed&quot;</span>
+<span class="n">output_miRNA</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/miRNA.bed&quot;</span>
+<span class="n">input_intersect_peak_miRNA</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/peak.intersect.miRNA.bed&quot;</span>
+<span class="n">input_intersect_peak_merged_miRNA</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/peak.merged.intersect.miRNA.bed&quot;</span>
+<span class="n">input_intersect_nonpeak_miRNA</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/nonpeak.intersect.miRNA.bed&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mf">0.05</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Merged-m6A-peaks">Merged m6A peaks<a class="anchor-link" href="#Merged-m6A-peaks">&#182;</a></h3><p>First convert excel to bed, and export bed file.</p>
+<p>Only need to do it once. bed file must be tab separated, false index, column "chr" rename to "# chr".</p>
+<p>Then sort it and use bedtools to obtain intersect with RBP in bash.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6A_peaks_merged</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">input_m6A_peak_merged</span><span class="p">,</span> <span class="n">usecols</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">m6A_peaks_merged</span> <span class="o">=</span> <span class="n">m6A_peaks_merged</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;chr&quot;</span><span class="p">:</span> <span class="s2">&quot;# chr&quot;</span><span class="p">})</span>
+<span class="n">m6A_peaks_merged</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_m6A_peak_merged</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Unmerged-m6A-peaks-and-nonpeaks">Unmerged m6A peaks and nonpeaks<a class="anchor-link" href="#Unmerged-m6A-peaks-and-nonpeaks">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6A_peaks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">input_m6A_peak</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">m6A_peaks</span> <span class="o">=</span> <span class="n">m6A_peaks</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;# chr&quot;</span><span class="p">,</span> <span class="s2">&quot;chromStart&quot;</span><span class="p">])</span>
+<span class="n">m6A_peaks</span> <span class="o">=</span> <span class="n">m6A_peaks</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;# chr&quot;</span><span class="p">:</span> <span class="s2">&quot;chr&quot;</span><span class="p">})</span>
+<span class="c1"># m6A_peaks = m6A_peaks[m6A_peaks[&quot;score&quot;] &lt; 0.05]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6A_nonpeaks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">input_m6A_nonpeak</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">m6A_nonpeaks</span> <span class="o">=</span> <span class="n">m6A_nonpeaks</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;# chr&quot;</span><span class="p">,</span> <span class="s2">&quot;chromStart&quot;</span><span class="p">])</span>
+<span class="n">m6A_nonpeaks</span> <span class="o">=</span> <span class="n">m6A_nonpeaks</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;# chr&quot;</span><span class="p">:</span> <span class="s2">&quot;chr&quot;</span><span class="p">})</span>
+<span class="c1"># m6A_nonpeaks = m6A_nonpeaks.iloc[:10000, :]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="n">m6A_peaks</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">m6A_peaks_merged</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">m6A_nonpeaks</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(184390, 12) (27795, 6) (282904, 12)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="RBP-binding-sites">RBP binding sites<a class="anchor-link" href="#RBP-binding-sites">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RBP_binding_sites</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">input_RBP</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                                  <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;RBP&quot;</span><span class="p">,</span> <span class="s2">&quot;peak_width&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">])</span>
+<span class="n">RBP_binding_sites</span> <span class="o">=</span> <span class="n">RBP_binding_sites</span><span class="p">[</span><span class="n">RBP_binding_sites</span><span class="p">[</span><span class="s2">&quot;peak_width&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">200</span><span class="p">]</span>
+<span class="n">RBP_name</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">RBP_binding_sites</span><span class="p">[</span><span class="s2">&quot;RBP&quot;</span><span class="p">])</span>
+<span class="n">RBP_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">RBP_name</span><span class="p">)</span>
+<span class="n">RBP_name</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="nb">print</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">RBP_binding_sites</span><span class="p">[</span><span class="s2">&quot;RBP&quot;</span><span class="p">]))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{&#39;FKBP4&#39;, &#39;NONO&#39;, &#39;FAM120A&#39;, &#39;LARP4&#39;, &#39;LSM11&#39;, &#39;NKRF&#39;, &#39;XRCC6&#39;, &#39;EWSR1&#39;, &#39;SAFB2&#39;, &#39;NCBP2&#39;, &#39;DDX3X&#39;, &#39;HNRNPC&#39;, &#39;SRSF9&#39;, &#39;FUBP1&#39;, &#39;EIF4G2&#39;, &#39;SND1&#39;, &#39;AUH&#39;, &#39;NSUN2&#39;, &#39;SF3A3&#39;, &#39;QKI&#39;, &#39;TBRG4&#39;, &#39;FMR1&#39;, &#39;GTF2F1&#39;, &#39;TIAL1&#39;, &#39;BUD13&#39;, &#39;PCBP2&#39;, &#39;SERBP1&#39;, &#39;AGGF1&#39;, &#39;IGF2BP1&#39;, &#39;HNRNPUL1&#39;, &#39;HNRNPU&#39;, &#39;SBDS&#39;, &#39;PPIL4&#39;, &#39;CSTF2&#39;, &#39;GEMIN5&#39;, &#39;SMNDC1&#39;, &#39;XPO5&#39;, &#39;KHSRP&#39;, &#39;U2AF2&#39;, &#39;SRSF1&#39;, &#39;NOLC1&#39;, &#39;SLTM&#39;, &#39;DDX55&#39;, &#39;SUB1&#39;, &#39;GPKOW&#39;, &#39;FUBP3&#39;, &#39;TNRC6A&#39;, &#39;PUS1&#39;, &#39;U2AF1&#39;, &#39;AKAP8L&#39;, &#39;GRSF1&#39;, &#39;RPS3&#39;, &#39;METAP2&#39;, &#39;POLR2G&#39;, &#39;FASTKD2&#39;, &#39;LARP7&#39;, &#39;RBM15&#39;, &#39;UCHL5&#39;, &#39;EIF4G1&#39;, &#39;RBFOX2&#39;, &#39;CSTF2T&#39;, &#39;RBM22&#39;, &#39;SUGP2&#39;, &#39;FTO&#39;, &#39;TIA1&#39;, &#39;EXOSC5&#39;, &#39;DGCR8&#39;, &#39;DHX30&#39;, &#39;SLBP&#39;, &#39;XRN2&#39;, &#39;PTBP1&#39;, &#39;ILF3&#39;, &#39;CPSF6&#39;, &#39;BCCIP&#39;, &#39;SF3B4&#39;, &#39;LIN28B&#39;, &#39;FXR2&#39;, &#39;DKC1&#39;, &#39;EFTUD2&#39;, &#39;HLTF&#39;, &#39;CDC40&#39;, &#39;GRWD1&#39;, &#39;ZRANB2&#39;, &#39;MTPAP&#39;, &#39;TAF15&#39;, &#39;TROVE2&#39;, &#39;SF3B1&#39;, &#39;PUM2&#39;, &#39;RPS11&#39;, &#39;TARDBP&#39;, &#39;IGF2BP3&#39;, &#39;SRSF7&#39;, &#39;NOL12&#39;, &#39;IGF2BP2&#39;, &#39;HNRNPM&#39;, &#39;DDX6&#39;, &#39;YBX3&#39;, &#39;YWHAG&#39;, &#39;EIF3D&#39;, &#39;DDX42&#39;, &#39;TRA2A&#39;, &#39;DDX24&#39;, &#39;HNRNPK&#39;, &#39;PPIG&#39;, &#39;NPM1&#39;, &#39;UPF1&#39;, &#39;RPS5&#39;, &#39;FUS&#39;, &#39;RBM5&#39;, &#39;DDX59&#39;, &#39;FXR1&#39;, &#39;EIF3H&#39;, &#39;RBM27&#39;, &#39;DROSHA&#39;, &#39;HNRNPA1&#39;, &#39;KHDRBS1&#39;, &#39;PRPF8&#39;, &#39;SUPV3L1&#39;, &#39;ZNF622&#39;, &#39;GNL3&#39;, &#39;SFPQ&#39;}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">peak_width</span> <span class="o">=</span> <span class="n">RBP_binding_sites</span><span class="p">[</span><span class="s2">&quot;peak_width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">peak_width</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span>  <span class="c1"># arguments are passed to np.histogram</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of RBP binding sites peak width&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Use-&quot;bedtools&quot;-in-bash-under-the-depository-~/Documents/m6A/Data/metApeakFisher">Use "bedtools" in bash under the depository ~/Documents/m6A/Data/metApeakFisher<a class="anchor-link" href="#Use-&quot;bedtools&quot;-in-bash-under-the-depository-~/Documents/m6A/Data/metApeakFisher">&#182;</a></h3>
+<pre><code>sort -k1,1 -k2,2n unmerged_peaks_metApeak.bed &gt; peaks.bed
+sort -k1,1 -k2,2n unmerged_nonpeaks_metApeak.bed &gt; nonpeaks.bed
+bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.bed -s &gt; peak.intersect.RBP.bed
+bedtools intersect -a ../all.RBP.intersect.hg19.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.RBP.bed</code></pre>
+<h4 id="First-sort-merged-peaks,-then-use-the-sorted-to-obtain-intersection-with-RBP-directly">First sort merged peaks, then use the sorted to obtain intersection with RBP directly<a class="anchor-link" href="#First-sort-merged-peaks,-then-use-the-sorted-to-obtain-intersection-with-RBP-directly">&#182;</a></h4>
+<pre><code>sort -k1,1 -k2,2n joint_merged_peaks_counts.bed &gt; peaks.merged.bed
+bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; peak.merged.intersect.RBP.bed</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Obtain-Fisher's-exact-test-statistics">Obtain Fisher's exact test statistics<a class="anchor-link" href="#Obtain-Fisher's-exact-test-statistics">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">read_intersect</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">head</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;chromStart&quot;</span><span class="p">,</span> <span class="s2">&quot;chromEnd&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;inter_width&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]):</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">head</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">cols</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_fisher</span><span class="p">(</span><span class="n">peak_fn</span><span class="p">,</span> <span class="n">nonpeak_fn</span><span class="p">,</span> <span class="n">peak_merge</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;n_inter_peak&#39;</span><span class="p">,</span> <span class="s1">&#39;n_inter_nonpeak&#39;</span><span class="p">,</span> 
+                                                                <span class="s1">&#39;n_nointer_peak&#39;</span><span class="p">,</span> <span class="s1">&#39;n_nointer_nonpeak&#39;</span><span class="p">,</span> 
+                                                                <span class="s1">&#39;fisher_p&#39;</span><span class="p">,</span> <span class="s1">&#39;odds_ratio&#39;</span><span class="p">]):</span>
+    <span class="n">peaks_intersect</span> <span class="o">=</span> <span class="n">read_intersect</span><span class="p">(</span><span class="n">peak_fn</span><span class="p">)</span>
+    <span class="n">peaks_intersect</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">nonpeaks_intersect</span> <span class="o">=</span> <span class="n">read_intersect</span><span class="p">(</span><span class="n">nonpeak_fn</span><span class="p">)</span>
+    <span class="n">nonpeaks_intersect</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">intersect</span> <span class="o">=</span> <span class="n">peaks_intersect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nonpeaks_intersect</span><span class="p">)</span>
+    <span class="n">fisher_stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="n">cols</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">sum_inter_peak</span> <span class="o">=</span> <span class="n">peaks_intersect</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sum_inter_nonpeak</span> <span class="o">=</span> <span class="n">nonpeaks_intersect</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">RBP</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">intersect</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])):</span>
+        <span class="n">fisher_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RBP</span>
+        <span class="n">n_inter_peak</span> <span class="o">=</span> <span class="n">intersect</span><span class="p">[(</span><span class="n">intersect</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">RBP</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">intersect</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_inter_nonpeak</span> <span class="o">=</span> <span class="n">intersect</span><span class="p">[(</span><span class="n">intersect</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">RBP</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">intersect</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_nointer_peak</span> <span class="o">=</span> <span class="n">sum_inter_peak</span> <span class="o">-</span> <span class="n">n_inter_peak</span>
+        <span class="n">n_nointer_nonpeak</span> <span class="o">=</span> <span class="n">sum_inter_nonpeak</span> <span class="o">-</span> <span class="n">n_inter_nonpeak</span>
+        <span class="n">fisher_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;n_inter_peak&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_inter_peak</span>
+        <span class="n">fisher_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;n_inter_nonpeak&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_inter_nonpeak</span>
+        <span class="n">fisher_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;n_nointer_peak&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_nointer_peak</span>
+        <span class="n">fisher_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;n_nointer_nonpeak&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_nointer_nonpeak</span>
+        <span class="n">fisher_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;fisher_p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">fisher_exact</span><span class="p">([[</span><span class="n">n_inter_peak</span><span class="p">,</span> <span class="n">n_inter_nonpeak</span><span class="p">],</span> 
+                                                                <span class="p">[</span><span class="n">n_nointer_peak</span><span class="p">,</span> <span class="n">n_nointer_nonpeak</span><span class="p">]])[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">fisher_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;odds_ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">fisher_exact</span><span class="p">([[</span><span class="n">n_inter_peak</span><span class="p">,</span> <span class="n">n_inter_nonpeak</span><span class="p">],</span> 
+                                                                  <span class="p">[</span><span class="n">n_nointer_peak</span><span class="p">,</span> <span class="n">n_nointer_nonpeak</span><span class="p">]])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">fisher_stats</span> <span class="o">=</span> <span class="n">fisher_stats</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;odds_ratio&quot;</span><span class="p">],</span> <span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">fisher_stats</span> <span class="o">=</span> <span class="n">fisher_stats</span><span class="o">.</span><span class="n">set_index</span><span class="p">([[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">fisher_stats</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]])</span>
+    <span class="k">return</span> <span class="n">fisher_stats</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fn1</span> <span class="o">=</span> <span class="n">input_intersect_peak_merged</span>
+<span class="n">fn2</span> <span class="o">=</span> <span class="n">input_intersect_nonpeak</span>
+<span class="n">fn3</span> <span class="o">=</span> <span class="n">input_intersect_peak</span>
+<span class="n">fisher_peak_merge</span> <span class="o">=</span> <span class="n">get_fisher</span><span class="p">(</span><span class="n">peak_fn</span> <span class="o">=</span> <span class="n">fn1</span><span class="p">,</span> <span class="n">nonpeak_fn</span> <span class="o">=</span> <span class="n">fn2</span><span class="p">)</span>
+<span class="n">fisher_peak_unmerge</span> <span class="o">=</span> <span class="n">get_fisher</span><span class="p">(</span><span class="n">peak_fn</span> <span class="o">=</span> <span class="n">fn3</span><span class="p">,</span> <span class="n">nonpeak_fn</span> <span class="o">=</span> <span class="n">fn2</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Potential m6A binding proteins include "YTHDF", "HNRNP", "FMR1", "IGF2BP" and "G3BP".</p>
+<p>The RBP binding sites data do not include "YTHDF" or "G3BP", only include "HNRNP", "FMR1" and "IGF2BP".</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RBP_potential</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;YTHDF&quot;</span><span class="p">,</span> <span class="s2">&quot;HNRNP&quot;</span><span class="p">,</span> <span class="s2">&quot;FMR1&quot;</span><span class="p">,</span> <span class="s2">&quot;IGF2BP&quot;</span><span class="p">,</span> <span class="s2">&quot;G3BP&quot;</span><span class="p">]</span>
+<span class="n">RBP_names</span> <span class="o">=</span> <span class="n">fisher_peak_merge</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">RBPs_potential</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">RBP</span> <span class="ow">in</span> <span class="n">RBP_names</span><span class="p">:</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">RBP</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">RBP_potential</span> <span class="k">if</span> <span class="n">RBP</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">RBPs_potential</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">RBPs_potential</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;IGF2BP3&#39;, &#39;HNRNPUL1&#39;, &#39;HNRNPA1&#39;, &#39;HNRNPM&#39;, &#39;IGF2BP1&#39;, &#39;FMR1&#39;, &#39;HNRNPK&#39;, &#39;HNRNPU&#39;, &#39;IGF2BP2&#39;, &#39;HNRNPC&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Fisher-test-statistics-of-RBP-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of RBP binding sites with merged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-RBP-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fisher_peak_merge</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[13]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>n_inter_peak</th>
+      <th>n_inter_nonpeak</th>
+      <th>n_nointer_peak</th>
+      <th>n_nointer_nonpeak</th>
+      <th>fisher_p</th>
+      <th>odds_ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>RBM15</td>
+      <td>5300</td>
+      <td>1565</td>
+      <td>859486</td>
+      <td>740576</td>
+      <td>0</td>
+      <td>2.91805</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>NCBP2</td>
+      <td>3198</td>
+      <td>1000</td>
+      <td>861588</td>
+      <td>741141</td>
+      <td>1.07934e-197</td>
+      <td>2.75093</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>DDX3X</td>
+      <td>5296</td>
+      <td>1726</td>
+      <td>859490</td>
+      <td>740415</td>
+      <td>4.69948e-307</td>
+      <td>2.64327</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>IGF2BP3</td>
+      <td>3947</td>
+      <td>1522</td>
+      <td>860839</td>
+      <td>740619</td>
+      <td>6.24384e-171</td>
+      <td>2.23113</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>FASTKD2</td>
+      <td>1647</td>
+      <td>717</td>
+      <td>863139</td>
+      <td>741424</td>
+      <td>1.04665e-55</td>
+      <td>1.97315</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>TRA2A</td>
+      <td>2553</td>
+      <td>1128</td>
+      <td>862233</td>
+      <td>741013</td>
+      <td>1.6042e-82</td>
+      <td>1.9451</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>DDX6</td>
+      <td>1416</td>
+      <td>631</td>
+      <td>863370</td>
+      <td>741510</td>
+      <td>1.68964e-45</td>
+      <td>1.92732</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>SLTM</td>
+      <td>1849</td>
+      <td>844</td>
+      <td>862937</td>
+      <td>741297</td>
+      <td>1.74622e-55</td>
+      <td>1.88195</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>FUS</td>
+      <td>103</td>
+      <td>47</td>
+      <td>864683</td>
+      <td>742094</td>
+      <td>0.000285908</td>
+      <td>1.88079</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>XRN2</td>
+      <td>2668</td>
+      <td>1239</td>
+      <td>862118</td>
+      <td>740902</td>
+      <td>7.36408e-76</td>
+      <td>1.85058</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>GTF2F1</td>
+      <td>3287</td>
+      <td>1587</td>
+      <td>861499</td>
+      <td>740554</td>
+      <td>1.67532e-83</td>
+      <td>1.78043</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>AUH</td>
+      <td>727</td>
+      <td>352</td>
+      <td>864059</td>
+      <td>741789</td>
+      <td>1.62622e-19</td>
+      <td>1.77308</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>RPS3</td>
+      <td>2794</td>
+      <td>1357</td>
+      <td>861992</td>
+      <td>740784</td>
+      <td>4.86427e-70</td>
+      <td>1.76944</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>FTO</td>
+      <td>9947</td>
+      <td>4991</td>
+      <td>854839</td>
+      <td>737150</td>
+      <td>1.57643e-222</td>
+      <td>1.71861</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>XRCC6</td>
+      <td>1259</td>
+      <td>638</td>
+      <td>863527</td>
+      <td>741503</td>
+      <td>1.32775e-28</td>
+      <td>1.6945</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>CSTF2T</td>
+      <td>7615</td>
+      <td>3889</td>
+      <td>857171</td>
+      <td>738252</td>
+      <td>5.34264e-161</td>
+      <td>1.68643</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>AGGF1</td>
+      <td>2042</td>
+      <td>1043</td>
+      <td>862744</td>
+      <td>741098</td>
+      <td>2.98371e-44</td>
+      <td>1.68176</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>LARP4</td>
+      <td>2150</td>
+      <td>1120</td>
+      <td>862636</td>
+      <td>741021</td>
+      <td>1.3017e-43</td>
+      <td>1.64901</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>GNL3</td>
+      <td>1761</td>
+      <td>919</td>
+      <td>863025</td>
+      <td>741222</td>
+      <td>8.65675e-36</td>
+      <td>1.64577</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>GEMIN5</td>
+      <td>7678</td>
+      <td>4023</td>
+      <td>857108</td>
+      <td>738118</td>
+      <td>9.47816e-149</td>
+      <td>1.64357</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>SF3B1</td>
+      <td>793</td>
+      <td>417</td>
+      <td>863993</td>
+      <td>741724</td>
+      <td>1.49165e-16</td>
+      <td>1.63256</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>DHX30</td>
+      <td>977</td>
+      <td>515</td>
+      <td>863809</td>
+      <td>741626</td>
+      <td>6.71227e-20</td>
+      <td>1.62875</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>NPM1</td>
+      <td>1186</td>
+      <td>626</td>
+      <td>863600</td>
+      <td>741515</td>
+      <td>1.01599e-23</td>
+      <td>1.62674</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>EIF4G2</td>
+      <td>7573</td>
+      <td>4052</td>
+      <td>857213</td>
+      <td>738089</td>
+      <td>3.40683e-136</td>
+      <td>1.60923</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>TAF15</td>
+      <td>3176</td>
+      <td>1724</td>
+      <td>861610</td>
+      <td>740417</td>
+      <td>5.46274e-55</td>
+      <td>1.5831</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>RPS11</td>
+      <td>1331</td>
+      <td>722</td>
+      <td>863455</td>
+      <td>741419</td>
+      <td>5.6842e-24</td>
+      <td>1.58294</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>PUS1</td>
+      <td>1279</td>
+      <td>697</td>
+      <td>863507</td>
+      <td>741444</td>
+      <td>9.74492e-23</td>
+      <td>1.57562</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>TROVE2</td>
+      <td>1463</td>
+      <td>810</td>
+      <td>863323</td>
+      <td>741331</td>
+      <td>2.35286e-24</td>
+      <td>1.55095</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>SBDS</td>
+      <td>904</td>
+      <td>503</td>
+      <td>863882</td>
+      <td>741638</td>
+      <td>2.41226e-15</td>
+      <td>1.5429</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>DDX55</td>
+      <td>2938</td>
+      <td>1652</td>
+      <td>861848</td>
+      <td>740489</td>
+      <td>1.94084e-44</td>
+      <td>1.52802</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>91</th>
+      <td>EXOSC5</td>
+      <td>9195</td>
+      <td>8298</td>
+      <td>855591</td>
+      <td>733843</td>
+      <td>0.000862</td>
+      <td>0.950419</td>
+    </tr>
+    <tr>
+      <th>92</th>
+      <td>RBM5</td>
+      <td>9435</td>
+      <td>8786</td>
+      <td>855351</td>
+      <td>733355</td>
+      <td>3.19693e-08</td>
+      <td>0.920705</td>
+    </tr>
+    <tr>
+      <th>93</th>
+      <td>EIF3D</td>
+      <td>22700</td>
+      <td>21119</td>
+      <td>842086</td>
+      <td>721022</td>
+      <td>1.17135e-17</td>
+      <td>0.920332</td>
+    </tr>
+    <tr>
+      <th>94</th>
+      <td>QKI</td>
+      <td>1623</td>
+      <td>1520</td>
+      <td>863163</td>
+      <td>740621</td>
+      <td>0.014865</td>
+      <td>0.916174</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>HLTF</td>
+      <td>18436</td>
+      <td>17506</td>
+      <td>846350</td>
+      <td>724635</td>
+      <td>3.45548e-22</td>
+      <td>0.901673</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>TIAL1</td>
+      <td>42</td>
+      <td>40</td>
+      <td>864744</td>
+      <td>742101</td>
+      <td>0.658878</td>
+      <td>0.901083</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>FXR1</td>
+      <td>12490</td>
+      <td>11932</td>
+      <td>852296</td>
+      <td>730209</td>
+      <td>3.31614e-17</td>
+      <td>0.896821</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>PCBP2</td>
+      <td>11414</td>
+      <td>10906</td>
+      <td>853372</td>
+      <td>731235</td>
+      <td>7.21701e-16</td>
+      <td>0.89679</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>HNRNPC</td>
+      <td>46750</td>
+      <td>44553</td>
+      <td>818036</td>
+      <td>697588</td>
+      <td>1.18857e-59</td>
+      <td>0.894811</td>
+    </tr>
+    <tr>
+      <th>100</th>
+      <td>XPO5</td>
+      <td>6062</td>
+      <td>5942</td>
+      <td>858724</td>
+      <td>736199</td>
+      <td>2.91844e-13</td>
+      <td>0.874631</td>
+    </tr>
+    <tr>
+      <th>101</th>
+      <td>KHDRBS1</td>
+      <td>21517</td>
+      <td>21217</td>
+      <td>843269</td>
+      <td>720924</td>
+      <td>6.617e-48</td>
+      <td>0.867004</td>
+    </tr>
+    <tr>
+      <th>102</th>
+      <td>CDC40</td>
+      <td>7425</td>
+      <td>7388</td>
+      <td>857361</td>
+      <td>734753</td>
+      <td>1.62549e-19</td>
+      <td>0.861286</td>
+    </tr>
+    <tr>
+      <th>103</th>
+      <td>SF3B4</td>
+      <td>2305</td>
+      <td>2311</td>
+      <td>862481</td>
+      <td>739830</td>
+      <td>1.2918e-07</td>
+      <td>0.855566</td>
+    </tr>
+    <tr>
+      <th>104</th>
+      <td>PRPF8</td>
+      <td>5027</td>
+      <td>5043</td>
+      <td>859759</td>
+      <td>737098</td>
+      <td>4.03648e-15</td>
+      <td>0.854611</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>ZNF622</td>
+      <td>22427</td>
+      <td>24153</td>
+      <td>842359</td>
+      <td>717988</td>
+      <td>2.04775e-136</td>
+      <td>0.791444</td>
+    </tr>
+    <tr>
+      <th>106</th>
+      <td>YBX3</td>
+      <td>27253</td>
+      <td>29418</td>
+      <td>837533</td>
+      <td>712723</td>
+      <td>5.80611e-170</td>
+      <td>0.788352</td>
+    </tr>
+    <tr>
+      <th>107</th>
+      <td>UPF1</td>
+      <td>8465</td>
+      <td>9304</td>
+      <td>856321</td>
+      <td>732837</td>
+      <td>1.06343e-61</td>
+      <td>0.778624</td>
+    </tr>
+    <tr>
+      <th>108</th>
+      <td>SUGP2</td>
+      <td>23559</td>
+      <td>25959</td>
+      <td>841227</td>
+      <td>716182</td>
+      <td>2.07621e-175</td>
+      <td>0.772643</td>
+    </tr>
+    <tr>
+      <th>109</th>
+      <td>DKC1</td>
+      <td>1918</td>
+      <td>2143</td>
+      <td>862868</td>
+      <td>739998</td>
+      <td>4.08436e-17</td>
+      <td>0.76756</td>
+    </tr>
+    <tr>
+      <th>110</th>
+      <td>SF3A3</td>
+      <td>4154</td>
+      <td>4644</td>
+      <td>860632</td>
+      <td>737497</td>
+      <td>1.95989e-35</td>
+      <td>0.766509</td>
+    </tr>
+    <tr>
+      <th>111</th>
+      <td>CSTF2</td>
+      <td>17008</td>
+      <td>19191</td>
+      <td>847778</td>
+      <td>722950</td>
+      <td>1.13134e-152</td>
+      <td>0.755756</td>
+    </tr>
+    <tr>
+      <th>112</th>
+      <td>PUM2</td>
+      <td>4313</td>
+      <td>4903</td>
+      <td>860473</td>
+      <td>737238</td>
+      <td>1.24561e-41</td>
+      <td>0.753682</td>
+    </tr>
+    <tr>
+      <th>113</th>
+      <td>U2AF2</td>
+      <td>8097</td>
+      <td>9445</td>
+      <td>856689</td>
+      <td>732696</td>
+      <td>1.23953e-92</td>
+      <td>0.733201</td>
+    </tr>
+    <tr>
+      <th>114</th>
+      <td>KHSRP</td>
+      <td>32303</td>
+      <td>37768</td>
+      <td>832483</td>
+      <td>704373</td>
+      <td>0</td>
+      <td>0.723679</td>
+    </tr>
+    <tr>
+      <th>115</th>
+      <td>FUBP1</td>
+      <td>74</td>
+      <td>90</td>
+      <td>864712</td>
+      <td>742051</td>
+      <td>0.0281373</td>
+      <td>0.705588</td>
+    </tr>
+    <tr>
+      <th>116</th>
+      <td>GRWD1</td>
+      <td>28922</td>
+      <td>35260</td>
+      <td>835864</td>
+      <td>706881</td>
+      <td>0</td>
+      <td>0.693676</td>
+    </tr>
+    <tr>
+      <th>117</th>
+      <td>LARP7</td>
+      <td>124</td>
+      <td>158</td>
+      <td>864662</td>
+      <td>741983</td>
+      <td>0.000994636</td>
+      <td>0.673461</td>
+    </tr>
+    <tr>
+      <th>118</th>
+      <td>DDX24</td>
+      <td>7999</td>
+      <td>10639</td>
+      <td>856787</td>
+      <td>731502</td>
+      <td>2.36556e-197</td>
+      <td>0.641915</td>
+    </tr>
+    <tr>
+      <th>119</th>
+      <td>PPIG</td>
+      <td>19728</td>
+      <td>27323</td>
+      <td>845058</td>
+      <td>714818</td>
+      <td>0</td>
+      <td>0.61075</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>FUBP3</td>
+      <td>2120</td>
+      <td>3833</td>
+      <td>862666</td>
+      <td>738308</td>
+      <td>8.89299e-176</td>
+      <td>0.47336</td>
+    </tr>
+  </tbody>
+</table>
+<p>121 rows × 7 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># test statistics of potential m6A binding proteins (merged m6A peaks and unmerged nonpeaks)</span>
+<span class="n">fisher_peak_merge</span><span class="p">[</span><span class="n">fisher_peak_merge</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">RBPs_potential</span><span class="p">)]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>n_inter_peak</th>
+      <th>n_inter_nonpeak</th>
+      <th>n_nointer_peak</th>
+      <th>n_nointer_nonpeak</th>
+      <th>fisher_p</th>
+      <th>odds_ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>3</th>
+      <td>IGF2BP3</td>
+      <td>3947</td>
+      <td>1522</td>
+      <td>860839</td>
+      <td>740619</td>
+      <td>6.24384e-171</td>
+      <td>2.23113</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>HNRNPUL1</td>
+      <td>1359</td>
+      <td>834</td>
+      <td>863427</td>
+      <td>741307</td>
+      <td>1.26388e-14</td>
+      <td>1.39903</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>HNRNPA1</td>
+      <td>6224</td>
+      <td>3837</td>
+      <td>858562</td>
+      <td>738304</td>
+      <td>5.5737e-60</td>
+      <td>1.39489</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>HNRNPM</td>
+      <td>5988</td>
+      <td>3742</td>
+      <td>858798</td>
+      <td>738399</td>
+      <td>1.19999e-53</td>
+      <td>1.37587</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>IGF2BP1</td>
+      <td>4282</td>
+      <td>2848</td>
+      <td>860504</td>
+      <td>739293</td>
+      <td>2.11425e-26</td>
+      <td>1.29173</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>FMR1</td>
+      <td>12088</td>
+      <td>8075</td>
+      <td>852698</td>
+      <td>734066</td>
+      <td>9.05598e-70</td>
+      <td>1.2887</td>
+    </tr>
+    <tr>
+      <th>55</th>
+      <td>HNRNPK</td>
+      <td>3247</td>
+      <td>2228</td>
+      <td>861539</td>
+      <td>739913</td>
+      <td>2.79703e-16</td>
+      <td>1.25162</td>
+    </tr>
+    <tr>
+      <th>56</th>
+      <td>HNRNPU</td>
+      <td>5687</td>
+      <td>3948</td>
+      <td>859099</td>
+      <td>738193</td>
+      <td>5.79733e-25</td>
+      <td>1.23775</td>
+    </tr>
+    <tr>
+      <th>71</th>
+      <td>IGF2BP2</td>
+      <td>15260</td>
+      <td>11806</td>
+      <td>849526</td>
+      <td>730335</td>
+      <td>1.32338e-17</td>
+      <td>1.11121</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>HNRNPC</td>
+      <td>46750</td>
+      <td>44553</td>
+      <td>818036</td>
+      <td>697588</td>
+      <td>1.18857e-59</td>
+      <td>0.894811</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Fisher-test-statistics-of-RBP-binding-sites-unmerged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of RBP binding sites unmerged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-RBP-binding-sites-unmerged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># test statistics of potential m6A binding proteins (unmerged m6A peaks and unmerged nonpeaks)</span>
+<span class="n">fisher_peak_unmerge</span><span class="p">[</span><span class="n">fisher_peak_unmerge</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">RBPs_potential</span><span class="p">)]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[15]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>n_inter_peak</th>
+      <th>n_inter_nonpeak</th>
+      <th>n_nointer_peak</th>
+      <th>n_nointer_nonpeak</th>
+      <th>fisher_p</th>
+      <th>odds_ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>8</th>
+      <td>IGF2BP3</td>
+      <td>4586</td>
+      <td>1522</td>
+      <td>1148761</td>
+      <td>740619</td>
+      <td>2.16158e-122</td>
+      <td>1.94261</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>FMR1</td>
+      <td>18832</td>
+      <td>8075</td>
+      <td>1134515</td>
+      <td>734066</td>
+      <td>1.76903e-217</td>
+      <td>1.50896</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>IGF2BP1</td>
+      <td>6264</td>
+      <td>2848</td>
+      <td>1147083</td>
+      <td>739293</td>
+      <td>1.5377e-55</td>
+      <td>1.41753</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>IGF2BP2</td>
+      <td>24619</td>
+      <td>11806</td>
+      <td>1128728</td>
+      <td>730335</td>
+      <td>9.28274e-160</td>
+      <td>1.34927</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>HNRNPUL1</td>
+      <td>1626</td>
+      <td>834</td>
+      <td>1151721</td>
+      <td>741307</td>
+      <td>7.53018e-08</td>
+      <td>1.25489</td>
+    </tr>
+    <tr>
+      <th>59</th>
+      <td>HNRNPA1</td>
+      <td>7037</td>
+      <td>3837</td>
+      <td>1146310</td>
+      <td>738304</td>
+      <td>8.12827e-17</td>
+      <td>1.18121</td>
+    </tr>
+    <tr>
+      <th>65</th>
+      <td>HNRNPK</td>
+      <td>3923</td>
+      <td>2228</td>
+      <td>1149424</td>
+      <td>739913</td>
+      <td>2.16906e-06</td>
+      <td>1.13345</td>
+    </tr>
+    <tr>
+      <th>73</th>
+      <td>HNRNPM</td>
+      <td>6148</td>
+      <td>3742</td>
+      <td>1147199</td>
+      <td>738399</td>
+      <td>0.00724526</td>
+      <td>1.0575</td>
+    </tr>
+    <tr>
+      <th>78</th>
+      <td>HNRNPU</td>
+      <td>6215</td>
+      <td>3948</td>
+      <td>1147132</td>
+      <td>738193</td>
+      <td>0.527598</td>
+      <td>1.01303</td>
+    </tr>
+    <tr>
+      <th>115</th>
+      <td>HNRNPC</td>
+      <td>47454</td>
+      <td>44553</td>
+      <td>1105893</td>
+      <td>697588</td>
+      <td>0</td>
+      <td>0.671865</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="microRNA:-Fisher's-exact-test-statistics-for-miRNA">microRNA: Fisher's exact test statistics for miRNA<a class="anchor-link" href="#microRNA:-Fisher's-exact-test-statistics-for-miRNA">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">miRNA</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">input_miRNA</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">usecols</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">])</span>
+<span class="n">miRNA</span><span class="p">[</span><span class="s2">&quot;name_gene&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">miRNA</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are 55 microRNAs included in dataset.</p>
+<p>Binding sites in one block are not always unique.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">miRNA</span><span class="p">[</span><span class="s2">&quot;miRNA&quot;</span><span class="p">]),</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">miRNA</span><span class="p">[</span><span class="s2">&quot;miRNA&quot;</span><span class="p">])))</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">miRNA</span><span class="p">[</span><span class="s2">&quot;blockSize&quot;</span><span class="p">]))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Counter({&#39;hsa-miR-330-3p&#39;: 2310, &#39;hsa-miR-17-5p&#39;: 1693, &#39;hsa-miR-340-5p&#39;: 1670, &#39;hsa-miR-182-5p&#39;: 1618, &#39;hsa-miR-183-5p&#39;: 1482, &#39;hsa-miR-140-3p&#39;: 1319, &#39;hsa-miR-25-3p&#39;: 1209, &#39;hsa-miR-186-5p&#39;: 1146, &#39;hsa-miR-142-3p&#39;: 1105, &#39;hsa-miR-141-3p&#39;: 1066, &#39;hsa-miR-142-5p&#39;: 1065, &#39;hsa-miR-505-3p&#39;: 743, &#39;hsa-miR-582-5p&#39;: 737, &#39;hsa-miR-22-3p&#39;: 709, &#39;hsa-miR-155-5p&#39;: 624, &#39;hsa-miR-143-3p&#39;: 563, &#39;hsa-miR-221-3p&#39;: 563, &#39;hsa-miR-132-3p&#39;: 553, &#39;hsa-miR-212-5p&#39;: 506, &#39;hsa-miR-140-5p&#39;: 466, &#39;hsa-miR-223-3p&#39;: 449, &#39;hsa-miR-185-5p&#39;: 445, &#39;hsa-miR-21-5p&#39;: 435, &#39;hsa-miR-150-5p&#39;: 402, &#39;hsa-miR-532-3p&#39;: 390, &#39;hsa-miR-542-3p&#39;: 390, &#39;hsa-miR-874-3p&#39;: 366, &#39;hsa-miR-342-3p&#39;: 354, &#39;hsa-miR-361-5p&#39;: 325, &#39;hsa-miR-335-5p&#39;: 322, &#39;hsa-miR-425-5p&#39;: 311, &#39;hsa-miR-331-3p&#39;: 283, &#39;hsa-miR-532-5p&#39;: 270, &#39;hsa-miR-28-5p&#39;: 269, &#39;hsa-miR-423-5p&#39;: 269, &#39;hsa-miR-192-5p&#39;: 240, &#39;hsa-miR-296-5p&#39;: 230, &#39;hsa-miR-328-3p&#39;: 228, &#39;hsa-miR-339-5p&#39;: 225, &#39;hsa-miR-501-3p&#39;: 225, &#39;hsa-miR-491-5p&#39;: 209, &#39;hsa-miR-362-5p&#39;: 202, &#39;hsa-miR-486-5p&#39;: 192, &#39;hsa-miR-324-5p&#39;: 161, &#39;hsa-miR-877-5p&#39;: 145, &#39;hsa-miR-28-3p&#39;: 137, &#39;hsa-miR-296-3p&#39;: 83, &#39;hsa-miR-191-5p&#39;: 67, &#39;hsa-miR-744-5p&#39;: 63, &#39;hsa-miR-210-3p&#39;: 51, &#39;hsa-miR-127-3p&#39;: 27, &#39;hsa-miR-615-3p&#39;: 22, &#39;hsa-miR-652-3p&#39;: 21, &#39;hsa-miR-423-3p&#39;: 21, &#39;hsa-miR-1249-3p&#39;: 17}) 
+ 55
+Counter({&#39;7&#39;: 19242, &#39;8&#39;: 9695, &#39;6,1&#39;: 10, &#39;1,6&#39;: 7, &#39;2,5&#39;: 6, &#39;2,6&#39;: 5, &#39;3,5&#39;: 5, &#39;4,3&#39;: 5, &#39;3,4&#39;: 5, &#39;5,2&#39;: 4, &#39;5,3&#39;: 3, &#39;6,2&#39;: 2, &#39;7,1&#39;: 2, &#39;1,7&#39;: 1, &#39;4,4&#39;: 1})
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Split-rows-with-two-blockSize/blockStart,-to-set-blockCount-to-1-for-every-row.">Split rows with two blockSize/blockStart, to set blockCount to 1 for every row.<a class="anchor-link" href="#Split-rows-with-two-blockSize/blockStart,-to-set-blockCount-to-1-for-every-row.">&#182;</a></h4><p>For rows with 2-blockstart sites, split blockSize and blockStarts into two rows.</p>
+<p>"start": original start + interval betweem two blockstart sites</p>
+<p>"end": start from last step + blockSize</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># separate the blocks with multiple blockSize</span>
+<span class="n">cols_miRNA</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;miRNA&quot;</span><span class="p">,</span> <span class="s2">&quot;blockSize&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]</span>
+<span class="n">single_block_miRNA</span> <span class="o">=</span> <span class="n">miRNA</span><span class="p">[</span><span class="n">miRNA</span><span class="p">[</span><span class="s2">&quot;blockSize&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">&quot;7&quot;</span><span class="p">,</span> <span class="s2">&quot;8&quot;</span><span class="p">])][</span><span class="n">cols_miRNA</span><span class="p">]</span>
+<span class="n">multi_block_miRNA</span> <span class="o">=</span> <span class="n">miRNA</span><span class="p">[</span><span class="o">~</span><span class="n">miRNA</span><span class="p">[</span><span class="s2">&quot;blockSize&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">&quot;7&quot;</span><span class="p">,</span> <span class="s2">&quot;8&quot;</span><span class="p">])]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tmp_col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chr&#39;</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;strand&#39;</span><span class="p">,</span> <span class="s1">&#39;miRNA&#39;</span><span class="p">,</span> <span class="s1">&#39;name_gene&#39;</span><span class="p">]</span>
+<span class="n">tmp_miRNA</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="n">tmp_col</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;blockSize&quot;</span><span class="p">,</span> <span class="s2">&quot;interval&quot;</span><span class="p">])</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">multi_block_miRNA</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;blockSize&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;blockStarts&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)):</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;The length of &#39;blockSize&#39; and &#39;blockStarts&#39; are different&quot;</span><span class="p">)</span>
+        <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;blockSize&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))):</span>
+            <span class="n">tmp1</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;blockSize&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="n">num</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;blockStarts&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="n">num</span><span class="p">])]</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">tmp_col</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tmp1</span><span class="p">)</span>
+            <span class="n">tmp_miRNA</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tmp_miRNA</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_miRNA</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;interval&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">tmp_miRNA</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_miRNA</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;blockSize&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">single_block_miRNA</span> <span class="o">=</span> <span class="n">single_block_miRNA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_miRNA</span><span class="p">[</span><span class="n">cols_miRNA</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Export-bed-file-of-unique-block-start-and-end-in-each-row">Export bed file of unique block start and end in each row<a class="anchor-link" href="#Export-bed-file-of-unique-block-start-and-end-in-each-row">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cols_sortby</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;miRNA&quot;</span><span class="p">,</span> <span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">]</span>
+<span class="n">single_block_miRNA</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="n">cols_sortby</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_miRNA</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Use-bedtools-to-obtain-intersect-of-peak/nonpeak-with-miRNA">Use bedtools to obtain intersect of peak/nonpeak with miRNA<a class="anchor-link" href="#Use-bedtools-to-obtain-intersect-of-peak/nonpeak-with-miRNA">&#182;</a></h3>
+<pre><code>bedtools intersect -a ../miRNA.bed -b peaks.bed -s &gt; peak.intersect.miRNA.bed
+bedtools intersect -a ../miRNA.bed -b peaks.merged.bed -s &gt; peak.merged.intersect.miRNA.bed
+bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miRNA.bed</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fn4</span> <span class="o">=</span> <span class="n">input_intersect_peak_miRNA</span>
+<span class="n">fn5</span> <span class="o">=</span> <span class="n">input_intersect_nonpeak_miRNA</span>
+<span class="n">fn6</span> <span class="o">=</span> <span class="n">input_intersect_peak_merged_miRNA</span>
+<span class="n">fisher_peak_merge_miRNA</span> <span class="o">=</span> <span class="n">get_fisher</span><span class="p">(</span><span class="n">peak_fn</span> <span class="o">=</span> <span class="n">fn4</span><span class="p">,</span> <span class="n">nonpeak_fn</span> <span class="o">=</span> <span class="n">fn5</span><span class="p">)</span>
+<span class="n">fisher_peak_unmerge_miRNA</span> <span class="o">=</span> <span class="n">get_fisher</span><span class="p">(</span><span class="n">peak_fn</span> <span class="o">=</span> <span class="n">fn6</span><span class="p">,</span> <span class="n">nonpeak_fn</span> <span class="o">=</span> <span class="n">fn5</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Fisher-test-statistics-of-microRNA-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of microRNA binding sites with merged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-microRNA-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fisher_peak_merge_miRNA</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span><span class="p">[</span><span class="s2">&quot;odds_ratio&quot;</span><span class="p">],</span> <span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[24]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>n_inter_peak</th>
+      <th>n_inter_nonpeak</th>
+      <th>n_nointer_peak</th>
+      <th>n_nointer_nonpeak</th>
+      <th>fisher_p</th>
+      <th>odds_ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>hsa-miR-615-3p</td>
+      <td>6</td>
+      <td>1</td>
+      <td>4103</td>
+      <td>5579</td>
+      <td>0.0468574</td>
+      <td>8.15842</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>hsa-miR-423-3p</td>
+      <td>14</td>
+      <td>3</td>
+      <td>4095</td>
+      <td>5577</td>
+      <td>0.000993382</td>
+      <td>6.35556</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>hsa-miR-210-3p</td>
+      <td>12</td>
+      <td>3</td>
+      <td>4097</td>
+      <td>5577</td>
+      <td>0.00652049</td>
+      <td>5.44496</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>hsa-miR-127-3p</td>
+      <td>8</td>
+      <td>2</td>
+      <td>4101</td>
+      <td>5578</td>
+      <td>0.0223117</td>
+      <td>5.44062</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>hsa-miR-1249-3p</td>
+      <td>7</td>
+      <td>2</td>
+      <td>4102</td>
+      <td>5578</td>
+      <td>0.0422105</td>
+      <td>4.75939</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>hsa-miR-423-5p</td>
+      <td>58</td>
+      <td>37</td>
+      <td>4051</td>
+      <td>5543</td>
+      <td>0.000337447</td>
+      <td>2.14491</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>hsa-miR-212-5p</td>
+      <td>116</td>
+      <td>78</td>
+      <td>3993</td>
+      <td>5502</td>
+      <td>1.02772e-06</td>
+      <td>2.0492</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>hsa-miR-296-5p</td>
+      <td>63</td>
+      <td>43</td>
+      <td>4046</td>
+      <td>5537</td>
+      <td>0.000488117</td>
+      <td>2.00503</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>hsa-miR-328-3p</td>
+      <td>53</td>
+      <td>38</td>
+      <td>4056</td>
+      <td>5542</td>
+      <td>0.00268099</td>
+      <td>1.90573</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>hsa-miR-331-3p</td>
+      <td>52</td>
+      <td>40</td>
+      <td>4057</td>
+      <td>5540</td>
+      <td>0.0077257</td>
+      <td>1.7752</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>hsa-miR-491-5p</td>
+      <td>40</td>
+      <td>32</td>
+      <td>4069</td>
+      <td>5548</td>
+      <td>0.0305094</td>
+      <td>1.70435</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>hsa-miR-223-3p</td>
+      <td>101</td>
+      <td>82</td>
+      <td>4008</td>
+      <td>5498</td>
+      <td>0.000489454</td>
+      <td>1.6896</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>hsa-miR-140-3p</td>
+      <td>256</td>
+      <td>212</td>
+      <td>3853</td>
+      <td>5368</td>
+      <td>5.24253e-08</td>
+      <td>1.68235</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>hsa-miR-362-5p</td>
+      <td>38</td>
+      <td>33</td>
+      <td>4071</td>
+      <td>5547</td>
+      <td>0.0699765</td>
+      <td>1.56901</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>hsa-miR-143-3p</td>
+      <td>102</td>
+      <td>95</td>
+      <td>4007</td>
+      <td>5485</td>
+      <td>0.00859482</td>
+      <td>1.46972</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>hsa-miR-140-5p</td>
+      <td>94</td>
+      <td>88</td>
+      <td>4015</td>
+      <td>5492</td>
+      <td>0.0123344</td>
+      <td>1.46113</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>hsa-miR-132-3p</td>
+      <td>116</td>
+      <td>111</td>
+      <td>3993</td>
+      <td>5469</td>
+      <td>0.00798643</td>
+      <td>1.43134</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>hsa-miR-296-3p</td>
+      <td>11</td>
+      <td>11</td>
+      <td>4098</td>
+      <td>5569</td>
+      <td>0.520588</td>
+      <td>1.35896</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>hsa-miR-652-3p</td>
+      <td>4</td>
+      <td>4</td>
+      <td>4105</td>
+      <td>5576</td>
+      <td>0.729295</td>
+      <td>1.35834</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>hsa-miR-183-5p</td>
+      <td>232</td>
+      <td>240</td>
+      <td>3877</td>
+      <td>5340</td>
+      <td>0.00260642</td>
+      <td>1.33144</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>hsa-miR-532-3p</td>
+      <td>78</td>
+      <td>81</td>
+      <td>4031</td>
+      <td>5499</td>
+      <td>0.0897683</td>
+      <td>1.31365</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>hsa-miR-150-5p</td>
+      <td>64</td>
+      <td>67</td>
+      <td>4045</td>
+      <td>5513</td>
+      <td>0.154165</td>
+      <td>1.30189</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>hsa-miR-877-5p</td>
+      <td>22</td>
+      <td>23</td>
+      <td>4087</td>
+      <td>5557</td>
+      <td>0.450045</td>
+      <td>1.30056</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>hsa-miR-335-5p</td>
+      <td>51</td>
+      <td>55</td>
+      <td>4058</td>
+      <td>5525</td>
+      <td>0.237113</td>
+      <td>1.26249</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>hsa-miR-22-3p</td>
+      <td>131</td>
+      <td>143</td>
+      <td>3978</td>
+      <td>5437</td>
+      <td>0.0720579</td>
+      <td>1.25207</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>hsa-miR-142-3p</td>
+      <td>187</td>
+      <td>209</td>
+      <td>3922</td>
+      <td>5371</td>
+      <td>0.0486534</td>
+      <td>1.2253</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>hsa-miR-505-3p</td>
+      <td>105</td>
+      <td>117</td>
+      <td>4004</td>
+      <td>5463</td>
+      <td>0.149024</td>
+      <td>1.22445</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>hsa-miR-486-5p</td>
+      <td>28</td>
+      <td>32</td>
+      <td>4081</td>
+      <td>5548</td>
+      <td>0.514766</td>
+      <td>1.18954</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>hsa-miR-182-5p</td>
+      <td>223</td>
+      <td>262</td>
+      <td>3886</td>
+      <td>5318</td>
+      <td>0.108978</td>
+      <td>1.16479</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>hsa-miR-28-5p</td>
+      <td>38</td>
+      <td>45</td>
+      <td>4071</td>
+      <td>5535</td>
+      <td>0.577475</td>
+      <td>1.14812</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>hsa-miR-324-5p</td>
+      <td>27</td>
+      <td>32</td>
+      <td>4082</td>
+      <td>5548</td>
+      <td>0.600092</td>
+      <td>1.14677</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>hsa-miR-339-5p</td>
+      <td>36</td>
+      <td>43</td>
+      <td>4073</td>
+      <td>5537</td>
+      <td>0.569823</td>
+      <td>1.13814</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>hsa-miR-342-3p</td>
+      <td>48</td>
+      <td>58</td>
+      <td>4061</td>
+      <td>5522</td>
+      <td>0.554605</td>
+      <td>1.12532</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>hsa-miR-542-3p</td>
+      <td>53</td>
+      <td>72</td>
+      <td>4056</td>
+      <td>5508</td>
+      <td>1</td>
+      <td>0.99963</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>hsa-miR-874-3p</td>
+      <td>77</td>
+      <td>105</td>
+      <td>4032</td>
+      <td>5475</td>
+      <td>1</td>
+      <td>0.995784</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>hsa-miR-192-5p</td>
+      <td>30</td>
+      <td>42</td>
+      <td>4079</td>
+      <td>5538</td>
+      <td>1</td>
+      <td>0.969776</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>hsa-miR-744-5p</td>
+      <td>9</td>
+      <td>13</td>
+      <td>4100</td>
+      <td>5567</td>
+      <td>1</td>
+      <td>0.940019</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>hsa-miR-21-5p</td>
+      <td>52</td>
+      <td>76</td>
+      <td>4057</td>
+      <td>5504</td>
+      <td>0.719276</td>
+      <td>0.928246</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>hsa-miR-582-5p</td>
+      <td>82</td>
+      <td>120</td>
+      <td>4027</td>
+      <td>5460</td>
+      <td>0.615241</td>
+      <td>0.926496</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>hsa-miR-532-5p</td>
+      <td>34</td>
+      <td>53</td>
+      <td>4075</td>
+      <td>5527</td>
+      <td>0.586376</td>
+      <td>0.870091</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>hsa-miR-17-5p</td>
+      <td>231</td>
+      <td>370</td>
+      <td>3878</td>
+      <td>5210</td>
+      <td>0.045127</td>
+      <td>0.838765</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>hsa-miR-25-3p</td>
+      <td>134</td>
+      <td>216</td>
+      <td>3975</td>
+      <td>5364</td>
+      <td>0.122884</td>
+      <td>0.837149</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>hsa-miR-185-5p</td>
+      <td>63</td>
+      <td>107</td>
+      <td>4046</td>
+      <td>5473</td>
+      <td>0.159519</td>
+      <td>0.796446</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>hsa-miR-155-5p</td>
+      <td>68</td>
+      <td>116</td>
+      <td>4041</td>
+      <td>5464</td>
+      <td>0.132847</td>
+      <td>0.792634</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>hsa-miR-425-5p</td>
+      <td>38</td>
+      <td>66</td>
+      <td>4071</td>
+      <td>5514</td>
+      <td>0.232881</td>
+      <td>0.77984</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>hsa-miR-361-5p</td>
+      <td>34</td>
+      <td>60</td>
+      <td>4075</td>
+      <td>5520</td>
+      <td>0.248864</td>
+      <td>0.767607</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>hsa-miR-501-3p</td>
+      <td>23</td>
+      <td>42</td>
+      <td>4086</td>
+      <td>5538</td>
+      <td>0.260332</td>
+      <td>0.742221</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>hsa-miR-191-5p</td>
+      <td>9</td>
+      <td>18</td>
+      <td>4100</td>
+      <td>5562</td>
+      <td>0.436353</td>
+      <td>0.678293</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>hsa-miR-28-3p</td>
+      <td>15</td>
+      <td>30</td>
+      <td>4094</td>
+      <td>5550</td>
+      <td>0.230448</td>
+      <td>0.677821</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>hsa-miR-142-5p</td>
+      <td>100</td>
+      <td>206</td>
+      <td>4009</td>
+      <td>5374</td>
+      <td>0.000505664</td>
+      <td>0.65072</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>hsa-miR-221-3p</td>
+      <td>55</td>
+      <td>114</td>
+      <td>4054</td>
+      <td>5466</td>
+      <td>0.00941775</td>
+      <td>0.650495</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>hsa-miR-141-3p</td>
+      <td>116</td>
+      <td>239</td>
+      <td>3993</td>
+      <td>5341</td>
+      <td>0.000153408</td>
+      <td>0.649207</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>hsa-miR-340-5p</td>
+      <td>138</td>
+      <td>317</td>
+      <td>3971</td>
+      <td>5263</td>
+      <td>6.14614e-08</td>
+      <td>0.57697</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>hsa-miR-330-3p</td>
+      <td>241</td>
+      <td>589</td>
+      <td>3868</td>
+      <td>4991</td>
+      <td>1.28562e-16</td>
+      <td>0.527962</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>hsa-miR-186-5p</td>
+      <td>86</td>
+      <td>287</td>
+      <td>4023</td>
+      <td>5293</td>
+      <td>1.81417e-15</td>
+      <td>0.394247</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Fisher test statistics (p&lt;0.05) of microRNA binding sites with merged m6A peaks and unmerged nonpeaks.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fisher_peak_merge_miRNA</span><span class="p">[</span><span class="n">fisher_peak_merge_miRNA</span><span class="p">[</span><span class="s2">&quot;fisher_p&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;odds_ratio&quot;</span><span class="p">],</span> <span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[27]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>n_inter_peak</th>
+      <th>n_inter_nonpeak</th>
+      <th>n_nointer_peak</th>
+      <th>n_nointer_nonpeak</th>
+      <th>fisher_p</th>
+      <th>odds_ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>hsa-miR-615-3p</td>
+      <td>6</td>
+      <td>1</td>
+      <td>4103</td>
+      <td>5579</td>
+      <td>0.0468574</td>
+      <td>8.15842</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>hsa-miR-423-3p</td>
+      <td>14</td>
+      <td>3</td>
+      <td>4095</td>
+      <td>5577</td>
+      <td>0.000993382</td>
+      <td>6.35556</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>hsa-miR-210-3p</td>
+      <td>12</td>
+      <td>3</td>
+      <td>4097</td>
+      <td>5577</td>
+      <td>0.00652049</td>
+      <td>5.44496</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>hsa-miR-127-3p</td>
+      <td>8</td>
+      <td>2</td>
+      <td>4101</td>
+      <td>5578</td>
+      <td>0.0223117</td>
+      <td>5.44062</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>hsa-miR-1249-3p</td>
+      <td>7</td>
+      <td>2</td>
+      <td>4102</td>
+      <td>5578</td>
+      <td>0.0422105</td>
+      <td>4.75939</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>hsa-miR-423-5p</td>
+      <td>58</td>
+      <td>37</td>
+      <td>4051</td>
+      <td>5543</td>
+      <td>0.000337447</td>
+      <td>2.14491</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>hsa-miR-212-5p</td>
+      <td>116</td>
+      <td>78</td>
+      <td>3993</td>
+      <td>5502</td>
+      <td>1.02772e-06</td>
+      <td>2.0492</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>hsa-miR-296-5p</td>
+      <td>63</td>
+      <td>43</td>
+      <td>4046</td>
+      <td>5537</td>
+      <td>0.000488117</td>
+      <td>2.00503</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>hsa-miR-328-3p</td>
+      <td>53</td>
+      <td>38</td>
+      <td>4056</td>
+      <td>5542</td>
+      <td>0.00268099</td>
+      <td>1.90573</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>hsa-miR-331-3p</td>
+      <td>52</td>
+      <td>40</td>
+      <td>4057</td>
+      <td>5540</td>
+      <td>0.0077257</td>
+      <td>1.7752</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>hsa-miR-491-5p</td>
+      <td>40</td>
+      <td>32</td>
+      <td>4069</td>
+      <td>5548</td>
+      <td>0.0305094</td>
+      <td>1.70435</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>hsa-miR-223-3p</td>
+      <td>101</td>
+      <td>82</td>
+      <td>4008</td>
+      <td>5498</td>
+      <td>0.000489454</td>
+      <td>1.6896</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>hsa-miR-140-3p</td>
+      <td>256</td>
+      <td>212</td>
+      <td>3853</td>
+      <td>5368</td>
+      <td>5.24253e-08</td>
+      <td>1.68235</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>hsa-miR-143-3p</td>
+      <td>102</td>
+      <td>95</td>
+      <td>4007</td>
+      <td>5485</td>
+      <td>0.00859482</td>
+      <td>1.46972</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>hsa-miR-140-5p</td>
+      <td>94</td>
+      <td>88</td>
+      <td>4015</td>
+      <td>5492</td>
+      <td>0.0123344</td>
+      <td>1.46113</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>hsa-miR-132-3p</td>
+      <td>116</td>
+      <td>111</td>
+      <td>3993</td>
+      <td>5469</td>
+      <td>0.00798643</td>
+      <td>1.43134</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>hsa-miR-183-5p</td>
+      <td>232</td>
+      <td>240</td>
+      <td>3877</td>
+      <td>5340</td>
+      <td>0.00260642</td>
+      <td>1.33144</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>hsa-miR-142-3p</td>
+      <td>187</td>
+      <td>209</td>
+      <td>3922</td>
+      <td>5371</td>
+      <td>0.0486534</td>
+      <td>1.2253</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>hsa-miR-17-5p</td>
+      <td>231</td>
+      <td>370</td>
+      <td>3878</td>
+      <td>5210</td>
+      <td>0.045127</td>
+      <td>0.838765</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>hsa-miR-142-5p</td>
+      <td>100</td>
+      <td>206</td>
+      <td>4009</td>
+      <td>5374</td>
+      <td>0.000505664</td>
+      <td>0.65072</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>hsa-miR-221-3p</td>
+      <td>55</td>
+      <td>114</td>
+      <td>4054</td>
+      <td>5466</td>
+      <td>0.00941775</td>
+      <td>0.650495</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>hsa-miR-141-3p</td>
+      <td>116</td>
+      <td>239</td>
+      <td>3993</td>
+      <td>5341</td>
+      <td>0.000153408</td>
+      <td>0.649207</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>hsa-miR-340-5p</td>
+      <td>138</td>
+      <td>317</td>
+      <td>3971</td>
+      <td>5263</td>
+      <td>6.14614e-08</td>
+      <td>0.57697</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>hsa-miR-330-3p</td>
+      <td>241</td>
+      <td>589</td>
+      <td>3868</td>
+      <td>4991</td>
+      <td>1.28562e-16</td>
+      <td>0.527962</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>hsa-miR-186-5p</td>
+      <td>86</td>
+      <td>287</td>
+      <td>4023</td>
+      <td>5293</td>
+      <td>1.81417e-15</td>
+      <td>0.394247</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Fisher-test-statistics-of-microRNA-binding-sites-with-unmerged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of microRNA binding sites with unmerged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-microRNA-binding-sites-with-unmerged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fisher_peak_unmerge_miRNA</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span><span class="p">[</span><span class="s2">&quot;odds_ratio&quot;</span><span class="p">],</span> <span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[25]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>n_inter_peak</th>
+      <th>n_inter_nonpeak</th>
+      <th>n_nointer_peak</th>
+      <th>n_nointer_nonpeak</th>
+      <th>fisher_p</th>
+      <th>odds_ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>hsa-miR-615-3p</td>
+      <td>6</td>
+      <td>1</td>
+      <td>3740</td>
+      <td>5579</td>
+      <td>0.0192407</td>
+      <td>8.95027</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>hsa-miR-423-3p</td>
+      <td>12</td>
+      <td>3</td>
+      <td>3734</td>
+      <td>5577</td>
+      <td>0.00244481</td>
+      <td>5.97429</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>hsa-miR-127-3p</td>
+      <td>8</td>
+      <td>2</td>
+      <td>3738</td>
+      <td>5578</td>
+      <td>0.0184756</td>
+      <td>5.96897</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>hsa-miR-210-3p</td>
+      <td>9</td>
+      <td>3</td>
+      <td>3737</td>
+      <td>5577</td>
+      <td>0.0177819</td>
+      <td>4.47712</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>hsa-miR-1249-3p</td>
+      <td>6</td>
+      <td>2</td>
+      <td>3740</td>
+      <td>5578</td>
+      <td>0.0671696</td>
+      <td>4.47433</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>hsa-miR-212-5p</td>
+      <td>105</td>
+      <td>78</td>
+      <td>3641</td>
+      <td>5502</td>
+      <td>2.73695e-06</td>
+      <td>2.0342</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>hsa-miR-423-5p</td>
+      <td>50</td>
+      <td>37</td>
+      <td>3696</td>
+      <td>5543</td>
+      <td>0.00131234</td>
+      <td>2.02666</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>hsa-miR-296-5p</td>
+      <td>56</td>
+      <td>43</td>
+      <td>3690</td>
+      <td>5537</td>
+      <td>0.00127683</td>
+      <td>1.95419</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>hsa-miR-328-3p</td>
+      <td>47</td>
+      <td>38</td>
+      <td>3699</td>
+      <td>5542</td>
+      <td>0.00524438</td>
+      <td>1.85309</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>hsa-miR-331-3p</td>
+      <td>48</td>
+      <td>40</td>
+      <td>3698</td>
+      <td>5540</td>
+      <td>0.00628328</td>
+      <td>1.79773</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>hsa-miR-491-5p</td>
+      <td>38</td>
+      <td>32</td>
+      <td>3708</td>
+      <td>5548</td>
+      <td>0.0195254</td>
+      <td>1.77677</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>hsa-miR-140-3p</td>
+      <td>231</td>
+      <td>212</td>
+      <td>3515</td>
+      <td>5368</td>
+      <td>2.13504e-07</td>
+      <td>1.66404</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>hsa-miR-362-5p</td>
+      <td>35</td>
+      <td>33</td>
+      <td>3711</td>
+      <td>5547</td>
+      <td>0.0626074</td>
+      <td>1.58534</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>hsa-miR-223-3p</td>
+      <td>85</td>
+      <td>82</td>
+      <td>3661</td>
+      <td>5498</td>
+      <td>0.00518661</td>
+      <td>1.55672</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>hsa-miR-140-5p</td>
+      <td>90</td>
+      <td>88</td>
+      <td>3656</td>
+      <td>5492</td>
+      <td>0.00531999</td>
+      <td>1.53633</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>hsa-miR-296-3p</td>
+      <td>11</td>
+      <td>11</td>
+      <td>3735</td>
+      <td>5569</td>
+      <td>0.387099</td>
+      <td>1.49103</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>hsa-miR-652-3p</td>
+      <td>4</td>
+      <td>4</td>
+      <td>3742</td>
+      <td>5576</td>
+      <td>0.721595</td>
+      <td>1.49011</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>hsa-miR-143-3p</td>
+      <td>94</td>
+      <td>95</td>
+      <td>3652</td>
+      <td>5485</td>
+      <td>0.00853163</td>
+      <td>1.48611</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>hsa-miR-532-3p</td>
+      <td>72</td>
+      <td>81</td>
+      <td>3674</td>
+      <td>5499</td>
+      <td>0.0813331</td>
+      <td>1.33043</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>hsa-miR-132-3p</td>
+      <td>98</td>
+      <td>111</td>
+      <td>3648</td>
+      <td>5469</td>
+      <td>0.0459695</td>
+      <td>1.3236</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>hsa-miR-183-5p</td>
+      <td>207</td>
+      <td>240</td>
+      <td>3539</td>
+      <td>5340</td>
+      <td>0.00753287</td>
+      <td>1.30143</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>hsa-miR-150-5p</td>
+      <td>58</td>
+      <td>67</td>
+      <td>3688</td>
+      <td>5513</td>
+      <td>0.168231</td>
+      <td>1.29405</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>hsa-miR-486-5p</td>
+      <td>27</td>
+      <td>32</td>
+      <td>3719</td>
+      <td>5548</td>
+      <td>0.424537</td>
+      <td>1.25871</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>hsa-miR-142-3p</td>
+      <td>170</td>
+      <td>209</td>
+      <td>3576</td>
+      <td>5371</td>
+      <td>0.061144</td>
+      <td>1.22169</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>hsa-miR-22-3p</td>
+      <td>116</td>
+      <td>143</td>
+      <td>3630</td>
+      <td>5437</td>
+      <td>0.139163</td>
+      <td>1.215</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>hsa-miR-505-3p</td>
+      <td>95</td>
+      <td>117</td>
+      <td>3651</td>
+      <td>5463</td>
+      <td>0.178099</td>
+      <td>1.21495</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>hsa-miR-339-5p</td>
+      <td>35</td>
+      <td>43</td>
+      <td>3711</td>
+      <td>5537</td>
+      <td>0.417813</td>
+      <td>1.21446</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>hsa-miR-324-5p</td>
+      <td>26</td>
+      <td>32</td>
+      <td>3720</td>
+      <td>5548</td>
+      <td>0.502717</td>
+      <td>1.21176</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>hsa-miR-335-5p</td>
+      <td>44</td>
+      <td>55</td>
+      <td>3702</td>
+      <td>5525</td>
+      <td>0.410116</td>
+      <td>1.19395</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>hsa-miR-342-3p</td>
+      <td>46</td>
+      <td>58</td>
+      <td>3700</td>
+      <td>5522</td>
+      <td>0.421495</td>
+      <td>1.18365</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>hsa-miR-182-5p</td>
+      <td>204</td>
+      <td>262</td>
+      <td>3542</td>
+      <td>5318</td>
+      <td>0.109627</td>
+      <td>1.16904</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>hsa-miR-877-5p</td>
+      <td>18</td>
+      <td>23</td>
+      <td>3728</td>
+      <td>5557</td>
+      <td>0.634876</td>
+      <td>1.16657</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>hsa-miR-28-5p</td>
+      <td>34</td>
+      <td>45</td>
+      <td>3712</td>
+      <td>5535</td>
+      <td>0.645226</td>
+      <td>1.12662</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>hsa-miR-542-3p</td>
+      <td>52</td>
+      <td>72</td>
+      <td>3694</td>
+      <td>5508</td>
+      <td>0.712603</td>
+      <td>1.07688</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>hsa-miR-874-3p</td>
+      <td>74</td>
+      <td>105</td>
+      <td>3672</td>
+      <td>5475</td>
+      <td>0.758501</td>
+      <td>1.05081</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>hsa-miR-192-5p</td>
+      <td>27</td>
+      <td>42</td>
+      <td>3719</td>
+      <td>5538</td>
+      <td>0.902442</td>
+      <td>0.957285</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>hsa-miR-582-5p</td>
+      <td>76</td>
+      <td>120</td>
+      <td>3670</td>
+      <td>5460</td>
+      <td>0.713234</td>
+      <td>0.942234</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>hsa-miR-532-5p</td>
+      <td>33</td>
+      <td>53</td>
+      <td>3713</td>
+      <td>5527</td>
+      <td>0.82525</td>
+      <td>0.926835</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>hsa-miR-744-5p</td>
+      <td>8</td>
+      <td>13</td>
+      <td>3738</td>
+      <td>5567</td>
+      <td>1</td>
+      <td>0.916492</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>hsa-miR-191-5p</td>
+      <td>11</td>
+      <td>18</td>
+      <td>3735</td>
+      <td>5562</td>
+      <td>0.85201</td>
+      <td>0.91004</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>hsa-miR-21-5p</td>
+      <td>46</td>
+      <td>76</td>
+      <td>3700</td>
+      <td>5504</td>
+      <td>0.642297</td>
+      <td>0.90037</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>hsa-miR-17-5p</td>
+      <td>216</td>
+      <td>370</td>
+      <td>3530</td>
+      <td>5210</td>
+      <td>0.0980996</td>
+      <td>0.861619</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>hsa-miR-25-3p</td>
+      <td>120</td>
+      <td>216</td>
+      <td>3626</td>
+      <td>5364</td>
+      <td>0.10014</td>
+      <td>0.821842</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>hsa-miR-185-5p</td>
+      <td>59</td>
+      <td>107</td>
+      <td>3687</td>
+      <td>5473</td>
+      <td>0.231552</td>
+      <td>0.818504</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>hsa-miR-155-5p</td>
+      <td>60</td>
+      <td>116</td>
+      <td>3686</td>
+      <td>5464</td>
+      <td>0.10324</td>
+      <td>0.766741</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>hsa-miR-28-3p</td>
+      <td>15</td>
+      <td>30</td>
+      <td>3731</td>
+      <td>5550</td>
+      <td>0.365936</td>
+      <td>0.743768</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>hsa-miR-501-3p</td>
+      <td>21</td>
+      <td>42</td>
+      <td>3725</td>
+      <td>5538</td>
+      <td>0.303244</td>
+      <td>0.743356</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>hsa-miR-361-5p</td>
+      <td>30</td>
+      <td>60</td>
+      <td>3716</td>
+      <td>5520</td>
+      <td>0.196099</td>
+      <td>0.742734</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>hsa-miR-425-5p</td>
+      <td>33</td>
+      <td>66</td>
+      <td>3713</td>
+      <td>5514</td>
+      <td>0.180679</td>
+      <td>0.742526</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>hsa-miR-142-5p</td>
+      <td>95</td>
+      <td>206</td>
+      <td>3651</td>
+      <td>5374</td>
+      <td>0.00186151</td>
+      <td>0.678801</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>hsa-miR-221-3p</td>
+      <td>52</td>
+      <td>114</td>
+      <td>3694</td>
+      <td>5466</td>
+      <td>0.0203487</td>
+      <td>0.674949</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>hsa-miR-141-3p</td>
+      <td>108</td>
+      <td>239</td>
+      <td>3638</td>
+      <td>5341</td>
+      <td>0.000427701</td>
+      <td>0.663416</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>hsa-miR-340-5p</td>
+      <td>128</td>
+      <td>317</td>
+      <td>3618</td>
+      <td>5263</td>
+      <td>3.85734e-07</td>
+      <td>0.587375</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>hsa-miR-330-3p</td>
+      <td>218</td>
+      <td>589</td>
+      <td>3528</td>
+      <td>4991</td>
+      <td>4.50537e-16</td>
+      <td>0.523601</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>hsa-miR-186-5p</td>
+      <td>79</td>
+      <td>287</td>
+      <td>3667</td>
+      <td>5293</td>
+      <td>1.93643e-14</td>
+      <td>0.397316</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Fisher test statistics (p&lt;0.05) of microRNA binding sites with unmerged m6A peaks and unmerged nonpeaks.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fisher_peak_unmerge_miRNA</span><span class="p">[</span><span class="n">fisher_peak_unmerge_miRNA</span><span class="p">[</span><span class="s2">&quot;fisher_p&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;odds_ratio&quot;</span><span class="p">],</span> <span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[28]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>n_inter_peak</th>
+      <th>n_inter_nonpeak</th>
+      <th>n_nointer_peak</th>
+      <th>n_nointer_nonpeak</th>
+      <th>fisher_p</th>
+      <th>odds_ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>hsa-miR-615-3p</td>
+      <td>6</td>
+      <td>1</td>
+      <td>3740</td>
+      <td>5579</td>
+      <td>0.0192407</td>
+      <td>8.95027</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>hsa-miR-423-3p</td>
+      <td>12</td>
+      <td>3</td>
+      <td>3734</td>
+      <td>5577</td>
+      <td>0.00244481</td>
+      <td>5.97429</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>hsa-miR-127-3p</td>
+      <td>8</td>
+      <td>2</td>
+      <td>3738</td>
+      <td>5578</td>
+      <td>0.0184756</td>
+      <td>5.96897</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>hsa-miR-210-3p</td>
+      <td>9</td>
+      <td>3</td>
+      <td>3737</td>
+      <td>5577</td>
+      <td>0.0177819</td>
+      <td>4.47712</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>hsa-miR-212-5p</td>
+      <td>105</td>
+      <td>78</td>
+      <td>3641</td>
+      <td>5502</td>
+      <td>2.73695e-06</td>
+      <td>2.0342</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>hsa-miR-423-5p</td>
+      <td>50</td>
+      <td>37</td>
+      <td>3696</td>
+      <td>5543</td>
+      <td>0.00131234</td>
+      <td>2.02666</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>hsa-miR-296-5p</td>
+      <td>56</td>
+      <td>43</td>
+      <td>3690</td>
+      <td>5537</td>
+      <td>0.00127683</td>
+      <td>1.95419</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>hsa-miR-328-3p</td>
+      <td>47</td>
+      <td>38</td>
+      <td>3699</td>
+      <td>5542</td>
+      <td>0.00524438</td>
+      <td>1.85309</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>hsa-miR-331-3p</td>
+      <td>48</td>
+      <td>40</td>
+      <td>3698</td>
+      <td>5540</td>
+      <td>0.00628328</td>
+      <td>1.79773</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>hsa-miR-491-5p</td>
+      <td>38</td>
+      <td>32</td>
+      <td>3708</td>
+      <td>5548</td>
+      <td>0.0195254</td>
+      <td>1.77677</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>hsa-miR-140-3p</td>
+      <td>231</td>
+      <td>212</td>
+      <td>3515</td>
+      <td>5368</td>
+      <td>2.13504e-07</td>
+      <td>1.66404</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>hsa-miR-223-3p</td>
+      <td>85</td>
+      <td>82</td>
+      <td>3661</td>
+      <td>5498</td>
+      <td>0.00518661</td>
+      <td>1.55672</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>hsa-miR-140-5p</td>
+      <td>90</td>
+      <td>88</td>
+      <td>3656</td>
+      <td>5492</td>
+      <td>0.00531999</td>
+      <td>1.53633</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>hsa-miR-143-3p</td>
+      <td>94</td>
+      <td>95</td>
+      <td>3652</td>
+      <td>5485</td>
+      <td>0.00853163</td>
+      <td>1.48611</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>hsa-miR-132-3p</td>
+      <td>98</td>
+      <td>111</td>
+      <td>3648</td>
+      <td>5469</td>
+      <td>0.0459695</td>
+      <td>1.3236</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>hsa-miR-183-5p</td>
+      <td>207</td>
+      <td>240</td>
+      <td>3539</td>
+      <td>5340</td>
+      <td>0.00753287</td>
+      <td>1.30143</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>hsa-miR-142-5p</td>
+      <td>95</td>
+      <td>206</td>
+      <td>3651</td>
+      <td>5374</td>
+      <td>0.00186151</td>
+      <td>0.678801</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>hsa-miR-221-3p</td>
+      <td>52</td>
+      <td>114</td>
+      <td>3694</td>
+      <td>5466</td>
+      <td>0.0203487</td>
+      <td>0.674949</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>hsa-miR-141-3p</td>
+      <td>108</td>
+      <td>239</td>
+      <td>3638</td>
+      <td>5341</td>
+      <td>0.000427701</td>
+      <td>0.663416</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>hsa-miR-340-5p</td>
+      <td>128</td>
+      <td>317</td>
+      <td>3618</td>
+      <td>5263</td>
+      <td>3.85734e-07</td>
+      <td>0.587375</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>hsa-miR-330-3p</td>
+      <td>218</td>
+      <td>589</td>
+      <td>3528</td>
+      <td>4991</td>
+      <td>4.50537e-16</td>
+      <td>0.523601</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>hsa-miR-186-5p</td>
+      <td>79</td>
+      <td>287</td>
+      <td>3667</td>
+      <td>5293</td>
+      <td>1.93643e-14</td>
+      <td>0.397316</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+&copy 2016-2017 Min Qiao at He Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/e2728e61236d72dcea7072c7285846c32539142f/analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.ipynb"><code>analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.ipynb</code></a> committed by Min Qiao on Wed Feb 14 17:02:58 2018 <a href="http://github.com/gaow/m6a/commit/e2728e61236d72dcea7072c7285846c32539142f">revision 1, e2728e6</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
