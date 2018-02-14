@@ -1,21 +1,10 @@
-include_dir: []
 name: 'M6A'
 repo: 'http://github.com/gaow/m6a'
-# footer: "&copy 2016-2017 Min Qiao at He Lab, University of Chicago"
-# exclude_file: []
-# hide_navbar: []
-# homepage: "Overview.ipynb"
-# add_commit_info: True
-# report_style: True
-# disqus: NULL
-# release_message: NULL # type a release message to enable auto-commit, eg: "Build website via jnbinder"
-# post_release_actions: NULL
-# homepage_label: Overview # Set to NULL to disable
-# source_label: "source" # Set to NULL to disable it; default is github octopus icon
-# theme: "cosmo" # Theme from bootstrap
-# font: "Droid Sans" # Set to NULL for theme default font
-# notebook_toc: True
-# long_autoindex: True # When set to `True` it uses the first paragraph under the title if available, instead of using the title, to make descriptions on the automatically generated for a page.
-# reverse_autoindex: [] # Directories for which auto-index be reversed. This is useful when a folder has notebook named like `20160502_XX` because it will show the newer notebook on the top.
-# report_style: False # Use SoS report style that hides codes by default for SoS notebooks
-# remove_whiteline: False # When set to `True` the empty lines in the output HTML will be purged. This will make the code block read more compact.
+footer: "&copy 2016-2017 Min Qiao at He Lab, University of Chicago"
+include_dir: ['analysis']
+homepage: "writeup/Overview.ipynb"
+# post_release_actions: "cd writeup/8687161qzfgsmmjwvzy && git pull" 
+add_commit_info: True
+notebook_toc: True
+reverse_autoindex: ['analysis']
+release_message: "Build website with jnbinder"
