@@ -887,7 +887,7 @@ def get_notebook_toc(path, exclude):
             data = json.load(f)
         try:
             # FIXME: this regex is to be continuously updated based on observed TOC generated
-            title = re.sub('[^0-9a-zA-Z-:&!?@.,()+]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
+            title = re.sub('[^0-9a-zA-Z-:&!?@.,()+/]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
         except IndexError:
             continue
         out +='"' + title + '":"' + name + '",'
