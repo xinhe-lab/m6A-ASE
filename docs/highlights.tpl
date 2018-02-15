@@ -1,4 +1,7 @@
+{%- extends 'basic.tpl' -%}
 
+{%- block header -%}
+{{ super() }}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -60,7 +63,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 <script>
 $( document ).ready(function(){
-            var cfg={'threshold':3,     // depth of toc (number of levels)
+            var cfg={'threshold':{{ nb.get('metadata', {}).get('toc', {}).get('threshold', '3') }},     // depth of toc (number of levels)
              'number_sections': false,
              'toc_cell': false,          // useless here
              'toc_window_display': true, // display the toc window
@@ -80,11 +83,11 @@ $( document ).ready(function(){
             st.toc_index=0;
             // fire the main function with these parameters
             table_of_contents(cfg, st);
-            var file=analysisDict[$("h1:first").attr("id")];
+            var file=highlightsDict[$("h1:first").attr("id")];
             $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
-            var docs=analysisArray;
-            var pos=analysisArray.indexOf(file);
+            var docs=highlightsArray;
+            var pos=highlightsArray.indexOf(file);
             for (var a=pos;a>=0;a--){
                   var name=docs[a]
                   $('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
@@ -162,6 +165,10 @@ body {
   <a href="../analysis.html">Analysis</a>
 </li>
         
+<li>
+  <a href="../highlights.html">Highlights</a>
+</li>
+        
       </ul>
         
 <ul class="nav navbar-nav navbar-right">
@@ -173,18 +180,14 @@ body {
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Overview-Fisher-Exact-test-result">Overview Fisher Exact test result<a class="anchor-link" href="#Overview-Fisher-Exact-test-result">&#182;</a></h1>
-</div>
-</div>
-</div>
+
+{%- endblock header -%}
+
+{% block footer %}
 <hr>
 &copy 2016-2017 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/1ef2a1b74afb1dd4f600484ea7530a552ec0028c/analysis/20180214_Overview_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA.ipynb"><code>analysis/20180214_Overview_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA.ipynb</code></a> committed by Min Qiao on Wed Feb 14 19:18:04 2018 <a href="http://github.com/gaow/m6a/commit/1ef2a1b74afb1dd4f600484ea7530a552ec0028c">revision 2, 1ef2a1b</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
 </html>
+{% endblock %}
