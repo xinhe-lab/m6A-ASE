@@ -1,6 +1,6 @@
 name: 'M6A'
 repo: 'http://github.com/gaow/m6a'
-footer: "&copy 2016-2017 Min Qiao at He Lab, University of Chicago"
+footer: "&copy 2018 Min Qiao at He Lab, University of Chicago"
 include_dir: ['highlights', 'analysis', 'writeup']
 homepage: "writeup/Overview.ipynb"
 # post_release_actions: "cd writeup/8687161qzfgsmmjwvzy && git pull" 
