@@ -162,11 +162,15 @@ body {
 </li>
         
 <li>
+  <a href="../highlights.html">Highlights</a>
+</li>
+        
+<li>
   <a href="../analysis.html">Analysis</a>
 </li>
         
 <li>
-  <a href="../highlights.html">Highlights</a>
+  <a href="../writeup.html">Writeup</a>
 </li>
         
       </ul>
