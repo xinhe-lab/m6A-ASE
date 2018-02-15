@@ -185,14 +185,156 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Overview-Fisher-Exact-test-result">Overview Fisher Exact test result<a class="anchor-link" href="#Overview-Fisher-Exact-test-result">&#182;</a></h1><p>Summary of <a href="../analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.html">this notebook</a>.</p>
+<h1 id="Overview-Fisher-Exact-test-result">Overview Fisher Exact test result<a class="anchor-link" href="#Overview-Fisher-Exact-test-result">&#182;</a></h1><p>Summary of <a href="https://gaow.github.io/m6A/analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.html">this notebook</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Data">Data<a class="anchor-link" href="#Data">&#182;</a></h3><ol>
+<li>Merged/unmerged m6A peaks， and unmerged m6A nonpeaks</li>
+<li>RBP binding sites data (121 RBPs)</li>
+<li>microRNA data (55 miRNA)</li>
+</ol>
+<p>For microRNA data, some blocks (rows) have multi-binding-site. For example,</p>
+
+<pre><code>chr  start     end       name          strand   blockSize   blockStarts miRNA   name_gene
+chr1    52260280    52260500    NRD1:miR-505-3p.1   -   2,6 0,214   hsa-miR-505-3p  NRD1
+chr4    83346034    83346721    HNRNPDL:miR-140-3p.1 -  2,6 0,681   hsa-miR-140-3p  HNRNPDL
+chr10   6261651 6262623  PFKFB3:miR-339-5p  +   5,3 0,969   hsa-miR-339-5p  PFKFB3
+
+</code></pre>
+<p>split the first row into separate rows</p>
+
+<pre><code>chr  start     end       name           strand  miRNA       name_gene   blockSize   interval
+chr1    52260280    52260282    NRD1:miR-505-3p.1   -   hsa-miR-505-3p  NRD1    2           0
+chr1    52260494    52260500    NRD1:miR-505-3p.1   -   hsa-miR-505-3p  NRD1    6           214
+
+</code></pre>
+<h3 id="Perform-Fisher's-exact-test-for-each-RBP/miRNA-over-all-chromosomes">Perform Fisher's exact test for each RBP/miRNA over all chromosomes<a class="anchor-link" href="#Perform-Fisher's-exact-test-for-each-RBP/miRNA-over-all-chromosomes">&#182;</a></h3><p>Obtain 2 $\times$ 2 table for the test by <code>bedtools</code></p>
+<ol>
+<li>the number of intersection with m6A peaks</li>
+<li>the total number of intersection with m6A peaks minus (1)</li>
+<li>the number of intersection with m6A nonpeaks</li>
+<li>the total number of intersection with m6A nonpeaks minus (3)</li>
+</ol>
+<p>Pay attention to the potential m6A binding proteins (readers or anti-readers) include: YTHDF, HNRNP, FMRP, IGF2BP and G3BP. However, only HNRNP, FMR1 and IGF2BP are found in RBP dataset, including IGF2BP3, HNRNPUL1, HNRNPA1, HNRNPM, IGF2BP1, FMR1, HNRNPK, HNRNPU, IGF2BP2, HNRNPC.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Odds-ratio-and-Fisher-test-p-value-for-RBPs">Odds ratio and Fisher test p-value for RBPs<a class="anchor-link" href="#Odds-ratio-and-Fisher-test-p-value-for-RBPs">&#182;</a></h3>
+<pre><code>name    n_inter_peak    n_inter_nonpeak n_nointer_peak  n_nointer_nonpeak   fisher_p    odds_ratio
+0   RBM15   5300    1565    859486  740576  0   2.91805
+1   NCBP2   3198    1000    861588  741141  1.07934e-197    2.75093
+2   DDX3X   5296    1726    859490  740415  4.69948e-307    2.64327
+3   IGF2BP3 3947    1522    860839  740619  6.24384e-171    2.23113
+4   FASTKD2 1647    717 863139  741424  1.04665e-55 1.97315
+5   TRA2A   2553    1128    862233  741013  1.6042e-82  1.9451
+6   DDX6    1416    631 863370  741510  1.68964e-45 1.92732
+7   SLTM    1849    844 862937  741297  1.74622e-55 1.88195
+8   FUS 103 47  864683  742094  0.000285908 1.88079
+9   XRN2    2668    1239    862118  740902  7.36408e-76 1.85058
+10  GTF2F1  3287    1587    861499  740554  1.67532e-83 1.78043
+11  AUH 727 352 864059  741789  1.62622e-19 1.77308
+12  RPS3    2794    1357    861992  740784  4.86427e-70 1.76944
+13  FTO 9947    4991    854839  737150  1.57643e-222    1.71861
+14  XRCC6   1259    638 863527  741503  1.32775e-28 1.6945
+15  CSTF2T  7615    3889    857171  738252  5.34264e-161    1.68643
+16  AGGF1   2042    1043    862744  741098  2.98371e-44 1.68176
+17  LARP4   2150    1120    862636  741021  1.3017e-43  1.64901
+18  GNL3    1761    919 863025  741222  8.65675e-36 1.64577
+19  GEMIN5  7678    4023    857108  738118  9.47816e-149    1.64357
+20  SF3B1   793 417 863993  741724  1.49165e-16 1.63256
+21  DHX30   977 515 863809  741626  6.71227e-20 1.62875
+22  NPM1    1186    626 863600  741515  1.01599e-23 1.62674
+23  EIF4G2  7573    4052    857213  738089  3.40683e-136    1.60923
+24  TAF15   3176    1724    861610  740417  5.46274e-55 1.5831
+25  RPS11   1331    722 863455  741419  5.6842e-24  1.58294
+26  PUS1    1279    697 863507  741444  9.74492e-23 1.57562
+27  TROVE2  1463    810 863323  741331  2.35286e-24 1.55095
+28  SBDS    904 503 863882  741638  2.41226e-15 1.5429
+29  DDX55   2938    1652    861848  740489  1.94084e-44 1.52802
+......</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Odds-ratio-and-Fisher-test-p-value-for-microRNAs">Odds ratio and Fisher test p-value for microRNAs<a class="anchor-link" href="#Odds-ratio-and-Fisher-test-p-value-for-microRNAs">&#182;</a></h3>
+<pre><code>name    n_inter_peak    n_inter_nonpeak n_nointer_peak  n_nointer_nonpeak   p-value OR
+0   hsa-miR-615-3p  6   1   4103    5579    0.0468574   8.15842
+1   hsa-miR-423-3p  14  3   4095    5577    0.000993382 6.35556
+2   hsa-miR-210-3p  12  3   4097    5577    0.00652049  5.44496
+3   hsa-miR-127-3p  8   2   4101    5578    0.0223117   5.44062
+4   hsa-miR-1249-3p 7   2   4102    5578    0.0422105   4.75939
+5   hsa-miR-423-5p  58  37  4051    5543    0.000337447 2.14491
+6   hsa-miR-212-5p  116 78  3993    5502    1.02772e-06 2.0492
+7   hsa-miR-296-5p  63  43  4046    5537    0.000488117 2.00503
+8   hsa-miR-328-3p  53  38  4056    5542    0.00268099  1.90573
+9   hsa-miR-331-3p  52  40  4057    5540    0.0077257   1.7752
+10  hsa-miR-491-5p  40  32  4069    5548    0.0305094   1.70435
+11  hsa-miR-223-3p  101 82  4008    5498    0.000489454 1.6896
+12  hsa-miR-140-3p  256 212 3853    5368    5.24253e-08 1.68235
+13  hsa-miR-362-5p  38  33  4071    5547    0.0699765   1.56901
+14  hsa-miR-143-3p  102 95  4007    5485    0.00859482  1.46972
+15  hsa-miR-140-5p  94  88  4015    5492    0.0123344   1.46113
+16  hsa-miR-132-3p  116 111 3993    5469    0.00798643  1.43134
+17  hsa-miR-296-3p  11  11  4098    5569    0.520588    1.35896
+18  hsa-miR-652-3p  4   4   4105    5576    0.729295    1.35834
+19  hsa-miR-183-5p  232 240 3877    5340    0.00260642  1.33144
+20  hsa-miR-532-3p  78  81  4031    5499    0.0897683   1.31365
+21  hsa-miR-150-5p  64  67  4045    5513    0.154165    1.30189
+22  hsa-miR-877-5p  22  23  4087    5557    0.450045    1.30056
+23  hsa-miR-335-5p  51  55  4058    5525    0.237113    1.26249
+24  hsa-miR-22-3p   131 143 3978    5437    0.0720579   1.25207
+25  hsa-miR-142-3p  187 209 3922    5371    0.0486534   1.2253
+26  hsa-miR-505-3p  105 117 4004    5463    0.149024    1.22445
+27  hsa-miR-486-5p  28  32  4081    5548    0.514766    1.18954
+28  hsa-miR-182-5p  223 262 3886    5318    0.108978    1.16479
+29  hsa-miR-28-5p   38  45  4071    5535    0.577475    1.14812
+30  hsa-miR-324-5p  27  32  4082    5548    0.600092    1.14677
+31  hsa-miR-339-5p  36  43  4073    5537    0.569823    1.13814
+32  hsa-miR-342-3p  48  58  4061    5522    0.554605    1.12532
+33  hsa-miR-542-3p  53  72  4056    5508    1   0.99963
+34  hsa-miR-874-3p  77  105 4032    5475    1   0.995784
+35  hsa-miR-192-5p  30  42  4079    5538    1   0.969776
+36  hsa-miR-744-5p  9   13  4100    5567    1   0.940019
+37  hsa-miR-21-5p   52  76  4057    5504    0.719276    0.928246
+38  hsa-miR-582-5p  82  120 4027    5460    0.615241    0.926496
+39  hsa-miR-532-5p  34  53  4075    5527    0.586376    0.870091
+40  hsa-miR-17-5p   231 370 3878    5210    0.045127    0.838765
+41  hsa-miR-25-3p   134 216 3975    5364    0.122884    0.837149
+42  hsa-miR-185-5p  63  107 4046    5473    0.159519    0.796446
+43  hsa-miR-155-5p  68  116 4041    5464    0.132847    0.792634
+44  hsa-miR-425-5p  38  66  4071    5514    0.232881    0.77984
+45  hsa-miR-361-5p  34  60  4075    5520    0.248864    0.767607
+46  hsa-miR-501-3p  23  42  4086    5538    0.260332    0.742221
+47  hsa-miR-191-5p  9   18  4100    5562    0.436353    0.678293
+48  hsa-miR-28-3p   15  30  4094    5550    0.230448    0.677821
+49  hsa-miR-142-5p  100 206 4009    5374    0.000505664 0.65072
+50  hsa-miR-221-3p  55  114 4054    5466    0.00941775  0.650495
+51  hsa-miR-141-3p  116 239 3993    5341    0.000153408 0.649207
+52  hsa-miR-340-5p  138 317 3971    5263    6.14614e-08 0.57697
+53  hsa-miR-330-3p  241 589 3868    4991    1.28562e-16 0.527962
+54  hsa-miR-186-5p  86  287 4023    5293    1.81417e-15 0.394247</code></pre>
 
 </div>
 </div>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/7545ded981d6a765358cf3d44ab7274ea40481c7/highlights/20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA.ipynb"><code>highlights/20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA.ipynb</code></a> committed by Min Qiao on Wed Feb 14 19:40:32 2018 <a href="http://github.com/gaow/m6a/commit/7545ded981d6a765358cf3d44ab7274ea40481c7">revision 2, 7545ded</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/4575031767e63635a997003def5ca85da6ef2c5c/highlights/20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA.ipynb"><code>highlights/20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA.ipynb</code></a> committed by Min Qiao on Thu Feb 15 16:23:14 2018 <a href="http://github.com/gaow/m6a/commit/4575031767e63635a997003def5ca85da6ef2c5c">revision 3, 4575031</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
