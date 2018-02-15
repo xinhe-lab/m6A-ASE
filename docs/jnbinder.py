@@ -887,7 +887,7 @@ def get_notebook_toc(path, exclude):
             data = json.load(f)
         try:
             # FIXME: this regex is to be continuously updated based on observed TOC generated
-            title = re.sub('[^0-9a-zA-Z-:&!?@.,()+/]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
+            title = re.sub('[^0-9a-zA-Z-:&!?@.,()+]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
         except IndexError:
             continue
         out +='"' + title + '":"' + name + '",'
@@ -912,9 +912,9 @@ def get_index_toc(path):
         data = json.load(f)
     for cell in data['cells']:
         for sentence in cell["source"]:
-            doc = re.search('(.+?)/(.+?).html', sentence)
+            doc = re.search('^.*\/(.+?).html', sentence)
             if doc:
-                res.append(doc.group(2))
+                res.append(doc.group(1))
     # Filter by reference index
     if not fi == fr:
         ref = []
@@ -922,9 +922,9 @@ def get_index_toc(path):
             data = json.load(f)
         for cell in data['cells']:
             for sentence in cell["source"]:
-                doc = re.search('(.+?)/(.+?).html', sentence)
+                doc = re.search('^.*\/(.+?).html', sentence)
                 if doc:
-                    ref.append(doc.group(2))
+                    ref.append(doc.group(1))
         res = [x for x in res if x in ref]
     return out + repr(res)
 
