@@ -189,7 +189,7 @@ body {
 
 {% block footer %}
 <hr>
-&copy 2016-2017 Min Qiao at He Lab, University of Chicago
+&copy 2018 Min Qiao at He Lab, University of Chicago
 </div>
 </div>
 </body>
