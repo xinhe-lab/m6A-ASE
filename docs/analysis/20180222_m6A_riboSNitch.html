@@ -1,0 +1,3064 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs-1.1/textmate.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs-1.1/highlight.js"></script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/toc2.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>');
+            }
+            $("#toc-header").hide();
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>M6A</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">M6A</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../highlights.html">Highlights</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/m6a"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/Documents/m6A/&quot;</span><span class="p">)</span>
+<span class="n">input_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/intron_m6AQTLs.txt&quot;</span>
+<span class="n">output_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/intron_m6AQTLs.bed&quot;</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">50</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Handle-m6AQTL-data">Handle m6AQTL data<a class="anchor-link" href="#Handle-m6AQTL-data">&#182;</a></h4><ol>
+<li>sort by chromosome and pos</li>
+<li>plus and minus 50 for each pos</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6AQTL</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">input_m6AQTL</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">m6AQTL</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">])</span>
+<span class="n">m6AQTL</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">set_index</span><span class="p">([[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m6AQTL</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]])</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;strand&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;gene_symbol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;pos1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">n</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;pos2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos2&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;width2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_m6AQTL</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6AQTL</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;width2&quot;</span><span class="p">,</span> <span class="s2">&quot;gap&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>chr</th>
+      <th>pos</th>
+      <th>start</th>
+      <th>end</th>
+      <th>pos1</th>
+      <th>pos2</th>
+      <th>gene_symbol</th>
+      <th>width</th>
+      <th>width2</th>
+      <th>gap</th>
+      <th>strand</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>chr1</td>
+      <td>899937</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>899887</td>
+      <td>899987</td>
+      <td>AGRN</td>
+      <td>101</td>
+      <td>200</td>
+      <td>81851</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>chr1</td>
+      <td>899938</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>899888</td>
+      <td>899988</td>
+      <td>AGRN</td>
+      <td>101</td>
+      <td>200</td>
+      <td>81850</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>chr1</td>
+      <td>899942</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>899892</td>
+      <td>899992</td>
+      <td>AGRN</td>
+      <td>101</td>
+      <td>200</td>
+      <td>81846</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>chr1</td>
+      <td>943468</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>943418</td>
+      <td>943518</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>5998</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>chr1</td>
+      <td>945612</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>945562</td>
+      <td>945662</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>3854</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>chr1</td>
+      <td>945861</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>945811</td>
+      <td>945911</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>3605</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>chr1</td>
+      <td>946127</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>946077</td>
+      <td>946177</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>3339</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>chr1</td>
+      <td>946135</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>946085</td>
+      <td>946185</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>3331</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>chr1</td>
+      <td>947034</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>946984</td>
+      <td>947084</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>2432</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>chr1</td>
+      <td>947538</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>947488</td>
+      <td>947588</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>1928</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>chr1</td>
+      <td>948421</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>948371</td>
+      <td>948471</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>1045</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>chr1</td>
+      <td>948846</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>948796</td>
+      <td>948896</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>620</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>chr1</td>
+      <td>948921</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>948871</td>
+      <td>948971</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>545</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>chr1</td>
+      <td>949235</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>949185</td>
+      <td>949285</td>
+      <td>ISG15</td>
+      <td>101</td>
+      <td>50</td>
+      <td>231</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>chr1</td>
+      <td>1226350</td>
+      <td>1164179</td>
+      <td>1164279</td>
+      <td>1226300</td>
+      <td>1226400</td>
+      <td>SDF4</td>
+      <td>101</td>
+      <td>100</td>
+      <td>-62171</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>chr1</td>
+      <td>1562895</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1562845</td>
+      <td>1562945</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>96868</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>chr1</td>
+      <td>1584192</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1584142</td>
+      <td>1584242</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>75571</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>chr1</td>
+      <td>1584593</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1584543</td>
+      <td>1584643</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>75170</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>chr1</td>
+      <td>1584842</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1584792</td>
+      <td>1584892</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74921</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>chr1</td>
+      <td>1584918</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1584868</td>
+      <td>1584968</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74845</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>chr1</td>
+      <td>1585257</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1585207</td>
+      <td>1585307</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74506</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>chr1</td>
+      <td>1585347</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1585297</td>
+      <td>1585397</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74416</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>chr1</td>
+      <td>1585388</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1585338</td>
+      <td>1585438</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74375</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>chr1</td>
+      <td>1585597</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1585547</td>
+      <td>1585647</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74166</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>chr1</td>
+      <td>1588531</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1588481</td>
+      <td>1588581</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>71232</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>chr1</td>
+      <td>1588543</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1588493</td>
+      <td>1588593</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>71220</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>chr1</td>
+      <td>1591869</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1591819</td>
+      <td>1591919</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>67894</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>chr1</td>
+      <td>1594199</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1594149</td>
+      <td>1594249</td>
+      <td>SLC35E2</td>
+      <td>101</td>
+      <td>50</td>
+      <td>65564</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>chr1</td>
+      <td>1598432</td>
+      <td>1594556</td>
+      <td>1595104</td>
+      <td>1598382</td>
+      <td>1598482</td>
+      <td>SLC35E2B</td>
+      <td>101</td>
+      <td>548</td>
+      <td>-3876</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>chr1</td>
+      <td>1598433</td>
+      <td>1594556</td>
+      <td>1595104</td>
+      <td>1598383</td>
+      <td>1598483</td>
+      <td>SLC35E2B</td>
+      <td>101</td>
+      <td>548</td>
+      <td>-3877</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>12713</th>
+      <td>chr9</td>
+      <td>136279339</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136279289</td>
+      <td>136279389</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-7584</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12714</th>
+      <td>chr9</td>
+      <td>136279339</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136279289</td>
+      <td>136279389</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-1754</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12715</th>
+      <td>chr9</td>
+      <td>136279339</td>
+      <td>136282769</td>
+      <td>136282918</td>
+      <td>136279289</td>
+      <td>136279389</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>149</td>
+      <td>3430</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12716</th>
+      <td>chr9</td>
+      <td>136279935</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136279885</td>
+      <td>136279985</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-8180</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12717</th>
+      <td>chr9</td>
+      <td>136279935</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136279885</td>
+      <td>136279985</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-2350</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12718</th>
+      <td>chr9</td>
+      <td>136279935</td>
+      <td>136282769</td>
+      <td>136282918</td>
+      <td>136279885</td>
+      <td>136279985</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>149</td>
+      <td>2834</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12719</th>
+      <td>chr9</td>
+      <td>136280996</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136280946</td>
+      <td>136281046</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-9241</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12720</th>
+      <td>chr9</td>
+      <td>136280996</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136280946</td>
+      <td>136281046</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-3411</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12721</th>
+      <td>chr9</td>
+      <td>136281416</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281366</td>
+      <td>136281466</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-9661</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12722</th>
+      <td>chr9</td>
+      <td>136281416</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136281366</td>
+      <td>136281466</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-3831</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12723</th>
+      <td>chr9</td>
+      <td>136281753</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281703</td>
+      <td>136281803</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-9998</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12724</th>
+      <td>chr9</td>
+      <td>136281917</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281867</td>
+      <td>136281967</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10162</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12725</th>
+      <td>chr9</td>
+      <td>136281925</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281875</td>
+      <td>136281975</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10170</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12726</th>
+      <td>chr9</td>
+      <td>136281925</td>
+      <td>136282769</td>
+      <td>136282918</td>
+      <td>136281875</td>
+      <td>136281975</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>149</td>
+      <td>844</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12727</th>
+      <td>chr9</td>
+      <td>136281925</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136281875</td>
+      <td>136281975</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-4340</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12728</th>
+      <td>chr9</td>
+      <td>136281966</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281916</td>
+      <td>136282016</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10211</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12729</th>
+      <td>chr9</td>
+      <td>136282096</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136282046</td>
+      <td>136282146</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10341</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12730</th>
+      <td>chr9</td>
+      <td>136282096</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136282046</td>
+      <td>136282146</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-4511</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12731</th>
+      <td>chr9</td>
+      <td>136282294</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136282244</td>
+      <td>136282344</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10539</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12732</th>
+      <td>chr9</td>
+      <td>136282294</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136282244</td>
+      <td>136282344</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-4709</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12733</th>
+      <td>chr9</td>
+      <td>136284450</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136284400</td>
+      <td>136284500</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-12695</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12734</th>
+      <td>chr9</td>
+      <td>136285739</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136285689</td>
+      <td>136285789</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-13984</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12735</th>
+      <td>chr9</td>
+      <td>136285739</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136285689</td>
+      <td>136285789</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-8154</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12736</th>
+      <td>chr9</td>
+      <td>136287934</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136287884</td>
+      <td>136287984</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-16179</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12737</th>
+      <td>chr9</td>
+      <td>136287934</td>
+      <td>136233506</td>
+      <td>136242129</td>
+      <td>136287884</td>
+      <td>136287984</td>
+      <td>SURF4</td>
+      <td>101</td>
+      <td>8623</td>
+      <td>-54428</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12738</th>
+      <td>chr9</td>
+      <td>136287934</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136287884</td>
+      <td>136287984</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-10349</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12739</th>
+      <td>chr9</td>
+      <td>136293308</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136293258</td>
+      <td>136293358</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-21553</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12740</th>
+      <td>chr9</td>
+      <td>136293308</td>
+      <td>136233506</td>
+      <td>136242129</td>
+      <td>136293258</td>
+      <td>136293358</td>
+      <td>SURF4</td>
+      <td>101</td>
+      <td>8623</td>
+      <td>-59802</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12741</th>
+      <td>chr9</td>
+      <td>136293308</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136293258</td>
+      <td>136293358</td>
+      <td>REXO4</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-15723</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th>12742</th>
+      <td>chr9</td>
+      <td>139992479</td>
+      <td>139942676</td>
+      <td>139942926</td>
+      <td>139992429</td>
+      <td>139992529</td>
+      <td>ENTPD2</td>
+      <td>101</td>
+      <td>250</td>
+      <td>-49803</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table>
+<p>12743 rows × 11 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Use-&quot;bedtools&quot;-in-bash-under-the-depository">Use "bedtools" in bash under the depository<a class="anchor-link" href="#Use-&quot;bedtools&quot;-in-bash-under-the-depository">&#182;</a></h3><p><code>~/Documents/m6A/Data/metApeakFisher</code></p>
+
+<pre><code>bedtools intersect -a ../intron_m6AQTLs.bed -b peaks.merged.bed -s &gt; peak.merged.m6AQTL.bed</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="n">Counter</span><span class="p">(</span><span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;width2&quot;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Counter({26: 2,
+         50: 884,
+         97: 1,
+         98: 22,
+         99: 505,
+         100: 457,
+         136: 1,
+         138: 2,
+         139: 5,
+         146: 26,
+         147: 6,
+         148: 79,
+         149: 264,
+         150: 359,
+         170: 9,
+         196: 1,
+         197: 76,
+         198: 44,
+         199: 567,
+         200: 197,
+         201: 1,
+         221: 1,
+         225: 1,
+         233: 1,
+         244: 1,
+         246: 1,
+         247: 46,
+         248: 216,
+         249: 307,
+         250: 300,
+         253: 1,
+         262: 27,
+         275: 4,
+         282: 2,
+         284: 18,
+         286: 16,
+         295: 22,
+         296: 50,
+         297: 17,
+         298: 172,
+         299: 371,
+         300: 18,
+         313: 201,
+         325: 1,
+         326: 4,
+         329: 2,
+         337: 1,
+         340: 1,
+         341: 3,
+         343: 2,
+         344: 7,
+         345: 7,
+         346: 27,
+         347: 201,
+         348: 9,
+         349: 93,
+         350: 8,
+         376: 36,
+         378: 405,
+         380: 1,
+         382: 17,
+         385: 1,
+         386: 24,
+         390: 1,
+         391: 2,
+         392: 1,
+         394: 1,
+         395: 13,
+         396: 3,
+         397: 34,
+         398: 47,
+         399: 76,
+         400: 76,
+         405: 24,
+         424: 2,
+         439: 25,
+         441: 3,
+         442: 1,
+         443: 16,
+         444: 3,
+         445: 1,
+         446: 80,
+         447: 26,
+         448: 99,
+         449: 63,
+         450: 15,
+         454: 1,
+         473: 13,
+         474: 2,
+         475: 1,
+         483: 16,
+         485: 22,
+         489: 1,
+         491: 1,
+         492: 1,
+         493: 8,
+         494: 26,
+         495: 16,
+         496: 49,
+         497: 43,
+         498: 37,
+         499: 245,
+         500: 1,
+         528: 6,
+         530: 5,
+         532: 12,
+         543: 4,
+         544: 1,
+         546: 37,
+         547: 22,
+         548: 86,
+         549: 6,
+         550: 1,
+         553: 1,
+         577: 1,
+         579: 54,
+         595: 1,
+         597: 17,
+         598: 3,
+         599: 5,
+         600: 1,
+         602: 2,
+         616: 8,
+         637: 2,
+         642: 24,
+         647: 113,
+         648: 25,
+         650: 17,
+         679: 6,
+         688: 6,
+         692: 2,
+         694: 38,
+         695: 89,
+         696: 17,
+         697: 14,
+         698: 4,
+         699: 25,
+         705: 4,
+         718: 261,
+         725: 1,
+         737: 13,
+         742: 2,
+         743: 1,
+         744: 10,
+         745: 2,
+         746: 11,
+         747: 12,
+         748: 17,
+         749: 49,
+         750: 1,
+         793: 51,
+         794: 38,
+         796: 1,
+         799: 83,
+         806: 24,
+         811: 1,
+         833: 167,
+         834: 1,
+         842: 116,
+         846: 4,
+         847: 20,
+         849: 9,
+         856: 2,
+         879: 206,
+         881: 42,
+         885: 1,
+         886: 1,
+         892: 1,
+         895: 1,
+         897: 1,
+         898: 6,
+         899: 3,
+         908: 1,
+         910: 187,
+         917: 1,
+         934: 2,
+         936: 1,
+         940: 1,
+         947: 7,
+         948: 1,
+         974: 23,
+         975: 14,
+         984: 4,
+         989: 1,
+         995: 3,
+         997: 1,
+         999: 1,
+         1008: 4,
+         1012: 2,
+         1024: 1,
+         1038: 1,
+         1043: 1,
+         1044: 1,
+         1046: 59,
+         1047: 1,
+         1048: 4,
+         1050: 1,
+         1065: 9,
+         1073: 6,
+         1093: 1,
+         1095: 20,
+         1100: 4,
+         1102: 7,
+         1106: 5,
+         1124: 2,
+         1158: 1,
+         1163: 2,
+         1169: 1,
+         1176: 1,
+         1177: 8,
+         1180: 1,
+         1191: 1,
+         1194: 1,
+         1198: 9,
+         1201: 9,
+         1208: 15,
+         1213: 77,
+         1222: 4,
+         1233: 8,
+         1241: 1,
+         1244: 1,
+         1286: 1,
+         1293: 1,
+         1315: 17,
+         1318: 1,
+         1333: 7,
+         1342: 10,
+         1345: 1,
+         1350: 1,
+         1353: 1,
+         1386: 1,
+         1392: 1,
+         1397: 1,
+         1405: 35,
+         1408: 8,
+         1409: 6,
+         1427: 37,
+         1428: 1,
+         1434: 11,
+         1438: 1,
+         1440: 10,
+         1447: 2,
+         1482: 5,
+         1488: 10,
+         1494: 13,
+         1517: 10,
+         1529: 11,
+         1546: 1,
+         1549: 53,
+         1551: 2,
+         1553: 14,
+         1564: 9,
+         1568: 1,
+         1571: 1,
+         1572: 3,
+         1575: 1,
+         1587: 1,
+         1598: 1,
+         1619: 1,
+         1640: 1,
+         1651: 1,
+         1660: 2,
+         1664: 1,
+         1697: 3,
+         1704: 2,
+         1729: 51,
+         1768: 1,
+         1795: 13,
+         1833: 1,
+         1856: 2,
+         1930: 1,
+         1934: 6,
+         1939: 1,
+         2010: 205,
+         2044: 1,
+         2072: 1,
+         2080: 1,
+         2086: 33,
+         2090: 10,
+         2132: 1,
+         2143: 2,
+         2156: 17,
+         2279: 1,
+         2289: 17,
+         2349: 1,
+         2357: 5,
+         2396: 1,
+         2417: 169,
+         2437: 1,
+         2438: 2,
+         2445: 1,
+         2447: 1,
+         2486: 1,
+         2519: 1,
+         2525: 2,
+         2526: 115,
+         2549: 2,
+         2556: 1,
+         2563: 4,
+         2565: 1,
+         2600: 1,
+         2618: 7,
+         2622: 1,
+         2639: 1,
+         2641: 286,
+         2646: 1,
+         2650: 10,
+         2708: 2,
+         2761: 64,
+         2770: 3,
+         2781: 7,
+         2805: 33,
+         2806: 4,
+         2815: 3,
+         2828: 14,
+         2910: 3,
+         2961: 6,
+         2962: 7,
+         2990: 1,
+         2998: 33,
+         3024: 27,
+         3094: 1,
+         3121: 13,
+         3148: 1,
+         3153: 1,
+         3196: 19,
+         3206: 1,
+         3290: 2,
+         3330: 1,
+         3337: 2,
+         3371: 20,
+         3376: 1,
+         3394: 3,
+         3403: 1,
+         3420: 7,
+         3446: 1,
+         3477: 2,
+         3494: 43,
+         3579: 21,
+         3615: 15,
+         3669: 8,
+         3733: 1,
+         3754: 21,
+         3763: 1,
+         3765: 2,
+         3793: 1,
+         3924: 1,
+         3972: 2,
+         3987: 1,
+         4001: 1,
+         4015: 2,
+         4028: 3,
+         4070: 1,
+         4099: 24,
+         4130: 25,
+         4131: 5,
+         4281: 1,
+         4302: 1,
+         4378: 1,
+         4393: 8,
+         4497: 1,
+         4554: 1,
+         4646: 2,
+         4661: 1,
+         4718: 9,
+         4750: 1,
+         4758: 1,
+         4866: 3,
+         4874: 1,
+         4916: 8,
+         5055: 5,
+         5076: 2,
+         5081: 18,
+         5094: 2,
+         5354: 1,
+         5366: 37,
+         5412: 262,
+         5444: 1,
+         5451: 1,
+         5499: 9,
+         5648: 2,
+         5762: 4,
+         5778: 1,
+         5827: 1,
+         5850: 2,
+         5857: 6,
+         5863: 4,
+         5961: 32,
+         6018: 3,
+         6078: 1,
+         6273: 41,
+         6305: 9,
+         6313: 1,
+         6339: 5,
+         6672: 27,
+         6746: 1,
+         6863: 9,
+         6964: 1,
+         7120: 3,
+         7154: 5,
+         7245: 31,
+         7252: 1,
+         7499: 1,
+         7596: 2,
+         7644: 1,
+         7665: 4,
+         7867: 11,
+         8028: 1,
+         8106: 18,
+         8167: 1,
+         8191: 1,
+         8201: 3,
+         8232: 8,
+         8269: 1,
+         8349: 19,
+         8456: 1,
+         8587: 39,
+         8623: 11,
+         8683: 16,
+         8706: 25,
+         8750: 1,
+         8958: 39,
+         9244: 3,
+         9582: 2,
+         9628: 1,
+         9987: 11,
+         10015: 3,
+         10058: 2,
+         10239: 250,
+         10265: 1,
+         10616: 2,
+         10823: 10,
+         10890: 5,
+         10960: 1,
+         11446: 1,
+         11489: 5,
+         11621: 1,
+         11649: 1,
+         11870: 47,
+         12786: 1,
+         12855: 1,
+         13064: 1,
+         13272: 2,
+         13893: 10,
+         13981: 4,
+         14311: 8,
+         14535: 1,
+         14931: 3,
+         15224: 10,
+         15250: 12,
+         15647: 1,
+         15837: 4,
+         15949: 1,
+         16108: 3,
+         16131: 1,
+         16257: 2,
+         16699: 21,
+         16921: 1,
+         17082: 1,
+         17610: 23,
+         18166: 1,
+         18304: 4,
+         18365: 1,
+         18383: 6,
+         20302: 1,
+         20320: 16,
+         20519: 2,
+         20958: 5,
+         21289: 7,
+         21351: 1,
+         23103: 9,
+         23164: 4,
+         24129: 5,
+         25313: 1,
+         25453: 2,
+         26242: 4,
+         26347: 1,
+         26522: 2,
+         27123: 1,
+         27323: 1,
+         27880: 1,
+         28462: 2,
+         32435: 4,
+         32788: 1,
+         36392: 2,
+         39088: 1,
+         55438: 4,
+         57198: 1,
+         59826: 6,
+         64422: 12,
+         67033: 1,
+         70238: 25,
+         86241: 28,
+         98863: 2,
+         102906: 1,
+         106259: 2,
+         110946: 2,
+         117608: 19,
+         128213: 5})</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6AQTL</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>chr</th>
+      <th>pos</th>
+      <th>peakID</th>
+      <th>snpID</th>
+      <th>dist</th>
+      <th>npvalue</th>
+      <th>beta</th>
+      <th>FDR</th>
+      <th>qvalue</th>
+      <th>strand</th>
+      <th>gene_symbol</th>
+      <th>start</th>
+      <th>end</th>
+      <th>pos1</th>
+      <th>pos2</th>
+      <th>width</th>
+      <th>width2</th>
+      <th>gap</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>chr1</td>
+      <td>899937</td>
+      <td>AGRN_981788_981988_+</td>
+      <td>rs143296006</td>
+      <td>-81852</td>
+      <td>1.257660e-04</td>
+      <td>0.209051</td>
+      <td>9.967526e-02</td>
+      <td>9.512829e-02</td>
+      <td>+</td>
+      <td>AGRN</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>899887</td>
+      <td>899987</td>
+      <td>101</td>
+      <td>200</td>
+      <td>81851</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>chr1</td>
+      <td>899938</td>
+      <td>AGRN_981788_981988_+</td>
+      <td>rs147467971</td>
+      <td>-81851</td>
+      <td>1.257660e-04</td>
+      <td>0.209051</td>
+      <td>9.967526e-02</td>
+      <td>9.512829e-02</td>
+      <td>+</td>
+      <td>AGRN</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>899888</td>
+      <td>899988</td>
+      <td>101</td>
+      <td>200</td>
+      <td>81850</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>chr1</td>
+      <td>899942</td>
+      <td>AGRN_981788_981988_+</td>
+      <td>rs71509448</td>
+      <td>-81847</td>
+      <td>4.651710e-05</td>
+      <td>0.256919</td>
+      <td>5.334776e-02</td>
+      <td>5.091415e-02</td>
+      <td>+</td>
+      <td>AGRN</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>899892</td>
+      <td>899992</td>
+      <td>101</td>
+      <td>200</td>
+      <td>81846</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>chr1</td>
+      <td>943468</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs3121567</td>
+      <td>-5999</td>
+      <td>9.042620e-05</td>
+      <td>0.175897</td>
+      <td>8.195625e-02</td>
+      <td>7.821758e-02</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>943418</td>
+      <td>943518</td>
+      <td>101</td>
+      <td>50</td>
+      <td>5998</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>chr1</td>
+      <td>945612</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs3121565</td>
+      <td>-3855</td>
+      <td>3.104540e-05</td>
+      <td>0.193259</td>
+      <td>4.084279e-02</td>
+      <td>3.897963e-02</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>945562</td>
+      <td>945662</td>
+      <td>101</td>
+      <td>50</td>
+      <td>3854</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>chr1</td>
+      <td>945861</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs150242145</td>
+      <td>-3606</td>
+      <td>3.786060e-06</td>
+      <td>0.191278</td>
+      <td>9.499576e-03</td>
+      <td>9.066226e-03</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>945811</td>
+      <td>945911</td>
+      <td>101</td>
+      <td>50</td>
+      <td>3605</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>chr1</td>
+      <td>946127</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs34487852</td>
+      <td>-3340</td>
+      <td>3.924570e-05</td>
+      <td>0.186970</td>
+      <td>4.754982e-02</td>
+      <td>4.538070e-02</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>946077</td>
+      <td>946177</td>
+      <td>101</td>
+      <td>50</td>
+      <td>3339</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>chr1</td>
+      <td>946135</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs9723307</td>
+      <td>-3332</td>
+      <td>3.924570e-05</td>
+      <td>0.186970</td>
+      <td>4.754982e-02</td>
+      <td>4.538070e-02</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>946085</td>
+      <td>946185</td>
+      <td>101</td>
+      <td>50</td>
+      <td>3331</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>chr1</td>
+      <td>947034</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs2465126</td>
+      <td>-2433</td>
+      <td>2.757970e-06</td>
+      <td>0.195956</td>
+      <td>7.407468e-03</td>
+      <td>7.069555e-03</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>946984</td>
+      <td>947084</td>
+      <td>101</td>
+      <td>50</td>
+      <td>2432</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>chr1</td>
+      <td>947538</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs2465125</td>
+      <td>-1929</td>
+      <td>3.735910e-05</td>
+      <td>0.183229</td>
+      <td>4.595932e-02</td>
+      <td>4.386276e-02</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>947488</td>
+      <td>947588</td>
+      <td>101</td>
+      <td>50</td>
+      <td>1928</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>chr1</td>
+      <td>948421</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs113047134</td>
+      <td>-1046</td>
+      <td>1.036510e-04</td>
+      <td>0.236611</td>
+      <td>8.924980e-02</td>
+      <td>8.517842e-02</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>948371</td>
+      <td>948471</td>
+      <td>101</td>
+      <td>50</td>
+      <td>1045</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>chr1</td>
+      <td>948846</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs3841266</td>
+      <td>-621</td>
+      <td>6.044450e-06</td>
+      <td>0.190571</td>
+      <td>1.310361e-02</td>
+      <td>1.250585e-02</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>948796</td>
+      <td>948896</td>
+      <td>101</td>
+      <td>50</td>
+      <td>620</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>chr1</td>
+      <td>948921</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs15842</td>
+      <td>-546</td>
+      <td>9.953320e-05</td>
+      <td>0.187639</td>
+      <td>8.686137e-02</td>
+      <td>8.289894e-02</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>948871</td>
+      <td>948971</td>
+      <td>101</td>
+      <td>50</td>
+      <td>545</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>chr1</td>
+      <td>949235</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs2465124</td>
+      <td>-232</td>
+      <td>7.037750e-05</td>
+      <td>0.184205</td>
+      <td>6.941192e-02</td>
+      <td>6.624550e-02</td>
+      <td>+</td>
+      <td>ISG15</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>949185</td>
+      <td>949285</td>
+      <td>101</td>
+      <td>50</td>
+      <td>231</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>chr1</td>
+      <td>1226350</td>
+      <td>SDF4_1164179_1164279_-</td>
+      <td>rs114416421</td>
+      <td>62170</td>
+      <td>3.629780e-05</td>
+      <td>0.413450</td>
+      <td>4.519178e-02</td>
+      <td>4.313023e-02</td>
+      <td>-</td>
+      <td>SDF4</td>
+      <td>1164179</td>
+      <td>1164279</td>
+      <td>1226300</td>
+      <td>1226400</td>
+      <td>101</td>
+      <td>100</td>
+      <td>-62171</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>chr1</td>
+      <td>1562895</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs12735861</td>
+      <td>-96869</td>
+      <td>2.438490e-05</td>
+      <td>0.382575</td>
+      <td>3.418754e-02</td>
+      <td>3.262798e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1562845</td>
+      <td>1562945</td>
+      <td>101</td>
+      <td>50</td>
+      <td>96868</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>chr1</td>
+      <td>1584192</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs4648606</td>
+      <td>-75572</td>
+      <td>9.248590e-05</td>
+      <td>0.365043</td>
+      <td>8.313875e-02</td>
+      <td>7.934615e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1584142</td>
+      <td>1584242</td>
+      <td>101</td>
+      <td>50</td>
+      <td>75571</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>chr1</td>
+      <td>1584593</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs564134629</td>
+      <td>-75171</td>
+      <td>7.934460e-05</td>
+      <td>0.389436</td>
+      <td>7.526679e-02</td>
+      <td>7.183328e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1584543</td>
+      <td>1584643</td>
+      <td>101</td>
+      <td>50</td>
+      <td>75170</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>chr1</td>
+      <td>1584842</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs12753686</td>
+      <td>-74922</td>
+      <td>7.934460e-05</td>
+      <td>0.389436</td>
+      <td>7.526679e-02</td>
+      <td>7.183328e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1584792</td>
+      <td>1584892</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74921</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>chr1</td>
+      <td>1584918</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs12753729</td>
+      <td>-74846</td>
+      <td>7.934460e-05</td>
+      <td>0.389436</td>
+      <td>7.526679e-02</td>
+      <td>7.183328e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1584868</td>
+      <td>1584968</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74845</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>chr1</td>
+      <td>1585257</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs4648758</td>
+      <td>-74507</td>
+      <td>7.934460e-05</td>
+      <td>0.389436</td>
+      <td>7.526679e-02</td>
+      <td>7.183328e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1585207</td>
+      <td>1585307</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74506</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>chr1</td>
+      <td>1585347</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs4648760</td>
+      <td>-74417</td>
+      <td>7.934460e-05</td>
+      <td>0.389436</td>
+      <td>7.526679e-02</td>
+      <td>7.183328e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1585297</td>
+      <td>1585397</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74416</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>chr1</td>
+      <td>1585388</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs4648761</td>
+      <td>-74376</td>
+      <td>7.934460e-05</td>
+      <td>0.389436</td>
+      <td>7.526679e-02</td>
+      <td>7.183328e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1585338</td>
+      <td>1585438</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74375</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>chr1</td>
+      <td>1585597</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs7531938</td>
+      <td>-74167</td>
+      <td>7.934460e-05</td>
+      <td>0.389436</td>
+      <td>7.526679e-02</td>
+      <td>7.183328e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1585547</td>
+      <td>1585647</td>
+      <td>101</td>
+      <td>50</td>
+      <td>74166</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>chr1</td>
+      <td>1588531</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs61774957</td>
+      <td>-71233</td>
+      <td>5.727490e-06</td>
+      <td>-0.428229</td>
+      <td>1.257610e-02</td>
+      <td>1.200241e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1588481</td>
+      <td>1588581</td>
+      <td>101</td>
+      <td>50</td>
+      <td>71232</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>chr1</td>
+      <td>1588543</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs71511310</td>
+      <td>-71221</td>
+      <td>4.629200e-06</td>
+      <td>-0.437440</td>
+      <td>1.071866e-02</td>
+      <td>1.022970e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1588493</td>
+      <td>1588593</td>
+      <td>101</td>
+      <td>50</td>
+      <td>71220</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>chr1</td>
+      <td>1591869</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs150468996</td>
+      <td>-67895</td>
+      <td>9.835890e-05</td>
+      <td>0.351089</td>
+      <td>8.642598e-02</td>
+      <td>8.248342e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1591819</td>
+      <td>1591919</td>
+      <td>101</td>
+      <td>50</td>
+      <td>67894</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>chr1</td>
+      <td>1594199</td>
+      <td>SLC35E2_1659763_1659813_-</td>
+      <td>rs72502752</td>
+      <td>-65565</td>
+      <td>7.934460e-05</td>
+      <td>0.389436</td>
+      <td>7.526679e-02</td>
+      <td>7.183328e-02</td>
+      <td>-</td>
+      <td>SLC35E2</td>
+      <td>1659763</td>
+      <td>1659813</td>
+      <td>1594149</td>
+      <td>1594249</td>
+      <td>101</td>
+      <td>50</td>
+      <td>65564</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>chr1</td>
+      <td>1598432</td>
+      <td>SLC35E2B_1594556_1595104_-</td>
+      <td>rs150429656</td>
+      <td>3875</td>
+      <td>7.786520e-05</td>
+      <td>0.227951</td>
+      <td>7.416605e-02</td>
+      <td>7.078276e-02</td>
+      <td>-</td>
+      <td>SLC35E2B</td>
+      <td>1594556</td>
+      <td>1595104</td>
+      <td>1598382</td>
+      <td>1598482</td>
+      <td>101</td>
+      <td>548</td>
+      <td>-3876</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>chr1</td>
+      <td>1598433</td>
+      <td>SLC35E2B_1594556_1595104_-</td>
+      <td>rs139010458</td>
+      <td>3876</td>
+      <td>7.786520e-05</td>
+      <td>0.227951</td>
+      <td>7.416605e-02</td>
+      <td>7.078276e-02</td>
+      <td>-</td>
+      <td>SLC35E2B</td>
+      <td>1594556</td>
+      <td>1595104</td>
+      <td>1598383</td>
+      <td>1598483</td>
+      <td>101</td>
+      <td>548</td>
+      <td>-3877</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>12713</th>
+      <td>chr9</td>
+      <td>136279339</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs28627696</td>
+      <td>7583</td>
+      <td>2.803280e-11</td>
+      <td>0.472724</td>
+      <td>5.219326e-07</td>
+      <td>4.981232e-07</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136279289</td>
+      <td>136279389</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-7584</td>
+    </tr>
+    <tr>
+      <th>12714</th>
+      <td>chr9</td>
+      <td>136279339</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs28627696</td>
+      <td>1753</td>
+      <td>6.694950e-09</td>
+      <td>-0.404148</td>
+      <td>6.853892e-05</td>
+      <td>6.541232e-05</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136279289</td>
+      <td>136279389</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-1754</td>
+    </tr>
+    <tr>
+      <th>12715</th>
+      <td>chr9</td>
+      <td>136279339</td>
+      <td>REXO4_136282769_136282918_-</td>
+      <td>rs28627696</td>
+      <td>-3431</td>
+      <td>6.069800e-05</td>
+      <td>-0.259183</td>
+      <td>6.311471e-02</td>
+      <td>6.023555e-02</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136282769</td>
+      <td>136282918</td>
+      <td>136279289</td>
+      <td>136279389</td>
+      <td>101</td>
+      <td>149</td>
+      <td>3430</td>
+    </tr>
+    <tr>
+      <th>12716</th>
+      <td>chr9</td>
+      <td>136279935</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs6597630</td>
+      <td>8179</td>
+      <td>6.482460e-13</td>
+      <td>0.490878</td>
+      <td>4.315411e-08</td>
+      <td>4.118552e-08</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136279885</td>
+      <td>136279985</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-8180</td>
+    </tr>
+    <tr>
+      <th>12717</th>
+      <td>chr9</td>
+      <td>136279935</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs6597630</td>
+      <td>2349</td>
+      <td>5.500400e-09</td>
+      <td>-0.402124</td>
+      <td>5.790350e-05</td>
+      <td>5.526207e-05</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136279885</td>
+      <td>136279985</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-2350</td>
+    </tr>
+    <tr>
+      <th>12718</th>
+      <td>chr9</td>
+      <td>136279935</td>
+      <td>REXO4_136282769_136282918_-</td>
+      <td>rs6597630</td>
+      <td>-2835</td>
+      <td>1.202290e-04</td>
+      <td>-0.247798</td>
+      <td>9.671338e-02</td>
+      <td>9.230153e-02</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136282769</td>
+      <td>136282918</td>
+      <td>136279885</td>
+      <td>136279985</td>
+      <td>101</td>
+      <td>149</td>
+      <td>2834</td>
+    </tr>
+    <tr>
+      <th>12719</th>
+      <td>chr9</td>
+      <td>136280996</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs78554244</td>
+      <td>9240</td>
+      <td>5.742490e-10</td>
+      <td>0.451202</td>
+      <td>8.083995e-06</td>
+      <td>7.715221e-06</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136280946</td>
+      <td>136281046</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-9241</td>
+    </tr>
+    <tr>
+      <th>12720</th>
+      <td>chr9</td>
+      <td>136280996</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs78554244</td>
+      <td>3410</td>
+      <td>1.090700e-08</td>
+      <td>-0.400052</td>
+      <td>9.752302e-05</td>
+      <td>9.307423e-05</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136280946</td>
+      <td>136281046</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-3411</td>
+    </tr>
+    <tr>
+      <th>12721</th>
+      <td>chr9</td>
+      <td>136281416</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs7022611</td>
+      <td>9660</td>
+      <td>1.161380e-12</td>
+      <td>0.496160</td>
+      <td>5.896675e-08</td>
+      <td>5.627681e-08</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281366</td>
+      <td>136281466</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-9661</td>
+    </tr>
+    <tr>
+      <th>12722</th>
+      <td>chr9</td>
+      <td>136281416</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs7022611</td>
+      <td>3830</td>
+      <td>6.582680e-08</td>
+      <td>-0.387073</td>
+      <td>4.360187e-04</td>
+      <td>4.161285e-04</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136281366</td>
+      <td>136281466</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-3831</td>
+    </tr>
+    <tr>
+      <th>12723</th>
+      <td>chr9</td>
+      <td>136281753</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs3118663</td>
+      <td>9997</td>
+      <td>1.899150e-07</td>
+      <td>-0.290183</td>
+      <td>1.011077e-03</td>
+      <td>9.649542e-04</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281703</td>
+      <td>136281803</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-9998</td>
+    </tr>
+    <tr>
+      <th>12724</th>
+      <td>chr9</td>
+      <td>136281917</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs3118664</td>
+      <td>10161</td>
+      <td>5.750200e-07</td>
+      <td>-0.275245</td>
+      <td>2.250657e-03</td>
+      <td>2.147987e-03</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281867</td>
+      <td>136281967</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10162</td>
+    </tr>
+    <tr>
+      <th>12725</th>
+      <td>chr9</td>
+      <td>136281925</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs3124780</td>
+      <td>10169</td>
+      <td>4.938920e-08</td>
+      <td>-0.321761</td>
+      <td>3.467635e-04</td>
+      <td>3.309449e-04</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281875</td>
+      <td>136281975</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10170</td>
+    </tr>
+    <tr>
+      <th>12726</th>
+      <td>chr9</td>
+      <td>136281925</td>
+      <td>REXO4_136282769_136282918_-</td>
+      <td>rs3124780</td>
+      <td>-845</td>
+      <td>4.214130e-05</td>
+      <td>0.205960</td>
+      <td>4.998695e-02</td>
+      <td>4.770665e-02</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136282769</td>
+      <td>136282918</td>
+      <td>136281875</td>
+      <td>136281975</td>
+      <td>101</td>
+      <td>149</td>
+      <td>844</td>
+    </tr>
+    <tr>
+      <th>12727</th>
+      <td>chr9</td>
+      <td>136281925</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs3124780</td>
+      <td>4339</td>
+      <td>1.036430e-04</td>
+      <td>0.229493</td>
+      <td>8.924750e-02</td>
+      <td>8.517622e-02</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136281875</td>
+      <td>136281975</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-4340</td>
+    </tr>
+    <tr>
+      <th>12728</th>
+      <td>chr9</td>
+      <td>136281966</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs3124779</td>
+      <td>10210</td>
+      <td>1.760540e-07</td>
+      <td>-0.287425</td>
+      <td>9.530465e-04</td>
+      <td>9.095706e-04</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136281916</td>
+      <td>136282016</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10211</td>
+    </tr>
+    <tr>
+      <th>12729</th>
+      <td>chr9</td>
+      <td>136282096</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs7038253</td>
+      <td>10340</td>
+      <td>1.009860e-10</td>
+      <td>0.472758</td>
+      <td>1.740803e-06</td>
+      <td>1.661391e-06</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136282046</td>
+      <td>136282146</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10341</td>
+    </tr>
+    <tr>
+      <th>12730</th>
+      <td>chr9</td>
+      <td>136282096</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs7038253</td>
+      <td>4510</td>
+      <td>4.014730e-07</td>
+      <td>-0.372696</td>
+      <td>1.742266e-03</td>
+      <td>1.662787e-03</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136282046</td>
+      <td>136282146</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-4511</td>
+    </tr>
+    <tr>
+      <th>12731</th>
+      <td>chr9</td>
+      <td>136282294</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs7037605</td>
+      <td>10538</td>
+      <td>1.161380e-12</td>
+      <td>0.496160</td>
+      <td>5.896675e-08</td>
+      <td>5.627681e-08</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136282244</td>
+      <td>136282344</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-10539</td>
+    </tr>
+    <tr>
+      <th>12732</th>
+      <td>chr9</td>
+      <td>136282294</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs7037605</td>
+      <td>4708</td>
+      <td>6.582680e-08</td>
+      <td>-0.387073</td>
+      <td>4.360187e-04</td>
+      <td>4.161285e-04</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136282244</td>
+      <td>136282344</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-4709</td>
+    </tr>
+    <tr>
+      <th>12733</th>
+      <td>chr9</td>
+      <td>136284450</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs3124776</td>
+      <td>12694</td>
+      <td>2.575630e-06</td>
+      <td>-0.276950</td>
+      <td>7.028253e-03</td>
+      <td>6.707639e-03</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136284400</td>
+      <td>136284500</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-12695</td>
+    </tr>
+    <tr>
+      <th>12734</th>
+      <td>chr9</td>
+      <td>136285739</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs28488980</td>
+      <td>13983</td>
+      <td>3.777320e-06</td>
+      <td>0.469073</td>
+      <td>9.480473e-03</td>
+      <td>9.047994e-03</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136285689</td>
+      <td>136285789</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-13984</td>
+    </tr>
+    <tr>
+      <th>12735</th>
+      <td>chr9</td>
+      <td>136285739</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs28488980</td>
+      <td>8153</td>
+      <td>1.145450e-05</td>
+      <td>-0.421558</td>
+      <td>2.038000e-02</td>
+      <td>1.945031e-02</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136285689</td>
+      <td>136285789</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-8154</td>
+    </tr>
+    <tr>
+      <th>12736</th>
+      <td>chr9</td>
+      <td>136287934</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs36218242</td>
+      <td>16178</td>
+      <td>4.508480e-05</td>
+      <td>0.474497</td>
+      <td>5.214044e-02</td>
+      <td>4.976190e-02</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136287884</td>
+      <td>136287984</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-16179</td>
+    </tr>
+    <tr>
+      <th>12737</th>
+      <td>chr9</td>
+      <td>136287934</td>
+      <td>SURF4_136233506_136242129_-</td>
+      <td>rs36218242</td>
+      <td>54427</td>
+      <td>5.969810e-05</td>
+      <td>0.408584</td>
+      <td>6.244056e-02</td>
+      <td>5.959215e-02</td>
+      <td>-</td>
+      <td>SURF4</td>
+      <td>136233506</td>
+      <td>136242129</td>
+      <td>136287884</td>
+      <td>136287984</td>
+      <td>101</td>
+      <td>8623</td>
+      <td>-54428</td>
+    </tr>
+    <tr>
+      <th>12738</th>
+      <td>chr9</td>
+      <td>136287934</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs36218242</td>
+      <td>10348</td>
+      <td>7.094900e-05</td>
+      <td>-0.435099</td>
+      <td>6.981798e-02</td>
+      <td>6.663304e-02</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136287884</td>
+      <td>136287984</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-10349</td>
+    </tr>
+    <tr>
+      <th>12739</th>
+      <td>chr9</td>
+      <td>136293308</td>
+      <td>REXO4_136271755_136272054_-</td>
+      <td>rs36219558</td>
+      <td>21552</td>
+      <td>4.508480e-05</td>
+      <td>0.474497</td>
+      <td>5.214044e-02</td>
+      <td>4.976190e-02</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>136293258</td>
+      <td>136293358</td>
+      <td>101</td>
+      <td>299</td>
+      <td>-21553</td>
+    </tr>
+    <tr>
+      <th>12740</th>
+      <td>chr9</td>
+      <td>136293308</td>
+      <td>SURF4_136233506_136242129_-</td>
+      <td>rs36219558</td>
+      <td>59801</td>
+      <td>5.969810e-05</td>
+      <td>0.408584</td>
+      <td>6.244056e-02</td>
+      <td>5.959215e-02</td>
+      <td>-</td>
+      <td>SURF4</td>
+      <td>136233506</td>
+      <td>136242129</td>
+      <td>136293258</td>
+      <td>136293358</td>
+      <td>101</td>
+      <td>8623</td>
+      <td>-59802</td>
+    </tr>
+    <tr>
+      <th>12741</th>
+      <td>chr9</td>
+      <td>136293308</td>
+      <td>REXO4_136277585_136280111_-</td>
+      <td>rs36219558</td>
+      <td>15722</td>
+      <td>7.094900e-05</td>
+      <td>-0.435099</td>
+      <td>6.981798e-02</td>
+      <td>6.663304e-02</td>
+      <td>-</td>
+      <td>REXO4</td>
+      <td>136277585</td>
+      <td>136280111</td>
+      <td>136293258</td>
+      <td>136293358</td>
+      <td>101</td>
+      <td>2526</td>
+      <td>-15723</td>
+    </tr>
+    <tr>
+      <th>12742</th>
+      <td>chr9</td>
+      <td>139992479</td>
+      <td>ENTPD2_139942676_139942926_-</td>
+      <td>rs12554429</td>
+      <td>49802</td>
+      <td>6.405520e-05</td>
+      <td>0.428989</td>
+      <td>6.576495e-02</td>
+      <td>6.276490e-02</td>
+      <td>-</td>
+      <td>ENTPD2</td>
+      <td>139942676</td>
+      <td>139942926</td>
+      <td>139992429</td>
+      <td>139992529</td>
+      <td>101</td>
+      <td>250</td>
+      <td>-49803</td>
+    </tr>
+  </tbody>
+</table>
+<p>12743 rows × 18 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+&copy 2018 Min Qiao at He Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/7d1fdb29d1245d1b3008a469bcd0be6c5224c176/analysis/20180222_m6A_riboSNitch.ipynb"><code>analysis/20180222_m6A_riboSNitch.ipynb</code></a> committed by Min Qiao on Fri Feb 23 17:16:51 2018 <a href="http://github.com/gaow/m6a/commit/7d1fdb29d1245d1b3008a469bcd0be6c5224c176">revision 1, 7d1fdb2</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
