@@ -1,7 +1,4 @@
-{%- extends 'basic.tpl' -%}
 
-{%- block header -%}
-{{ super() }}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -123,7 +120,7 @@ function sortDataFrame(id, n, dtype) {
 
 <script>
 $( document ).ready(function(){
-            var cfg={'threshold':{{ nb.get('metadata', {}).get('toc', {}).get('threshold', '3') }},     // depth of toc (number of levels)
+            var cfg={'threshold':3,     // depth of toc (number of levels)
              'number_sections': false,
              'toc_cell': false,          // useless here
              'toc_window_display': true, // display the toc window
@@ -143,12 +140,12 @@ $( document ).ready(function(){
             st.toc_index=0;
             // fire the main function with these parameters
             table_of_contents(cfg, st);
-            var file=writeupDict[$("h1:first").attr("id")];
+            var file=analysisDict[$("h1:first").attr("id")];
             $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
-            var docs=writeupArray;
-            var docs_map=writeupArrayMap;
-            var pos=writeupArray.indexOf(file);
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
             for (var a=pos;a>=0;a--){
                   $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
             }
@@ -243,14 +240,31 @@ body {
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Prepare-reference-databases">Prepare reference databases<a class="anchor-link" href="#Prepare-reference-databases">&#182;</a></h3><h4 id="hg19-human-reference-genome">hg19 human reference genome<a class="anchor-link" href="#hg19-human-reference-genome">&#182;</a></h4><ol>
+<li><p>Download <code>hg19.2bit</code> and <code>twoBitToFa</code> on <a href="http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/">assembly of the human genome</a>.</p>
+</li>
+<li><p>Use <code>twoBitToFa</code> to extract <code>hg19.fa</code> from <code>hg19.2bit</code>. Remember to run twoBitToFa specifying the full qualified path (i.e. /directory/where/you/have/twoBitToFa).</p>
+<p>eg: <code>~/Downloads/twoBitToFa ~/Downloads/hg19.2bit ~/Downloads/hg19.fa</code></p>
+</li>
+</ol>
+<h4 id="Ensembl-reference-transcriptome">Ensembl reference transcriptome<a class="anchor-link" href="#Ensembl-reference-transcriptome">&#182;</a></h4><ol>
+<li><p>Download <code>Homo_sapiens.GRCh38.91.gtf.gz</code> from <a href="https://useast.ensembl.org/info/data/ftp/index.html">Ensembl</a>.</p>
+</li>
+<li><p>unzip it using <code>gzip -cd Homo_sapiens.GRCh38.91.gtf.gz &gt; ensembl.gtf</code></p>
+</li>
+</ol>
 
-{%- endblock header -%}
-
-{% block footer %}
+</div>
+</div>
+</div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
+
 </div>
 </div>
 </body>
 </html>
-{% endblock %}

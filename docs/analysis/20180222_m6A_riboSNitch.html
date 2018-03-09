@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="ipynb_website:version" content="0.9.3" />
+<meta name="ipynb_website:version" content="0.9.4" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <link rel="stylesheet" type="text/css" href="../css/jt.css">
@@ -32,10 +32,10 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 }
 </script>
 
-<script src="../js/toc2.js"></script>
+<script src="../js/doc_toc.js"></script>
 <script src="../js/docs.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script>
     MathJax.Hub.Config({
         extensions: ["tex2jax.js"],
@@ -56,6 +56,66 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
             }
         }
     });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
 </script>
 
 <script>
@@ -84,17 +144,16 @@ $( document ).ready(function(){
             $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
             var docs=analysisArray;
+            var docs_map=analysisArrayMap;
             var pos=analysisArray.indexOf(file);
             for (var a=pos;a>=0;a--){
-                  var name=docs[a]
-                  $('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
             }
             $('a[href="'+file+'.html'+'"]').css("color","#126dce");
             for (var a=pos+1;a<docs.length;a++){
-                  var name=docs[a]
-                  $(".toc #toc-level0").append('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>');
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
             }
-            $("#toc-header").hide();
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
     });
 </script>
 
@@ -188,10 +247,37 @@ body {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/Documents/m6A/&quot;</span><span class="p">)</span>
-<span class="n">input_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/intron_m6AQTLs.txt&quot;</span>
-<span class="n">output_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/intron_m6AQTLs.bed&quot;</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">exon_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/exon_m6AQTLs.txt&quot;</span>
+<span class="n">output_exon_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/exon_m6AQTLs.bed&quot;</span>
+<span class="n">intron_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/intron_m6AQTLs.txt&quot;</span>
+<span class="n">output_intron_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/intron_m6AQTLs.bed&quot;</span>
+<span class="n">output_dbSNP</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/dbSNP/dbSNP.vcf.gz&quot;</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">200</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Import-dbSNP-and-export-the-first-five-columns,-only-need-to-do-it-once">Import dbSNP and export the first five columns, only need to do it once<a class="anchor-link" href="#Import-dbSNP-and-export-the-first-five-columns,-only-need-to-do-it-once">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># input_dbSNP = f&quot;{path}/Data/dbSNP/common_all_20170710.vcf.gz&quot;</span>
+<span class="c1"># dbSNP = pd.read_table(input_dbSNP, header = 56, compression = &quot;gzip&quot;, usecols = [0,1,2,3,4], low_memory = False)</span>
+<span class="c1"># dbSNP.to_csv(output_dbSNP, compression = &quot;gzip&quot;, sep = &quot;\t&quot;, index = False)</span>
 </pre></div>
 
 </div>
@@ -205,7 +291,7 @@ body {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h4 id="Handle-m6AQTL-data">Handle m6AQTL data<a class="anchor-link" href="#Handle-m6AQTL-data">&#182;</a></h4><ol>
 <li>sort by chromosome and pos</li>
-<li>plus and minus 50 for each pos</li>
+<li>plus and minus 200 for each pos</li>
 </ol>
 
 </div>
@@ -213,22 +299,23 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6AQTL</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">input_m6AQTL</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6AQTL</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">intron_m6AQTL</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">m6AQTL</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">])</span>
 <span class="n">m6AQTL</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">set_index</span><span class="p">([[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m6AQTL</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]])</span>
 <span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;strand&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;gene_symbol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;pos1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">n</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;pos2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos2&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;width2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">m6AQTL</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_m6AQTL</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">&lt;=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">out_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]</span>
+<span class="n">m6AQTL</span><span class="p">[</span><span class="n">out_cols</span><span class="p">]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_intron_m6AQTL</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -238,10 +325,23 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6AQTL</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;width2&quot;</span><span class="p">,</span> <span class="s2">&quot;gap&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dbSNP</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">output_dbSNP</span><span class="p">,</span> <span class="n">compression</span> <span class="o">=</span> <span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">low_memory</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[53]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dbSNP</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -254,7 +354,107 @@ body {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[3]:</div>
+<div class="prompt output_prompt">Out[53]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>#CHROM</th>
+      <th>POS</th>
+      <th>ID</th>
+      <th>REF</th>
+      <th>ALT</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>10177</td>
+      <td>rs367896724</td>
+      <td>A</td>
+      <td>AC</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>10352</td>
+      <td>rs555500075</td>
+      <td>T</td>
+      <td>TA</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>10352</td>
+      <td>rs145072688</td>
+      <td>T</td>
+      <td>TA</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>10616</td>
+      <td>rs376342519</td>
+      <td>CCGCCGTTGCAAAGGCGCGCCG</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>10642</td>
+      <td>rs558604819</td>
+      <td>G</td>
+      <td>A</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6AQTL</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;snpID&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;gap&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[31]:</div>
 
 
 
@@ -279,13 +479,13 @@ body {
       <th></th>
       <th>chr</th>
       <th>pos</th>
+      <th>snpID</th>
       <th>start</th>
       <th>end</th>
+      <th>width</th>
       <th>pos1</th>
       <th>pos2</th>
       <th>gene_symbol</th>
-      <th>width</th>
-      <th>width2</th>
       <th>gap</th>
       <th>strand</th>
     </tr>
@@ -295,13 +495,13 @@ body {
       <th>0</th>
       <td>chr1</td>
       <td>899937</td>
+      <td>rs143296006</td>
       <td>981788</td>
       <td>981988</td>
-      <td>899887</td>
-      <td>899987</td>
-      <td>AGRN</td>
-      <td>101</td>
       <td>200</td>
+      <td>899737</td>
+      <td>900137</td>
+      <td>AGRN</td>
       <td>81851</td>
       <td>+</td>
     </tr>
@@ -309,13 +509,13 @@ body {
       <th>1</th>
       <td>chr1</td>
       <td>899938</td>
+      <td>rs147467971</td>
       <td>981788</td>
       <td>981988</td>
-      <td>899888</td>
-      <td>899988</td>
-      <td>AGRN</td>
-      <td>101</td>
       <td>200</td>
+      <td>899738</td>
+      <td>900138</td>
+      <td>AGRN</td>
       <td>81850</td>
       <td>+</td>
     </tr>
@@ -323,13 +523,13 @@ body {
       <th>2</th>
       <td>chr1</td>
       <td>899942</td>
+      <td>rs71509448</td>
       <td>981788</td>
       <td>981988</td>
-      <td>899892</td>
-      <td>899992</td>
-      <td>AGRN</td>
-      <td>101</td>
       <td>200</td>
+      <td>899742</td>
+      <td>900142</td>
+      <td>AGRN</td>
       <td>81846</td>
       <td>+</td>
     </tr>
@@ -337,13 +537,13 @@ body {
       <th>3</th>
       <td>chr1</td>
       <td>943468</td>
+      <td>rs3121567</td>
       <td>949466</td>
       <td>949516</td>
-      <td>943418</td>
-      <td>943518</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
+      <td>943268</td>
+      <td>943668</td>
+      <td>ISG15</td>
       <td>5998</td>
       <td>+</td>
     </tr>
@@ -351,13 +551,13 @@ body {
       <th>4</th>
       <td>chr1</td>
       <td>945612</td>
+      <td>rs3121565</td>
       <td>949466</td>
       <td>949516</td>
-      <td>945562</td>
-      <td>945662</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
+      <td>945412</td>
+      <td>945812</td>
+      <td>ISG15</td>
       <td>3854</td>
       <td>+</td>
     </tr>
@@ -365,13 +565,13 @@ body {
       <th>5</th>
       <td>chr1</td>
       <td>945861</td>
+      <td>rs150242145</td>
       <td>949466</td>
       <td>949516</td>
-      <td>945811</td>
-      <td>945911</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
+      <td>945661</td>
+      <td>946061</td>
+      <td>ISG15</td>
       <td>3605</td>
       <td>+</td>
     </tr>
@@ -379,13 +579,13 @@ body {
       <th>6</th>
       <td>chr1</td>
       <td>946127</td>
+      <td>rs34487852</td>
       <td>949466</td>
       <td>949516</td>
-      <td>946077</td>
-      <td>946177</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
+      <td>945927</td>
+      <td>946327</td>
+      <td>ISG15</td>
       <td>3339</td>
       <td>+</td>
     </tr>
@@ -393,13 +593,13 @@ body {
       <th>7</th>
       <td>chr1</td>
       <td>946135</td>
+      <td>rs9723307</td>
       <td>949466</td>
       <td>949516</td>
-      <td>946085</td>
-      <td>946185</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
+      <td>945935</td>
+      <td>946335</td>
+      <td>ISG15</td>
       <td>3331</td>
       <td>+</td>
     </tr>
@@ -407,13 +607,13 @@ body {
       <th>8</th>
       <td>chr1</td>
       <td>947034</td>
+      <td>rs2465126</td>
       <td>949466</td>
       <td>949516</td>
-      <td>946984</td>
-      <td>947084</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
+      <td>946834</td>
+      <td>947234</td>
+      <td>ISG15</td>
       <td>2432</td>
       <td>+</td>
     </tr>
@@ -421,733 +621,324 @@ body {
       <th>9</th>
       <td>chr1</td>
       <td>947538</td>
+      <td>rs2465125</td>
       <td>949466</td>
       <td>949516</td>
-      <td>947488</td>
-      <td>947588</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
+      <td>947338</td>
+      <td>947738</td>
+      <td>ISG15</td>
       <td>1928</td>
       <td>+</td>
     </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[52]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n1</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="c1"># gap = m6AQTL[&quot;gap&quot;].tolist()</span>
+<span class="n">gap</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="p">[(</span><span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">n1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">n1</span><span class="p">)][</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">gap</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of gap (the distance between SNP pos and start of peak)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">m6AQTL</span><span class="p">,</span> <span class="n">dbSNP</span><span class="p">,</span> <span class="n">how</span> <span class="o">=</span> <span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">left_on</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;snpID&quot;</span><span class="p">],</span> <span class="n">right_on</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;POS&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res1</span> <span class="o">=</span> <span class="n">res</span><span class="p">[[</span><span class="s2">&quot;#CHROM&quot;</span><span class="p">,</span> <span class="s2">&quot;POS&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;REF&quot;</span><span class="p">,</span> <span class="s2">&quot;ALT&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="s2">&quot;FDR&quot;</span><span class="p">]]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res1</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[27]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>#CHROM</th>
+      <th>POS</th>
+      <th>ID</th>
+      <th>REF</th>
+      <th>ALT</th>
+      <th>strand</th>
+      <th>start</th>
+      <th>end</th>
+      <th>width</th>
+      <th>gene_symbol</th>
+      <th>pos1</th>
+      <th>pos2</th>
+      <th>beta</th>
+      <th>FDR</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
-      <th>10</th>
-      <td>chr1</td>
-      <td>948421</td>
+      <th>0</th>
+      <td>1</td>
+      <td>899937</td>
+      <td>rs143296006</td>
+      <td>G</td>
+      <td>T</td>
+      <td>+</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>200</td>
+      <td>AGRN</td>
+      <td>899737</td>
+      <td>900137</td>
+      <td>0.209051</td>
+      <td>0.099675</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>899938</td>
+      <td>rs147467971</td>
+      <td>G</td>
+      <td>C,T</td>
+      <td>+</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>200</td>
+      <td>AGRN</td>
+      <td>899738</td>
+      <td>900138</td>
+      <td>0.209051</td>
+      <td>0.099675</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>899942</td>
+      <td>rs71509448</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>200</td>
+      <td>AGRN</td>
+      <td>899742</td>
+      <td>900142</td>
+      <td>0.256919</td>
+      <td>0.053348</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>943468</td>
+      <td>rs3121567</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
       <td>949466</td>
       <td>949516</td>
-      <td>948371</td>
-      <td>948471</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
-      <td>1045</td>
-      <td>+</td>
+      <td>ISG15</td>
+      <td>943268</td>
+      <td>943668</td>
+      <td>0.175897</td>
+      <td>0.081956</td>
     </tr>
     <tr>
-      <th>11</th>
-      <td>chr1</td>
-      <td>948846</td>
+      <th>4</th>
+      <td>1</td>
+      <td>945612</td>
+      <td>rs3121565</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
       <td>949466</td>
       <td>949516</td>
-      <td>948796</td>
-      <td>948896</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
-      <td>620</td>
-      <td>+</td>
+      <td>ISG15</td>
+      <td>945412</td>
+      <td>945812</td>
+      <td>0.193259</td>
+      <td>0.040843</td>
     </tr>
     <tr>
-      <th>12</th>
-      <td>chr1</td>
-      <td>948921</td>
+      <th>5</th>
+      <td>1</td>
+      <td>945861</td>
+      <td>rs150242145</td>
+      <td>ATTAT</td>
+      <td>A</td>
+      <td>+</td>
       <td>949466</td>
       <td>949516</td>
-      <td>948871</td>
-      <td>948971</td>
-      <td>ISG15</td>
-      <td>101</td>
       <td>50</td>
-      <td>545</td>
-      <td>+</td>
+      <td>ISG15</td>
+      <td>945661</td>
+      <td>946061</td>
+      <td>0.191278</td>
+      <td>0.009500</td>
     </tr>
     <tr>
-      <th>13</th>
-      <td>chr1</td>
-      <td>949235</td>
+      <th>6</th>
+      <td>1</td>
+      <td>946127</td>
+      <td>rs34487852</td>
+      <td>GT</td>
+      <td>G</td>
+      <td>+</td>
       <td>949466</td>
       <td>949516</td>
-      <td>949185</td>
-      <td>949285</td>
+      <td>50</td>
       <td>ISG15</td>
-      <td>101</td>
-      <td>50</td>
-      <td>231</td>
+      <td>945927</td>
+      <td>946327</td>
+      <td>0.186970</td>
+      <td>0.047550</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>946135</td>
+      <td>rs9723307</td>
+      <td>T</td>
+      <td>G</td>
       <td>+</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>chr1</td>
-      <td>1226350</td>
-      <td>1164179</td>
-      <td>1164279</td>
-      <td>1226300</td>
-      <td>1226400</td>
-      <td>SDF4</td>
-      <td>101</td>
-      <td>100</td>
-      <td>-62171</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>chr1</td>
-      <td>1562895</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1562845</td>
-      <td>1562945</td>
-      <td>SLC35E2</td>
-      <td>101</td>
+      <td>949466</td>
+      <td>949516</td>
       <td>50</td>
-      <td>96868</td>
-      <td>-</td>
+      <td>ISG15</td>
+      <td>945935</td>
+      <td>946335</td>
+      <td>0.186970</td>
+      <td>0.047550</td>
     </tr>
     <tr>
-      <th>16</th>
-      <td>chr1</td>
-      <td>1584192</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1584142</td>
-      <td>1584242</td>
-      <td>SLC35E2</td>
-      <td>101</td>
+      <th>8</th>
+      <td>1</td>
+      <td>947034</td>
+      <td>rs2465126</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>949466</td>
+      <td>949516</td>
       <td>50</td>
-      <td>75571</td>
-      <td>-</td>
+      <td>ISG15</td>
+      <td>946834</td>
+      <td>947234</td>
+      <td>0.195956</td>
+      <td>0.007407</td>
     </tr>
     <tr>
-      <th>17</th>
-      <td>chr1</td>
-      <td>1584593</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1584543</td>
-      <td>1584643</td>
-      <td>SLC35E2</td>
-      <td>101</td>
+      <th>9</th>
+      <td>1</td>
+      <td>947538</td>
+      <td>rs2465125</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>949466</td>
+      <td>949516</td>
       <td>50</td>
-      <td>75170</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>chr1</td>
-      <td>1584842</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1584792</td>
-      <td>1584892</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74921</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>chr1</td>
-      <td>1584918</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1584868</td>
-      <td>1584968</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74845</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>chr1</td>
-      <td>1585257</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1585207</td>
-      <td>1585307</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74506</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>chr1</td>
-      <td>1585347</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1585297</td>
-      <td>1585397</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74416</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>chr1</td>
-      <td>1585388</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1585338</td>
-      <td>1585438</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74375</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>chr1</td>
-      <td>1585597</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1585547</td>
-      <td>1585647</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74166</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>chr1</td>
-      <td>1588531</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1588481</td>
-      <td>1588581</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>71232</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>chr1</td>
-      <td>1588543</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1588493</td>
-      <td>1588593</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>71220</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>chr1</td>
-      <td>1591869</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1591819</td>
-      <td>1591919</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>67894</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>chr1</td>
-      <td>1594199</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1594149</td>
-      <td>1594249</td>
-      <td>SLC35E2</td>
-      <td>101</td>
-      <td>50</td>
-      <td>65564</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>chr1</td>
-      <td>1598432</td>
-      <td>1594556</td>
-      <td>1595104</td>
-      <td>1598382</td>
-      <td>1598482</td>
-      <td>SLC35E2B</td>
-      <td>101</td>
-      <td>548</td>
-      <td>-3876</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>chr1</td>
-      <td>1598433</td>
-      <td>1594556</td>
-      <td>1595104</td>
-      <td>1598383</td>
-      <td>1598483</td>
-      <td>SLC35E2B</td>
-      <td>101</td>
-      <td>548</td>
-      <td>-3877</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>12713</th>
-      <td>chr9</td>
-      <td>136279339</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136279289</td>
-      <td>136279389</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-7584</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12714</th>
-      <td>chr9</td>
-      <td>136279339</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136279289</td>
-      <td>136279389</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-1754</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12715</th>
-      <td>chr9</td>
-      <td>136279339</td>
-      <td>136282769</td>
-      <td>136282918</td>
-      <td>136279289</td>
-      <td>136279389</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>149</td>
-      <td>3430</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12716</th>
-      <td>chr9</td>
-      <td>136279935</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136279885</td>
-      <td>136279985</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-8180</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12717</th>
-      <td>chr9</td>
-      <td>136279935</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136279885</td>
-      <td>136279985</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-2350</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12718</th>
-      <td>chr9</td>
-      <td>136279935</td>
-      <td>136282769</td>
-      <td>136282918</td>
-      <td>136279885</td>
-      <td>136279985</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>149</td>
-      <td>2834</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12719</th>
-      <td>chr9</td>
-      <td>136280996</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136280946</td>
-      <td>136281046</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-9241</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12720</th>
-      <td>chr9</td>
-      <td>136280996</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136280946</td>
-      <td>136281046</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-3411</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12721</th>
-      <td>chr9</td>
-      <td>136281416</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281366</td>
-      <td>136281466</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-9661</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12722</th>
-      <td>chr9</td>
-      <td>136281416</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136281366</td>
-      <td>136281466</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-3831</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12723</th>
-      <td>chr9</td>
-      <td>136281753</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281703</td>
-      <td>136281803</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-9998</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12724</th>
-      <td>chr9</td>
-      <td>136281917</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281867</td>
-      <td>136281967</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10162</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12725</th>
-      <td>chr9</td>
-      <td>136281925</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281875</td>
-      <td>136281975</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10170</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12726</th>
-      <td>chr9</td>
-      <td>136281925</td>
-      <td>136282769</td>
-      <td>136282918</td>
-      <td>136281875</td>
-      <td>136281975</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>149</td>
-      <td>844</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12727</th>
-      <td>chr9</td>
-      <td>136281925</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136281875</td>
-      <td>136281975</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-4340</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12728</th>
-      <td>chr9</td>
-      <td>136281966</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281916</td>
-      <td>136282016</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10211</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12729</th>
-      <td>chr9</td>
-      <td>136282096</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136282046</td>
-      <td>136282146</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10341</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12730</th>
-      <td>chr9</td>
-      <td>136282096</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136282046</td>
-      <td>136282146</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-4511</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12731</th>
-      <td>chr9</td>
-      <td>136282294</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136282244</td>
-      <td>136282344</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10539</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12732</th>
-      <td>chr9</td>
-      <td>136282294</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136282244</td>
-      <td>136282344</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-4709</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12733</th>
-      <td>chr9</td>
-      <td>136284450</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136284400</td>
-      <td>136284500</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-12695</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12734</th>
-      <td>chr9</td>
-      <td>136285739</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136285689</td>
-      <td>136285789</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-13984</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12735</th>
-      <td>chr9</td>
-      <td>136285739</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136285689</td>
-      <td>136285789</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-8154</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12736</th>
-      <td>chr9</td>
-      <td>136287934</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136287884</td>
-      <td>136287984</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-16179</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12737</th>
-      <td>chr9</td>
-      <td>136287934</td>
-      <td>136233506</td>
-      <td>136242129</td>
-      <td>136287884</td>
-      <td>136287984</td>
-      <td>SURF4</td>
-      <td>101</td>
-      <td>8623</td>
-      <td>-54428</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12738</th>
-      <td>chr9</td>
-      <td>136287934</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136287884</td>
-      <td>136287984</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-10349</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12739</th>
-      <td>chr9</td>
-      <td>136293308</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136293258</td>
-      <td>136293358</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-21553</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12740</th>
-      <td>chr9</td>
-      <td>136293308</td>
-      <td>136233506</td>
-      <td>136242129</td>
-      <td>136293258</td>
-      <td>136293358</td>
-      <td>SURF4</td>
-      <td>101</td>
-      <td>8623</td>
-      <td>-59802</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12741</th>
-      <td>chr9</td>
-      <td>136293308</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136293258</td>
-      <td>136293358</td>
-      <td>REXO4</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-15723</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <th>12742</th>
-      <td>chr9</td>
-      <td>139992479</td>
-      <td>139942676</td>
-      <td>139942926</td>
-      <td>139992429</td>
-      <td>139992529</td>
-      <td>ENTPD2</td>
-      <td>101</td>
-      <td>250</td>
-      <td>-49803</td>
-      <td>-</td>
+      <td>ISG15</td>
+      <td>947338</td>
+      <td>947738</td>
+      <td>0.183229</td>
+      <td>0.045959</td>
     </tr>
   </tbody>
 </table>
-<p>12743 rows × 11 columns</p>
 </div>
 </div>
 
@@ -1170,11 +961,14 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[55]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
-<span class="n">Counter</span><span class="p">(</span><span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;width2&quot;</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n2</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">width</span> <span class="o">=</span> <span class="n">m6AQTL</span><span class="p">[</span><span class="n">m6AQTL</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">n2</span><span class="p">][</span><span class="s2">&quot;width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of width&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -1187,511 +981,15 @@ body {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[5]:</div>
+<div class="prompt"></div>
 
 
 
 
-<div class="output_text output_subarea output_execute_result">
-<pre>Counter({26: 2,
-         50: 884,
-         97: 1,
-         98: 22,
-         99: 505,
-         100: 457,
-         136: 1,
-         138: 2,
-         139: 5,
-         146: 26,
-         147: 6,
-         148: 79,
-         149: 264,
-         150: 359,
-         170: 9,
-         196: 1,
-         197: 76,
-         198: 44,
-         199: 567,
-         200: 197,
-         201: 1,
-         221: 1,
-         225: 1,
-         233: 1,
-         244: 1,
-         246: 1,
-         247: 46,
-         248: 216,
-         249: 307,
-         250: 300,
-         253: 1,
-         262: 27,
-         275: 4,
-         282: 2,
-         284: 18,
-         286: 16,
-         295: 22,
-         296: 50,
-         297: 17,
-         298: 172,
-         299: 371,
-         300: 18,
-         313: 201,
-         325: 1,
-         326: 4,
-         329: 2,
-         337: 1,
-         340: 1,
-         341: 3,
-         343: 2,
-         344: 7,
-         345: 7,
-         346: 27,
-         347: 201,
-         348: 9,
-         349: 93,
-         350: 8,
-         376: 36,
-         378: 405,
-         380: 1,
-         382: 17,
-         385: 1,
-         386: 24,
-         390: 1,
-         391: 2,
-         392: 1,
-         394: 1,
-         395: 13,
-         396: 3,
-         397: 34,
-         398: 47,
-         399: 76,
-         400: 76,
-         405: 24,
-         424: 2,
-         439: 25,
-         441: 3,
-         442: 1,
-         443: 16,
-         444: 3,
-         445: 1,
-         446: 80,
-         447: 26,
-         448: 99,
-         449: 63,
-         450: 15,
-         454: 1,
-         473: 13,
-         474: 2,
-         475: 1,
-         483: 16,
-         485: 22,
-         489: 1,
-         491: 1,
-         492: 1,
-         493: 8,
-         494: 26,
-         495: 16,
-         496: 49,
-         497: 43,
-         498: 37,
-         499: 245,
-         500: 1,
-         528: 6,
-         530: 5,
-         532: 12,
-         543: 4,
-         544: 1,
-         546: 37,
-         547: 22,
-         548: 86,
-         549: 6,
-         550: 1,
-         553: 1,
-         577: 1,
-         579: 54,
-         595: 1,
-         597: 17,
-         598: 3,
-         599: 5,
-         600: 1,
-         602: 2,
-         616: 8,
-         637: 2,
-         642: 24,
-         647: 113,
-         648: 25,
-         650: 17,
-         679: 6,
-         688: 6,
-         692: 2,
-         694: 38,
-         695: 89,
-         696: 17,
-         697: 14,
-         698: 4,
-         699: 25,
-         705: 4,
-         718: 261,
-         725: 1,
-         737: 13,
-         742: 2,
-         743: 1,
-         744: 10,
-         745: 2,
-         746: 11,
-         747: 12,
-         748: 17,
-         749: 49,
-         750: 1,
-         793: 51,
-         794: 38,
-         796: 1,
-         799: 83,
-         806: 24,
-         811: 1,
-         833: 167,
-         834: 1,
-         842: 116,
-         846: 4,
-         847: 20,
-         849: 9,
-         856: 2,
-         879: 206,
-         881: 42,
-         885: 1,
-         886: 1,
-         892: 1,
-         895: 1,
-         897: 1,
-         898: 6,
-         899: 3,
-         908: 1,
-         910: 187,
-         917: 1,
-         934: 2,
-         936: 1,
-         940: 1,
-         947: 7,
-         948: 1,
-         974: 23,
-         975: 14,
-         984: 4,
-         989: 1,
-         995: 3,
-         997: 1,
-         999: 1,
-         1008: 4,
-         1012: 2,
-         1024: 1,
-         1038: 1,
-         1043: 1,
-         1044: 1,
-         1046: 59,
-         1047: 1,
-         1048: 4,
-         1050: 1,
-         1065: 9,
-         1073: 6,
-         1093: 1,
-         1095: 20,
-         1100: 4,
-         1102: 7,
-         1106: 5,
-         1124: 2,
-         1158: 1,
-         1163: 2,
-         1169: 1,
-         1176: 1,
-         1177: 8,
-         1180: 1,
-         1191: 1,
-         1194: 1,
-         1198: 9,
-         1201: 9,
-         1208: 15,
-         1213: 77,
-         1222: 4,
-         1233: 8,
-         1241: 1,
-         1244: 1,
-         1286: 1,
-         1293: 1,
-         1315: 17,
-         1318: 1,
-         1333: 7,
-         1342: 10,
-         1345: 1,
-         1350: 1,
-         1353: 1,
-         1386: 1,
-         1392: 1,
-         1397: 1,
-         1405: 35,
-         1408: 8,
-         1409: 6,
-         1427: 37,
-         1428: 1,
-         1434: 11,
-         1438: 1,
-         1440: 10,
-         1447: 2,
-         1482: 5,
-         1488: 10,
-         1494: 13,
-         1517: 10,
-         1529: 11,
-         1546: 1,
-         1549: 53,
-         1551: 2,
-         1553: 14,
-         1564: 9,
-         1568: 1,
-         1571: 1,
-         1572: 3,
-         1575: 1,
-         1587: 1,
-         1598: 1,
-         1619: 1,
-         1640: 1,
-         1651: 1,
-         1660: 2,
-         1664: 1,
-         1697: 3,
-         1704: 2,
-         1729: 51,
-         1768: 1,
-         1795: 13,
-         1833: 1,
-         1856: 2,
-         1930: 1,
-         1934: 6,
-         1939: 1,
-         2010: 205,
-         2044: 1,
-         2072: 1,
-         2080: 1,
-         2086: 33,
-         2090: 10,
-         2132: 1,
-         2143: 2,
-         2156: 17,
-         2279: 1,
-         2289: 17,
-         2349: 1,
-         2357: 5,
-         2396: 1,
-         2417: 169,
-         2437: 1,
-         2438: 2,
-         2445: 1,
-         2447: 1,
-         2486: 1,
-         2519: 1,
-         2525: 2,
-         2526: 115,
-         2549: 2,
-         2556: 1,
-         2563: 4,
-         2565: 1,
-         2600: 1,
-         2618: 7,
-         2622: 1,
-         2639: 1,
-         2641: 286,
-         2646: 1,
-         2650: 10,
-         2708: 2,
-         2761: 64,
-         2770: 3,
-         2781: 7,
-         2805: 33,
-         2806: 4,
-         2815: 3,
-         2828: 14,
-         2910: 3,
-         2961: 6,
-         2962: 7,
-         2990: 1,
-         2998: 33,
-         3024: 27,
-         3094: 1,
-         3121: 13,
-         3148: 1,
-         3153: 1,
-         3196: 19,
-         3206: 1,
-         3290: 2,
-         3330: 1,
-         3337: 2,
-         3371: 20,
-         3376: 1,
-         3394: 3,
-         3403: 1,
-         3420: 7,
-         3446: 1,
-         3477: 2,
-         3494: 43,
-         3579: 21,
-         3615: 15,
-         3669: 8,
-         3733: 1,
-         3754: 21,
-         3763: 1,
-         3765: 2,
-         3793: 1,
-         3924: 1,
-         3972: 2,
-         3987: 1,
-         4001: 1,
-         4015: 2,
-         4028: 3,
-         4070: 1,
-         4099: 24,
-         4130: 25,
-         4131: 5,
-         4281: 1,
-         4302: 1,
-         4378: 1,
-         4393: 8,
-         4497: 1,
-         4554: 1,
-         4646: 2,
-         4661: 1,
-         4718: 9,
-         4750: 1,
-         4758: 1,
-         4866: 3,
-         4874: 1,
-         4916: 8,
-         5055: 5,
-         5076: 2,
-         5081: 18,
-         5094: 2,
-         5354: 1,
-         5366: 37,
-         5412: 262,
-         5444: 1,
-         5451: 1,
-         5499: 9,
-         5648: 2,
-         5762: 4,
-         5778: 1,
-         5827: 1,
-         5850: 2,
-         5857: 6,
-         5863: 4,
-         5961: 32,
-         6018: 3,
-         6078: 1,
-         6273: 41,
-         6305: 9,
-         6313: 1,
-         6339: 5,
-         6672: 27,
-         6746: 1,
-         6863: 9,
-         6964: 1,
-         7120: 3,
-         7154: 5,
-         7245: 31,
-         7252: 1,
-         7499: 1,
-         7596: 2,
-         7644: 1,
-         7665: 4,
-         7867: 11,
-         8028: 1,
-         8106: 18,
-         8167: 1,
-         8191: 1,
-         8201: 3,
-         8232: 8,
-         8269: 1,
-         8349: 19,
-         8456: 1,
-         8587: 39,
-         8623: 11,
-         8683: 16,
-         8706: 25,
-         8750: 1,
-         8958: 39,
-         9244: 3,
-         9582: 2,
-         9628: 1,
-         9987: 11,
-         10015: 3,
-         10058: 2,
-         10239: 250,
-         10265: 1,
-         10616: 2,
-         10823: 10,
-         10890: 5,
-         10960: 1,
-         11446: 1,
-         11489: 5,
-         11621: 1,
-         11649: 1,
-         11870: 47,
-         12786: 1,
-         12855: 1,
-         13064: 1,
-         13272: 2,
-         13893: 10,
-         13981: 4,
-         14311: 8,
-         14535: 1,
-         14931: 3,
-         15224: 10,
-         15250: 12,
-         15647: 1,
-         15837: 4,
-         15949: 1,
-         16108: 3,
-         16131: 1,
-         16257: 2,
-         16699: 21,
-         16921: 1,
-         17082: 1,
-         17610: 23,
-         18166: 1,
-         18304: 4,
-         18365: 1,
-         18383: 6,
-         20302: 1,
-         20320: 16,
-         20519: 2,
-         20958: 5,
-         21289: 7,
-         21351: 1,
-         23103: 9,
-         23164: 4,
-         24129: 5,
-         25313: 1,
-         25453: 2,
-         26242: 4,
-         26347: 1,
-         26522: 2,
-         27123: 1,
-         27323: 1,
-         27880: 1,
-         28462: 2,
-         32435: 4,
-         32788: 1,
-         36392: 2,
-         39088: 1,
-         55438: 4,
-         57198: 1,
-         59826: 6,
-         64422: 12,
-         67033: 1,
-         70238: 25,
-         86241: 28,
-         98863: 2,
-         102906: 1,
-         106259: 2,
-         110946: 2,
-         117608: 19,
-         128213: 5})</pre>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
 </div>
 
 </div>
@@ -1700,1364 +998,30 @@ body {
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6AQTL</span>
-</pre></div>
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>@NTCNCCACCC:K00180:212:H7VCTBBXX:3:1101:21673:1033 1:N:0:NAATTCGT+AGGCTNTA
+@NCGNTCAAGA:K00180:212:H7VCTBBXX:3:1101:21755:1033 1:N:0:NAATTCGT+AGGCTNTA
+@NCTNCCCGAG:K00180:212:H7VCTBBXX:3:1101:21795:1033 1:N:0:NAATTCGT+AGGCTNTA
+@NTCNTCCAAC:K00180:212:H7VCTBBXX:3:1101:22465:1033 1:N:0:NAATTCGT+AGGCTNTA</p>
 
 </div>
 </div>
 </div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[6]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>chr</th>
-      <th>pos</th>
-      <th>peakID</th>
-      <th>snpID</th>
-      <th>dist</th>
-      <th>npvalue</th>
-      <th>beta</th>
-      <th>FDR</th>
-      <th>qvalue</th>
-      <th>strand</th>
-      <th>gene_symbol</th>
-      <th>start</th>
-      <th>end</th>
-      <th>pos1</th>
-      <th>pos2</th>
-      <th>width</th>
-      <th>width2</th>
-      <th>gap</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>chr1</td>
-      <td>899937</td>
-      <td>AGRN_981788_981988_+</td>
-      <td>rs143296006</td>
-      <td>-81852</td>
-      <td>1.257660e-04</td>
-      <td>0.209051</td>
-      <td>9.967526e-02</td>
-      <td>9.512829e-02</td>
-      <td>+</td>
-      <td>AGRN</td>
-      <td>981788</td>
-      <td>981988</td>
-      <td>899887</td>
-      <td>899987</td>
-      <td>101</td>
-      <td>200</td>
-      <td>81851</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>chr1</td>
-      <td>899938</td>
-      <td>AGRN_981788_981988_+</td>
-      <td>rs147467971</td>
-      <td>-81851</td>
-      <td>1.257660e-04</td>
-      <td>0.209051</td>
-      <td>9.967526e-02</td>
-      <td>9.512829e-02</td>
-      <td>+</td>
-      <td>AGRN</td>
-      <td>981788</td>
-      <td>981988</td>
-      <td>899888</td>
-      <td>899988</td>
-      <td>101</td>
-      <td>200</td>
-      <td>81850</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>chr1</td>
-      <td>899942</td>
-      <td>AGRN_981788_981988_+</td>
-      <td>rs71509448</td>
-      <td>-81847</td>
-      <td>4.651710e-05</td>
-      <td>0.256919</td>
-      <td>5.334776e-02</td>
-      <td>5.091415e-02</td>
-      <td>+</td>
-      <td>AGRN</td>
-      <td>981788</td>
-      <td>981988</td>
-      <td>899892</td>
-      <td>899992</td>
-      <td>101</td>
-      <td>200</td>
-      <td>81846</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>chr1</td>
-      <td>943468</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs3121567</td>
-      <td>-5999</td>
-      <td>9.042620e-05</td>
-      <td>0.175897</td>
-      <td>8.195625e-02</td>
-      <td>7.821758e-02</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>943418</td>
-      <td>943518</td>
-      <td>101</td>
-      <td>50</td>
-      <td>5998</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>chr1</td>
-      <td>945612</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs3121565</td>
-      <td>-3855</td>
-      <td>3.104540e-05</td>
-      <td>0.193259</td>
-      <td>4.084279e-02</td>
-      <td>3.897963e-02</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>945562</td>
-      <td>945662</td>
-      <td>101</td>
-      <td>50</td>
-      <td>3854</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>chr1</td>
-      <td>945861</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs150242145</td>
-      <td>-3606</td>
-      <td>3.786060e-06</td>
-      <td>0.191278</td>
-      <td>9.499576e-03</td>
-      <td>9.066226e-03</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>945811</td>
-      <td>945911</td>
-      <td>101</td>
-      <td>50</td>
-      <td>3605</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>chr1</td>
-      <td>946127</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs34487852</td>
-      <td>-3340</td>
-      <td>3.924570e-05</td>
-      <td>0.186970</td>
-      <td>4.754982e-02</td>
-      <td>4.538070e-02</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>946077</td>
-      <td>946177</td>
-      <td>101</td>
-      <td>50</td>
-      <td>3339</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>chr1</td>
-      <td>946135</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs9723307</td>
-      <td>-3332</td>
-      <td>3.924570e-05</td>
-      <td>0.186970</td>
-      <td>4.754982e-02</td>
-      <td>4.538070e-02</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>946085</td>
-      <td>946185</td>
-      <td>101</td>
-      <td>50</td>
-      <td>3331</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>chr1</td>
-      <td>947034</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs2465126</td>
-      <td>-2433</td>
-      <td>2.757970e-06</td>
-      <td>0.195956</td>
-      <td>7.407468e-03</td>
-      <td>7.069555e-03</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>946984</td>
-      <td>947084</td>
-      <td>101</td>
-      <td>50</td>
-      <td>2432</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>chr1</td>
-      <td>947538</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs2465125</td>
-      <td>-1929</td>
-      <td>3.735910e-05</td>
-      <td>0.183229</td>
-      <td>4.595932e-02</td>
-      <td>4.386276e-02</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>947488</td>
-      <td>947588</td>
-      <td>101</td>
-      <td>50</td>
-      <td>1928</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>chr1</td>
-      <td>948421</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs113047134</td>
-      <td>-1046</td>
-      <td>1.036510e-04</td>
-      <td>0.236611</td>
-      <td>8.924980e-02</td>
-      <td>8.517842e-02</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>948371</td>
-      <td>948471</td>
-      <td>101</td>
-      <td>50</td>
-      <td>1045</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>chr1</td>
-      <td>948846</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs3841266</td>
-      <td>-621</td>
-      <td>6.044450e-06</td>
-      <td>0.190571</td>
-      <td>1.310361e-02</td>
-      <td>1.250585e-02</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>948796</td>
-      <td>948896</td>
-      <td>101</td>
-      <td>50</td>
-      <td>620</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>chr1</td>
-      <td>948921</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs15842</td>
-      <td>-546</td>
-      <td>9.953320e-05</td>
-      <td>0.187639</td>
-      <td>8.686137e-02</td>
-      <td>8.289894e-02</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>948871</td>
-      <td>948971</td>
-      <td>101</td>
-      <td>50</td>
-      <td>545</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>chr1</td>
-      <td>949235</td>
-      <td>ISG15_949466_949516_+</td>
-      <td>rs2465124</td>
-      <td>-232</td>
-      <td>7.037750e-05</td>
-      <td>0.184205</td>
-      <td>6.941192e-02</td>
-      <td>6.624550e-02</td>
-      <td>+</td>
-      <td>ISG15</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>949185</td>
-      <td>949285</td>
-      <td>101</td>
-      <td>50</td>
-      <td>231</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>chr1</td>
-      <td>1226350</td>
-      <td>SDF4_1164179_1164279_-</td>
-      <td>rs114416421</td>
-      <td>62170</td>
-      <td>3.629780e-05</td>
-      <td>0.413450</td>
-      <td>4.519178e-02</td>
-      <td>4.313023e-02</td>
-      <td>-</td>
-      <td>SDF4</td>
-      <td>1164179</td>
-      <td>1164279</td>
-      <td>1226300</td>
-      <td>1226400</td>
-      <td>101</td>
-      <td>100</td>
-      <td>-62171</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>chr1</td>
-      <td>1562895</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs12735861</td>
-      <td>-96869</td>
-      <td>2.438490e-05</td>
-      <td>0.382575</td>
-      <td>3.418754e-02</td>
-      <td>3.262798e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1562845</td>
-      <td>1562945</td>
-      <td>101</td>
-      <td>50</td>
-      <td>96868</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>chr1</td>
-      <td>1584192</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs4648606</td>
-      <td>-75572</td>
-      <td>9.248590e-05</td>
-      <td>0.365043</td>
-      <td>8.313875e-02</td>
-      <td>7.934615e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1584142</td>
-      <td>1584242</td>
-      <td>101</td>
-      <td>50</td>
-      <td>75571</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>chr1</td>
-      <td>1584593</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs564134629</td>
-      <td>-75171</td>
-      <td>7.934460e-05</td>
-      <td>0.389436</td>
-      <td>7.526679e-02</td>
-      <td>7.183328e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1584543</td>
-      <td>1584643</td>
-      <td>101</td>
-      <td>50</td>
-      <td>75170</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>chr1</td>
-      <td>1584842</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs12753686</td>
-      <td>-74922</td>
-      <td>7.934460e-05</td>
-      <td>0.389436</td>
-      <td>7.526679e-02</td>
-      <td>7.183328e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1584792</td>
-      <td>1584892</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74921</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>chr1</td>
-      <td>1584918</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs12753729</td>
-      <td>-74846</td>
-      <td>7.934460e-05</td>
-      <td>0.389436</td>
-      <td>7.526679e-02</td>
-      <td>7.183328e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1584868</td>
-      <td>1584968</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74845</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>chr1</td>
-      <td>1585257</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs4648758</td>
-      <td>-74507</td>
-      <td>7.934460e-05</td>
-      <td>0.389436</td>
-      <td>7.526679e-02</td>
-      <td>7.183328e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1585207</td>
-      <td>1585307</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74506</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>chr1</td>
-      <td>1585347</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs4648760</td>
-      <td>-74417</td>
-      <td>7.934460e-05</td>
-      <td>0.389436</td>
-      <td>7.526679e-02</td>
-      <td>7.183328e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1585297</td>
-      <td>1585397</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74416</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>chr1</td>
-      <td>1585388</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs4648761</td>
-      <td>-74376</td>
-      <td>7.934460e-05</td>
-      <td>0.389436</td>
-      <td>7.526679e-02</td>
-      <td>7.183328e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1585338</td>
-      <td>1585438</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74375</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>chr1</td>
-      <td>1585597</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs7531938</td>
-      <td>-74167</td>
-      <td>7.934460e-05</td>
-      <td>0.389436</td>
-      <td>7.526679e-02</td>
-      <td>7.183328e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1585547</td>
-      <td>1585647</td>
-      <td>101</td>
-      <td>50</td>
-      <td>74166</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>chr1</td>
-      <td>1588531</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs61774957</td>
-      <td>-71233</td>
-      <td>5.727490e-06</td>
-      <td>-0.428229</td>
-      <td>1.257610e-02</td>
-      <td>1.200241e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1588481</td>
-      <td>1588581</td>
-      <td>101</td>
-      <td>50</td>
-      <td>71232</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>chr1</td>
-      <td>1588543</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs71511310</td>
-      <td>-71221</td>
-      <td>4.629200e-06</td>
-      <td>-0.437440</td>
-      <td>1.071866e-02</td>
-      <td>1.022970e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1588493</td>
-      <td>1588593</td>
-      <td>101</td>
-      <td>50</td>
-      <td>71220</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>chr1</td>
-      <td>1591869</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs150468996</td>
-      <td>-67895</td>
-      <td>9.835890e-05</td>
-      <td>0.351089</td>
-      <td>8.642598e-02</td>
-      <td>8.248342e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1591819</td>
-      <td>1591919</td>
-      <td>101</td>
-      <td>50</td>
-      <td>67894</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>chr1</td>
-      <td>1594199</td>
-      <td>SLC35E2_1659763_1659813_-</td>
-      <td>rs72502752</td>
-      <td>-65565</td>
-      <td>7.934460e-05</td>
-      <td>0.389436</td>
-      <td>7.526679e-02</td>
-      <td>7.183328e-02</td>
-      <td>-</td>
-      <td>SLC35E2</td>
-      <td>1659763</td>
-      <td>1659813</td>
-      <td>1594149</td>
-      <td>1594249</td>
-      <td>101</td>
-      <td>50</td>
-      <td>65564</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>chr1</td>
-      <td>1598432</td>
-      <td>SLC35E2B_1594556_1595104_-</td>
-      <td>rs150429656</td>
-      <td>3875</td>
-      <td>7.786520e-05</td>
-      <td>0.227951</td>
-      <td>7.416605e-02</td>
-      <td>7.078276e-02</td>
-      <td>-</td>
-      <td>SLC35E2B</td>
-      <td>1594556</td>
-      <td>1595104</td>
-      <td>1598382</td>
-      <td>1598482</td>
-      <td>101</td>
-      <td>548</td>
-      <td>-3876</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>chr1</td>
-      <td>1598433</td>
-      <td>SLC35E2B_1594556_1595104_-</td>
-      <td>rs139010458</td>
-      <td>3876</td>
-      <td>7.786520e-05</td>
-      <td>0.227951</td>
-      <td>7.416605e-02</td>
-      <td>7.078276e-02</td>
-      <td>-</td>
-      <td>SLC35E2B</td>
-      <td>1594556</td>
-      <td>1595104</td>
-      <td>1598383</td>
-      <td>1598483</td>
-      <td>101</td>
-      <td>548</td>
-      <td>-3877</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>12713</th>
-      <td>chr9</td>
-      <td>136279339</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs28627696</td>
-      <td>7583</td>
-      <td>2.803280e-11</td>
-      <td>0.472724</td>
-      <td>5.219326e-07</td>
-      <td>4.981232e-07</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136279289</td>
-      <td>136279389</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-7584</td>
-    </tr>
-    <tr>
-      <th>12714</th>
-      <td>chr9</td>
-      <td>136279339</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs28627696</td>
-      <td>1753</td>
-      <td>6.694950e-09</td>
-      <td>-0.404148</td>
-      <td>6.853892e-05</td>
-      <td>6.541232e-05</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136279289</td>
-      <td>136279389</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-1754</td>
-    </tr>
-    <tr>
-      <th>12715</th>
-      <td>chr9</td>
-      <td>136279339</td>
-      <td>REXO4_136282769_136282918_-</td>
-      <td>rs28627696</td>
-      <td>-3431</td>
-      <td>6.069800e-05</td>
-      <td>-0.259183</td>
-      <td>6.311471e-02</td>
-      <td>6.023555e-02</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136282769</td>
-      <td>136282918</td>
-      <td>136279289</td>
-      <td>136279389</td>
-      <td>101</td>
-      <td>149</td>
-      <td>3430</td>
-    </tr>
-    <tr>
-      <th>12716</th>
-      <td>chr9</td>
-      <td>136279935</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs6597630</td>
-      <td>8179</td>
-      <td>6.482460e-13</td>
-      <td>0.490878</td>
-      <td>4.315411e-08</td>
-      <td>4.118552e-08</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136279885</td>
-      <td>136279985</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-8180</td>
-    </tr>
-    <tr>
-      <th>12717</th>
-      <td>chr9</td>
-      <td>136279935</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs6597630</td>
-      <td>2349</td>
-      <td>5.500400e-09</td>
-      <td>-0.402124</td>
-      <td>5.790350e-05</td>
-      <td>5.526207e-05</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136279885</td>
-      <td>136279985</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-2350</td>
-    </tr>
-    <tr>
-      <th>12718</th>
-      <td>chr9</td>
-      <td>136279935</td>
-      <td>REXO4_136282769_136282918_-</td>
-      <td>rs6597630</td>
-      <td>-2835</td>
-      <td>1.202290e-04</td>
-      <td>-0.247798</td>
-      <td>9.671338e-02</td>
-      <td>9.230153e-02</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136282769</td>
-      <td>136282918</td>
-      <td>136279885</td>
-      <td>136279985</td>
-      <td>101</td>
-      <td>149</td>
-      <td>2834</td>
-    </tr>
-    <tr>
-      <th>12719</th>
-      <td>chr9</td>
-      <td>136280996</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs78554244</td>
-      <td>9240</td>
-      <td>5.742490e-10</td>
-      <td>0.451202</td>
-      <td>8.083995e-06</td>
-      <td>7.715221e-06</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136280946</td>
-      <td>136281046</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-9241</td>
-    </tr>
-    <tr>
-      <th>12720</th>
-      <td>chr9</td>
-      <td>136280996</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs78554244</td>
-      <td>3410</td>
-      <td>1.090700e-08</td>
-      <td>-0.400052</td>
-      <td>9.752302e-05</td>
-      <td>9.307423e-05</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136280946</td>
-      <td>136281046</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-3411</td>
-    </tr>
-    <tr>
-      <th>12721</th>
-      <td>chr9</td>
-      <td>136281416</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs7022611</td>
-      <td>9660</td>
-      <td>1.161380e-12</td>
-      <td>0.496160</td>
-      <td>5.896675e-08</td>
-      <td>5.627681e-08</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281366</td>
-      <td>136281466</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-9661</td>
-    </tr>
-    <tr>
-      <th>12722</th>
-      <td>chr9</td>
-      <td>136281416</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs7022611</td>
-      <td>3830</td>
-      <td>6.582680e-08</td>
-      <td>-0.387073</td>
-      <td>4.360187e-04</td>
-      <td>4.161285e-04</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136281366</td>
-      <td>136281466</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-3831</td>
-    </tr>
-    <tr>
-      <th>12723</th>
-      <td>chr9</td>
-      <td>136281753</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs3118663</td>
-      <td>9997</td>
-      <td>1.899150e-07</td>
-      <td>-0.290183</td>
-      <td>1.011077e-03</td>
-      <td>9.649542e-04</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281703</td>
-      <td>136281803</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-9998</td>
-    </tr>
-    <tr>
-      <th>12724</th>
-      <td>chr9</td>
-      <td>136281917</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs3118664</td>
-      <td>10161</td>
-      <td>5.750200e-07</td>
-      <td>-0.275245</td>
-      <td>2.250657e-03</td>
-      <td>2.147987e-03</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281867</td>
-      <td>136281967</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10162</td>
-    </tr>
-    <tr>
-      <th>12725</th>
-      <td>chr9</td>
-      <td>136281925</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs3124780</td>
-      <td>10169</td>
-      <td>4.938920e-08</td>
-      <td>-0.321761</td>
-      <td>3.467635e-04</td>
-      <td>3.309449e-04</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281875</td>
-      <td>136281975</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10170</td>
-    </tr>
-    <tr>
-      <th>12726</th>
-      <td>chr9</td>
-      <td>136281925</td>
-      <td>REXO4_136282769_136282918_-</td>
-      <td>rs3124780</td>
-      <td>-845</td>
-      <td>4.214130e-05</td>
-      <td>0.205960</td>
-      <td>4.998695e-02</td>
-      <td>4.770665e-02</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136282769</td>
-      <td>136282918</td>
-      <td>136281875</td>
-      <td>136281975</td>
-      <td>101</td>
-      <td>149</td>
-      <td>844</td>
-    </tr>
-    <tr>
-      <th>12727</th>
-      <td>chr9</td>
-      <td>136281925</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs3124780</td>
-      <td>4339</td>
-      <td>1.036430e-04</td>
-      <td>0.229493</td>
-      <td>8.924750e-02</td>
-      <td>8.517622e-02</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136281875</td>
-      <td>136281975</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-4340</td>
-    </tr>
-    <tr>
-      <th>12728</th>
-      <td>chr9</td>
-      <td>136281966</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs3124779</td>
-      <td>10210</td>
-      <td>1.760540e-07</td>
-      <td>-0.287425</td>
-      <td>9.530465e-04</td>
-      <td>9.095706e-04</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136281916</td>
-      <td>136282016</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10211</td>
-    </tr>
-    <tr>
-      <th>12729</th>
-      <td>chr9</td>
-      <td>136282096</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs7038253</td>
-      <td>10340</td>
-      <td>1.009860e-10</td>
-      <td>0.472758</td>
-      <td>1.740803e-06</td>
-      <td>1.661391e-06</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136282046</td>
-      <td>136282146</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10341</td>
-    </tr>
-    <tr>
-      <th>12730</th>
-      <td>chr9</td>
-      <td>136282096</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs7038253</td>
-      <td>4510</td>
-      <td>4.014730e-07</td>
-      <td>-0.372696</td>
-      <td>1.742266e-03</td>
-      <td>1.662787e-03</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136282046</td>
-      <td>136282146</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-4511</td>
-    </tr>
-    <tr>
-      <th>12731</th>
-      <td>chr9</td>
-      <td>136282294</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs7037605</td>
-      <td>10538</td>
-      <td>1.161380e-12</td>
-      <td>0.496160</td>
-      <td>5.896675e-08</td>
-      <td>5.627681e-08</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136282244</td>
-      <td>136282344</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-10539</td>
-    </tr>
-    <tr>
-      <th>12732</th>
-      <td>chr9</td>
-      <td>136282294</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs7037605</td>
-      <td>4708</td>
-      <td>6.582680e-08</td>
-      <td>-0.387073</td>
-      <td>4.360187e-04</td>
-      <td>4.161285e-04</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136282244</td>
-      <td>136282344</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-4709</td>
-    </tr>
-    <tr>
-      <th>12733</th>
-      <td>chr9</td>
-      <td>136284450</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs3124776</td>
-      <td>12694</td>
-      <td>2.575630e-06</td>
-      <td>-0.276950</td>
-      <td>7.028253e-03</td>
-      <td>6.707639e-03</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136284400</td>
-      <td>136284500</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-12695</td>
-    </tr>
-    <tr>
-      <th>12734</th>
-      <td>chr9</td>
-      <td>136285739</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs28488980</td>
-      <td>13983</td>
-      <td>3.777320e-06</td>
-      <td>0.469073</td>
-      <td>9.480473e-03</td>
-      <td>9.047994e-03</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136285689</td>
-      <td>136285789</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-13984</td>
-    </tr>
-    <tr>
-      <th>12735</th>
-      <td>chr9</td>
-      <td>136285739</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs28488980</td>
-      <td>8153</td>
-      <td>1.145450e-05</td>
-      <td>-0.421558</td>
-      <td>2.038000e-02</td>
-      <td>1.945031e-02</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136285689</td>
-      <td>136285789</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-8154</td>
-    </tr>
-    <tr>
-      <th>12736</th>
-      <td>chr9</td>
-      <td>136287934</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs36218242</td>
-      <td>16178</td>
-      <td>4.508480e-05</td>
-      <td>0.474497</td>
-      <td>5.214044e-02</td>
-      <td>4.976190e-02</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136287884</td>
-      <td>136287984</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-16179</td>
-    </tr>
-    <tr>
-      <th>12737</th>
-      <td>chr9</td>
-      <td>136287934</td>
-      <td>SURF4_136233506_136242129_-</td>
-      <td>rs36218242</td>
-      <td>54427</td>
-      <td>5.969810e-05</td>
-      <td>0.408584</td>
-      <td>6.244056e-02</td>
-      <td>5.959215e-02</td>
-      <td>-</td>
-      <td>SURF4</td>
-      <td>136233506</td>
-      <td>136242129</td>
-      <td>136287884</td>
-      <td>136287984</td>
-      <td>101</td>
-      <td>8623</td>
-      <td>-54428</td>
-    </tr>
-    <tr>
-      <th>12738</th>
-      <td>chr9</td>
-      <td>136287934</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs36218242</td>
-      <td>10348</td>
-      <td>7.094900e-05</td>
-      <td>-0.435099</td>
-      <td>6.981798e-02</td>
-      <td>6.663304e-02</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136287884</td>
-      <td>136287984</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-10349</td>
-    </tr>
-    <tr>
-      <th>12739</th>
-      <td>chr9</td>
-      <td>136293308</td>
-      <td>REXO4_136271755_136272054_-</td>
-      <td>rs36219558</td>
-      <td>21552</td>
-      <td>4.508480e-05</td>
-      <td>0.474497</td>
-      <td>5.214044e-02</td>
-      <td>4.976190e-02</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136271755</td>
-      <td>136272054</td>
-      <td>136293258</td>
-      <td>136293358</td>
-      <td>101</td>
-      <td>299</td>
-      <td>-21553</td>
-    </tr>
-    <tr>
-      <th>12740</th>
-      <td>chr9</td>
-      <td>136293308</td>
-      <td>SURF4_136233506_136242129_-</td>
-      <td>rs36219558</td>
-      <td>59801</td>
-      <td>5.969810e-05</td>
-      <td>0.408584</td>
-      <td>6.244056e-02</td>
-      <td>5.959215e-02</td>
-      <td>-</td>
-      <td>SURF4</td>
-      <td>136233506</td>
-      <td>136242129</td>
-      <td>136293258</td>
-      <td>136293358</td>
-      <td>101</td>
-      <td>8623</td>
-      <td>-59802</td>
-    </tr>
-    <tr>
-      <th>12741</th>
-      <td>chr9</td>
-      <td>136293308</td>
-      <td>REXO4_136277585_136280111_-</td>
-      <td>rs36219558</td>
-      <td>15722</td>
-      <td>7.094900e-05</td>
-      <td>-0.435099</td>
-      <td>6.981798e-02</td>
-      <td>6.663304e-02</td>
-      <td>-</td>
-      <td>REXO4</td>
-      <td>136277585</td>
-      <td>136280111</td>
-      <td>136293258</td>
-      <td>136293358</td>
-      <td>101</td>
-      <td>2526</td>
-      <td>-15723</td>
-    </tr>
-    <tr>
-      <th>12742</th>
-      <td>chr9</td>
-      <td>139992479</td>
-      <td>ENTPD2_139942676_139942926_-</td>
-      <td>rs12554429</td>
-      <td>49802</td>
-      <td>6.405520e-05</td>
-      <td>0.428989</td>
-      <td>6.576495e-02</td>
-      <td>6.276490e-02</td>
-      <td>-</td>
-      <td>ENTPD2</td>
-      <td>139942676</td>
-      <td>139942926</td>
-      <td>139992429</td>
-      <td>139992529</td>
-      <td>101</td>
-      <td>250</td>
-      <td>-49803</td>
-    </tr>
-  </tbody>
-</table>
-<p>12743 rows × 18 columns</p>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
-</div>
-
-</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>@<instrument>:<run number>:<flowcell ID>:<lane>:<tile>:<x-pos>:<y-pos> <read>:<is filtered>:<control number>:<sample number></p>
 
 </div>
 </div>
-
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/7d1fdb29d1245d1b3008a469bcd0be6c5224c176/analysis/20180222_m6A_riboSNitch.ipynb"><code>analysis/20180222_m6A_riboSNitch.ipynb</code></a> committed by Min Qiao on Fri Feb 23 17:16:51 2018 <a href="http://github.com/gaow/m6a/commit/7d1fdb29d1245d1b3008a469bcd0be6c5224c176">revision 1, 7d1fdb2</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+
 </div>
 </div>
 </body>

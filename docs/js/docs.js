@@ -1,6 +1,9 @@
-var highlightsArray = []
-var highlightsDict = {"Overview-Fisher-Exact-test-result-1":"20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA"}
-var analysisArray = []
-var analysisDict = {"Fisher-Exact-test-for-m6A-peak-nonpeak-and-RBP-binding-sites-1":"20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak","import-pandas-as-pd-1":"20180222_m6A_riboSNitch"}
+var highlightsArray = ['20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA', '20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak']
+var highlightsDict = {'Overview-Fisher-Exact-test-result-1': '20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA'}
+var highlightsArrayMap = {'20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA': 'Overview Fisher Exact test result'}
+var analysisArray = ['AS_RBP_pipeline', '20180222_m6A_riboSNitch', '20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak']
+var analysisDict = {'Fisher-Exact-test-for-m6A-peak-nonpeak-and-RBP-binding-sites-1': '20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak', 'import-pandas-as-pd-1': '20180222_m6A_riboSNitch', 'Prepare-reference-databases-1': 'AS_RBP_pipeline'}
+var analysisArrayMap = {'20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak': 'Fisher Exact test for m ... inding sites', '20180222_m6A_riboSNitch': 'import pandas as pd', 'AS_RBP_pipeline': 'Prepare reference databases'}
 var writeupArray = []
 var writeupDict = {}
+var writeupArrayMap = {}
