@@ -1,0 +1,663 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs-1.1/textmate.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs-1.1/highlight.js"></script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>M6A</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">M6A</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../highlights.html">Highlights</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/m6a"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="ASE-calling-pipeline">ASE calling pipeline<a class="anchor-link" href="#ASE-calling-pipeline">&#182;</a></h1><p>Mostly based on Yanyu's work in 2017. The pipeline aligns <code>fastq</code> sequences to <code>bam</code> using <code>STAR</code>, then adjust the mapping via <code>WASP</code> to account for allele specificity, and finally call genotype and ASE via <code>QuASAR</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Overview-of-procedure">Overview of procedure<a class="anchor-link" href="#Overview-of-procedure">&#182;</a></h2><ol>
+<li>Gather require resources</li>
+<li>Align reads to genome</li>
+<li>Remove biased reads</li>
+<li>Genotype and ASE calling</li>
+</ol>
+<p>The pipeline is implemented in SoS as displayed in the rest of this SoS notebook. The pipeline can be executed from this notebook directly on local or remote computer. For more information see <a href="https://github.com/vatlab/SOS">SoS website</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Environment-configurations">Environment configurations<a class="anchor-link" href="#Environment-configurations">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/ASE&#39;</span><span class="p">)</span>
+<span class="c1"># Resource files</span>
+<span class="n">resource_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/hg19&quot;</span>
+<span class="n">ref_fa</span> <span class="o">=</span> <span class="s2">&quot;hg19.fa&quot;</span>
+<span class="n">ref_gtf</span> <span class="o">=</span> <span class="s1">&#39;Homo_sapiens.GRCh38.91.gtf.gz&#39;</span>
+<span class="n">wasp_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/WASP&quot;</span>
+<span class="c1"># Sample files</span>
+<span class="n">sample_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/samples&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s1">&#39;ENCLB279NMT&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF824TZM&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF176JNE&#39;</span><span class="p">]})</span>
+<span class="n">fastq</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([[</span><span class="n">f</span><span class="s2">&quot;{sample_dir}/{s}/{q}.fastq.gz&quot;</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">[</span><span class="n">s</span><span class="p">]]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">])</span>
+
+<span class="p">[</span><span class="n">wasp</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{wasp_dir}/README.md&quot;</span>
+<span class="kn">bash:</span> <span class="n">work_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span>
+    <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">bmvdgeijn</span><span class="o">/</span><span class="n">WASP</span>
+
+<span class="p">[</span><span class="n">star</span><span class="p">]</span>
+<span class="c1"># One time deal for all projects, quite time / resource consuming (32GB memory)</span>
+<span class="kn">parameter:</span> <span class="n">ncpu</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
+<span class="kn">bash:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+     <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> \
+        <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">sjdbGTFtagExonParentTranscript</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_gtf</span><span class="p">}</span>
+        <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Resource-preparation">Resource preparation<a class="anchor-link" href="#Resource-preparation">&#182;</a></h2><h3 id="hg19-human-reference-data">hg19 human reference data<a class="anchor-link" href="#hg19-human-reference-data">&#182;</a></h3><p>Obtain <code>hg19.fa</code> and <code>Homo_sapiens.GRCh38.91.gtf.gz</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">hg19_reference_1</span> <span class="p">(</span><span class="n">download</span><span class="p">)]</span>
+<span class="c1"># Download `hg19.2bit` and `twoBitToFa` from {ucsc_url}</span>
+<span class="n">ucsc_url</span> <span class="o">=</span> <span class="s2">&quot;http://hgdownload.cse.ucsc.edu&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/hg19.2bit&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/twoBitToFa&quot;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">resource_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="p">{</span><span class="n">ucsc_url</span><span class="p">}</span><span class="o">/</span><span class="n">goldenPath</span><span class="o">/</span><span class="n">hg19</span><span class="o">/</span><span class="n">bigZips</span><span class="o">/</span><span class="n">hg19</span><span class="o">.</span><span class="mi">2</span><span class="n">bit</span>
+    <span class="p">{</span><span class="n">ucsc_url</span><span class="p">}</span><span class="o">/</span><span class="n">admin</span><span class="o">/</span><span class="n">exe</span><span class="o">/</span><span class="n">linux</span><span class="o">.</span><span class="n">x86_64</span><span class="o">/</span><span class="n">twoBitToFa</span>
+
+<span class="p">[</span><span class="n">hg19_reference_2</span> <span class="p">(</span><span class="n">decompress</span> <span class="n">hg19</span><span class="o">.</span><span class="n">fa</span><span class="p">)]</span>
+<span class="c1"># Use `twoBitToFa` to extract `hg19.fa` from `hg19.2bit`</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/{ref_fa}&quot;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
+    <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+
+<span class="p">[</span><span class="n">hg19_reference_3</span> <span class="p">(</span><span class="n">gene</span> <span class="n">annotations</span><span class="p">)]</span>
+<span class="c1"># Download `Homo_sapiens.GRCh38.91.gtf.gz` from Ensembl</span>
+<span class="c1"># https://useast.ensembl.org/info/data/ftp/index.html</span>
+<span class="n">ensembl_ftp</span> <span class="o">=</span> <span class="s1">&#39;ftp://ftp.ensembl.org/pub/release-91/gtf/homo_sapiens/&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/{ref_gtf}&quot;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">resource_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="p">{</span><span class="n">ensembl_ftp</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_gtf</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Get-samples">Get samples<a class="anchor-link" href="#Get-samples">&#182;</a></h2><p>FIXME: add description -- where do samples come from, etc</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">obtain_samples</span><span class="p">]</span>
+<span class="c1"># Download samples from ENCODE</span>
+<span class="c1"># https://www.encodeproject.org/experiments/ENCSR384KAN/</span>
+<span class="n">encode_url</span> <span class="o">=</span> <span class="s1">&#39;https://www.encodeproject.org/files&#39;</span>
+<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;fastq&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">fastq</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">sample_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="p">{</span><span class="n">encode_url</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">_fastq</span><span class="p">:</span><span class="n">bnn</span><span class="p">}</span><span class="o">/</span><span class="err">@</span><span class="nd">@download</span><span class="o">/</span><span class="p">{</span><span class="n">_fastq</span><span class="p">:</span><span class="n">b</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Alignment">Alignment<a class="anchor-link" href="#Alignment">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_1</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">prefiltering</span> <span class="n">alignment</span><span class="p">)]</span>
+<span class="c1"># Align with STAR</span>
+<span class="c1"># Followd by samtools remove reads with quality less than {qual_cutoff}</span>
+<span class="kn">parameter:</span> <span class="n">qual_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="kn">depend:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="n">fastq</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{sample_dir}/{x}.qual{qual_cutoff}.bam&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">bash:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
+        <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outStd</span> <span class="n">BAM_SortedByCoordinate</span> \
+        <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
+        <span class="o">--</span><span class="n">sjdbGTFtagExonParentTranscript</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_gtf</span><span class="p">}</span> <span class="o">|</span>
+    <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bq</span> <span class="p">{</span><span class="n">qual_cutoff</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+
+<span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">intersecting</span> <span class="n">SNP</span><span class="p">)]</span>
+<span class="c1"># WASP finding unbiased reads intersecting with SNP</span>
+<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;wasp&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name:n}.remap.fq.gz&#39;</span><span class="p">)</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">find_intersecting_snps</span><span class="o">.</span><span class="n">py</span> \
+        <span class="o">--</span><span class="n">snp_dir</span> <span class="n">FIXME</span> <span class="o">--</span><span class="n">is_sorted</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
+
+<span class="p">[</span><span class="n">align_3</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">prefiltering</span> <span class="n">alignement</span><span class="p">)]</span>
+<span class="c1"># Align WASP remap with STAR</span>
+<span class="c1"># Followd by samtools remove reads with quality less than {qual_cutoff}</span>
+<span class="kn">parameter:</span> <span class="n">qual_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.remap.fq.gz&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name}.wasp.qual{qual_cutoff}.bam&#39;</span><span class="p">)</span>
+<span class="kn">bash:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">readFilesCommand</span> <span class="n">zcat</span> \
+        <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outStd</span> <span class="n">BAM_SortedByCoordinate</span> \
+        <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
+        <span class="o">--</span><span class="n">sjdbGTFtagExonParentTranscript</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_gtf</span><span class="p">}</span> <span class="o">|</span>
+    <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bq</span> <span class="p">{</span><span class="n">qual_cutoff</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">infile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">list_of_snps</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">nthreads</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">genesymbol</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="n">genome_folder</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">wasp_path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+<span class="n">prefix</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+<span class="n">log_idx</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>
+<span class="n">logfilename</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prefix</span><span class="p">,</span> <span class="n">log_idx</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">])</span> 
+<span class="n">logfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;fastq2bam.&#39;</span> <span class="o">+</span> <span class="n">logfilename</span> <span class="o">+</span> <span class="s1">&#39; is generated&#39;</span><span class="p">)</span>
+<span class="n">logfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;The index is &#39;</span> <span class="o">+</span> <span class="n">log_idx</span><span class="p">)</span>
+<span class="n">logfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mkdir &#39;</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_align1&#39;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+<span class="c1"># ############################################################</span>
+<span class="c1"># #START# STAR pre-filtering alignment #START#</span>
+<span class="c1"># # input/output:</span>
+<span class="c1"># working_folder1 = prefix + &#39;_align1&#39;</span>
+<span class="c1"># inputfile = infile</span>
+<span class="c1"># outputfile = os.sep.join([working_folder1, &#39;Aligned.sortedByCoord.out.bam&#39;])</span>
+<span class="c1"># ###</span>
+<span class="c1"># # cmd:</span>
+<span class="c1"># cmd = &#39;STAR --runThreadN &#39; + nthreads + &#39; \</span>
+<span class="c1"># --genomeDir &#39; + genome_folder + &#39; \</span>
+<span class="c1"># --readFilesIn &#39; + inputfile + &#39; \</span>
+<span class="c1"># --readFilesCommand bzcat \</span>
+<span class="c1"># --outFileNamePrefix &#39; + working_folder1 + &#39;/ \</span>
+<span class="c1"># --outSAMtype BAM SortedByCoordinate \</span>
+<span class="c1"># --sjdbGTFtagExonParentTranscript &#39; + genesymbol + &#39; \</span>
+<span class="c1"># &gt; &#39; + outputfile + &#39;.out&#39;</span>
+<span class="c1"># ###</span>
+<span class="c1"># # run cmd</span>
+<span class="c1"># do_and_report(cmd, logfilename, &#39;STAR-align-prefiltering&#39;)</span>
+<span class="c1"># ###</span>
+<span class="c1"># # post step: release memory</span>
+<span class="c1">#  # cmd = &#39;STAR --genomeLoad Remove&#39;</span>
+<span class="c1"># # do_and_report(cmd, logfilename, &#39;STAR-align-releasing-memory&#39;)</span>
+<span class="c1"># ###</span>
+<span class="c1"># #END# STAR pre-filtering alignment #END#</span>
+<span class="c1">############################################################</span>
+
+
+<span class="c1"># ############################################################</span>
+<span class="c1"># #START# samtools removing reads with quuality less than 10 #START#</span>
+<span class="c1"># # input/output:</span>
+<span class="c1"># inputfile = outputfile</span>
+<span class="c1"># outputfile = os.sep.join([working_folder1, &#39;Aligned.sortedByCoord.out.filtered-quality-10.bam&#39;])</span>
+<span class="c1"># ###</span>
+<span class="c1"># # cmd:</span>
+<span class="c1"># cmd = &#39;samtools view -bq 10 &#39; + inputfile + &#39; &gt; &#39; + outputfile # here the quality is hard coded as 10</span>
+<span class="c1"># ###</span>
+<span class="c1"># # run cmd:</span>
+<span class="c1"># do_and_report(cmd, logfilename, &#39;samtools-filter-quality-less-than-10&#39;)</span>
+<span class="c1"># ###</span>
+<span class="c1"># #END# STAR pre-filtering alignment #END#</span>
+<span class="c1">############################################################</span>
+
+
+<span class="c1">############################################################</span>
+<span class="c1">#START# WASP finding unbiased reads intersecting with SNP #START#</span>
+<span class="c1"># # input/output:</span>
+<span class="c1"># inputfile = outputfile</span>
+<span class="c1"># temp = inputfile.split(&#39;.&#39;)</span>
+<span class="c1"># wasp_name = basename(inputfile)</span>
+<span class="c1"># wasp_name = wasp_name.split(&#39;.&#39;)</span>
+<span class="c1"># wasp_name = &#39;.&#39;.join(wasp_name[ : -1])</span>
+<span class="c1"># outputfile = &#39;.&#39;.join(temp[ : -1] + [&#39;remap.fq.gz&#39;])</span>
+<span class="c1"># ###</span>
+<span class="c1"># # cmd:</span>
+<span class="c1"># cmd = &#39;python-conda &#39; + wasp_path + &#39;/find_intersecting_snps.py \</span>
+<span class="c1"># --snp_dir &#39; + list_of_snps + &#39; \</span>
+<span class="c1"># --is_sorted &#39;\</span>
+<span class="c1"># + inputfile</span>
+<span class="c1"># ###</span>
+<span class="c1"># # run cmd:</span>
+<span class="c1"># do_and_report(cmd, logfilename, &#39;WASP-intersect-without-bias&#39;)</span>
+<span class="c1">###</span>
+<span class="c1">#END# WASP finding unbiased reads intersecting with SNP #END#</span>
+<span class="c1">############################################################</span>
+
+<span class="c1"># cmd = &#39;mkdir &#39; + outputfile + &#39;_align2&#39;</span>
+<span class="c1"># os.system(cmd)</span>
+
+<span class="c1">############################################################</span>
+<span class="c1"># #START# STAR post-filtering alignment #START#</span>
+<span class="c1"># # input/output:</span>
+<span class="c1"># working_folder2 = outputfile + &#39;_align2&#39;</span>
+<span class="c1"># inputfile = outputfile</span>
+<span class="c1"># outputfile = os.sep.join([working_folder2, &#39;Aligned.sortedByCoord.out.bam&#39;])</span>
+<span class="c1"># ###</span>
+<span class="c1"># # cmd:</span>
+<span class="c1"># cmd = &#39;STAR --runThreadN &#39; + nthreads + &#39; \</span>
+<span class="c1"># --genomeDir &#39; + genome_folder + &#39; \</span>
+<span class="c1"># --readFilesIn &#39; + inputfile + &#39; \</span>
+<span class="c1"># --readFilesCommand zcat \</span>
+<span class="c1"># --outFileNamePrefix &#39; + working_folder2 + &#39;/ \</span>
+<span class="c1"># --outSAMtype BAM SortedByCoordinate \</span>
+<span class="c1"># --sjdbGTFtagExonParentTranscript &#39; + genesymbol + &#39; \</span>
+<span class="c1"># &gt; &#39; + outputfile + &#39;.out&#39;</span>
+<span class="c1"># ###</span>
+<span class="c1"># # run cmd:</span>
+<span class="c1"># do_and_report(cmd, logfilename, &#39;STAR-align-postfiltering&#39;)</span>
+<span class="c1"># ###</span>
+<span class="c1"># # post step: release memory</span>
+<span class="c1"># # cmd = &#39;STAR --genomeLoad Remove&#39;</span>
+<span class="c1"># # do_and_report(cmd, logfilename, &#39;STAR-align-releasing-memory&#39;)</span>
+<span class="c1"># ###</span>
+<span class="c1"># #END# STAR post-filtering alignment #END#</span>
+<span class="c1"># ############################################################</span>
+
+
+<span class="c1"># ############################################################</span>
+<span class="c1"># #START# samtools removing reads with quuality less than 10 #START#</span>
+<span class="c1"># # input/output:</span>
+<span class="c1"># inputfile = outputfile</span>
+<span class="c1"># outputfile = os.sep.join([working_folder2, &#39;Aligned.sortedByCoord.out.filtered-quality-10.bam&#39;])</span>
+<span class="c1"># ###</span>
+<span class="c1"># # cmd:</span>
+<span class="c1"># cmd = &#39;samtools view -bq 10 &#39; + inputfile + &#39; &gt; &#39; + outputfile # here the quality is hard coded as 10</span>
+<span class="c1"># ###</span>
+<span class="c1"># # run cmd:</span>
+<span class="c1"># do_and_report(cmd, logfilename, &#39;samtools-filter-quality-less-than-10&#39;)</span>
+<span class="c1"># ###</span>
+<span class="c1"># #END# STAR pre-filtering alignment #END#</span>
+<span class="c1"># ############################################################</span>
+
+
+<span class="c1">############################################################</span>
+<span class="c1">#START# WASP removing ambiguously mapped reads #START#</span>
+<span class="c1"># input/output:</span>
+<span class="n">inputfile_to_remap</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.to.remap.bam&#39;</span><span class="p">])</span>
+<span class="n">inputfile_keep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.keep_remapped.bam&#39;</span><span class="p">])</span>
+<span class="n">inputfile_remap</span> <span class="o">=</span> <span class="n">outputfile</span>
+<span class="n">temp</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<span class="n">outputfile</span> <span class="o">=</span> <span class="n">inputfile_keep</span>
+<span class="c1">###</span>
+<span class="c1"># cmd:</span>
+<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;python-conda &#39;</span> <span class="o">+</span> <span class="n">wasp_path</span> <span class="o">+</span> <span class="s1">&#39;/filter_remapped_reads.py &#39;</span>\
+<span class="o">+</span> <span class="n">inputfile_to_remap</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
+<span class="o">+</span> <span class="n">inputfile_remap</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
+<span class="o">+</span> <span class="n">inputfile_keep</span>
+<span class="c1">###</span>
+<span class="c1"># run cmd:</span>
+<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;WASP-remove-ambiguous-reads&#39;</span><span class="p">)</span>
+<span class="c1">###</span>
+<span class="c1">#END# WASP removing ambiguously mapped reads #END#</span>
+<span class="c1">############################################################</span>
+
+
+<span class="c1">############################################################</span>
+<span class="c1">#START# samtools merging kept reads #START#</span>
+<span class="c1"># input/output:</span>
+<span class="n">inputfile1</span> <span class="o">=</span> <span class="n">outputfile</span>
+<span class="n">inputfile2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.keep.bam&#39;</span><span class="p">])</span>
+<span class="n">temp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.merged_keep.bam&#39;</span><span class="p">])</span>
+<span class="n">outputfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.merged_keep.sorted.bam&#39;</span><span class="p">])</span>
+<span class="c1">###</span>
+<span class="c1"># cmd:</span>
+<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;samtools merge &#39;</span>\
+<span class="o">+</span> <span class="n">temp</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
+<span class="o">+</span> <span class="n">inputfile1</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
+<span class="o">+</span> <span class="n">inputfile2</span>
+<span class="c1">###</span>
+<span class="c1"># run cmd:</span>
+<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;samtools-merge-unbiased-reads&#39;</span><span class="p">)</span>
+<span class="c1">###</span>
+<span class="c1"># post step:</span>
+<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;samtools sort -o &#39;</span>\
+<span class="o">+</span> <span class="n">outputfile</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
+<span class="o">+</span> <span class="n">temp</span>
+<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;samtools-merge-unbiased-reads-sort&#39;</span><span class="p">)</span>
+<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;samtools index &#39;</span>\
+<span class="o">+</span> <span class="n">outputfile</span>
+<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;samtools-merge-unbiased-reads-index&#39;</span><span class="p">)</span>
+<span class="c1">#END# samtools merging kept reads #END#</span>
+<span class="c1">############################################################</span>
+
+
+<span class="c1">############################################################</span>
+<span class="c1">#START# WASP removing duplicated reads randomly #START#</span>
+<span class="c1"># input/output:</span>
+<span class="n">inputfile</span> <span class="o">=</span> <span class="n">outputfile</span>
+<span class="n">outputfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="s1">&#39;final.bam&#39;</span><span class="p">])</span>
+<span class="c1">###</span>
+<span class="c1"># cmd:</span>
+<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;python-conda &#39;</span> <span class="o">+</span> <span class="n">wasp_path</span> <span class="o">+</span> <span class="s1">&#39;/rmdup.py &#39;</span>\
+<span class="o">+</span> <span class="n">inputfile</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
+<span class="o">+</span> <span class="n">outputfile</span>
+<span class="c1">###</span>
+<span class="c1"># run cmd:</span>
+<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;WASP-remove-duplicated-reads&#39;</span><span class="p">)</span>
+<span class="c1">###</span>
+<span class="c1">#END# WASP removing duplicated reads randomly #END#</span>
+<span class="c1">############################################################</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<hr>
+&copy 2018 Min Qiao at He Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/5be2052473f3253e90a37e1e35e6e746157563ae/analysis/20170311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20170311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Gao Wang on Sun Mar 11 22:23:43 2018 <a href="http://github.com/gaow/m6a/commit/5be2052473f3253e90a37e1e35e6e746157563ae">revision 1, 5be2052</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
