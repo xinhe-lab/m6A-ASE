@@ -1,9 +1,9 @@
 var highlightsArray = ['20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA', '20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak']
 var highlightsDict = {'Overview-Fisher-Exact-test-result-1': '20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA'}
 var highlightsArrayMap = {'20180214_FisherExactTest_m6A_peak-nonpeak_RBP-miRNA': 'Overview Fisher Exact test result'}
-var analysisArray = ['20180222_m6A_riboSNitch', '20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak', '20170311_ASE_Calling_WASP_QuASAR']
-var analysisDict = {'ASE-calling-pipeline-1': '20170311_ASE_Calling_WASP_QuASAR', 'Fisher-Exact-test-for-m6A-peak-nonpeak-and-RBP-binding-sites-1': '20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak', 'import-pandas-as-pd-1': '20180222_m6A_riboSNitch'}
-var analysisArrayMap = {'20170311_ASE_Calling_WASP_QuASAR': 'ASE calling pipeline', '20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak': 'Fisher Exact test for m ... inding sites', '20180222_m6A_riboSNitch': 'import pandas as pd'}
+var analysisArray = ['20180222_m6A_riboSNitch', '20180212_Enrichment_annalysis_m6A_peak_with_RBP_or_miRNA', '20170311_ASE_Calling_WASP_QuASAR']
+var analysisDict = {'ASE-calling-pipeline-1': '20170311_ASE_Calling_WASP_QuASAR', 'Enrichment-analysis-for-m6A-peak-with-1': '20180212_Enrichment_annalysis_m6A_peak_with_RBP_or_miRNA', 'import-pandas-as-pd-1': '20180222_m6A_riboSNitch'}
+var analysisArrayMap = {'20170311_ASE_Calling_WASP_QuASAR': 'ASE calling pipeline', '20180212_Enrichment_annalysis_m6A_peak_with_RBP_or_miRNA': 'Enrichment analysis for m6A peak with', '20180222_m6A_riboSNitch': 'import pandas as pd'}
 var writeupArray = []
 var writeupDict = {}
 var writeupArrayMap = {}
