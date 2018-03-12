@@ -244,23 +244,15 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Fisher-Exact-test-for-m6A-peak/nonpeak-and-RBP-binding-sites">Fisher Exact test for m6A peak/nonpeak and RBP binding sites<a class="anchor-link" href="#Fisher-Exact-test-for-m6A-peak/nonpeak-and-RBP-binding-sites">&#182;</a></h1><p>Data on <a href="https://github.com/gaow/m6A/blob/master/writeup/Private_Links.md">cloud drive</a></p>
-<h4 id="Use-merged/unmerged-m6A-peak-and-unmerged-nonpeak,-obtain-their-intersections-with-RBP-binding-sites-respectively.">Use merged/unmerged m6A peak and unmerged nonpeak, obtain their intersections with RBP binding sites respectively.<a class="anchor-link" href="#Use-merged/unmerged-m6A-peak-and-unmerged-nonpeak,-obtain-their-intersections-with-RBP-binding-sites-respectively.">&#182;</a></h4><h4 id="Perform-Fisher's-exact-test-for-each-RBP:">Perform Fisher's exact test for each RBP:<a class="anchor-link" href="#Perform-Fisher's-exact-test-for-each-RBP:">&#182;</a></h4><ol>
-<li>the number of intersection with m6A peaks</li>
-<li>the total number of intersection with peaks minus (1)</li>
-<li>the number of intersection with nonpeaks</li>
-<li>the total number of intersection with nonpeaks minus (3)</li>
-</ol>
-<h4 id="Check-the-test-statistics-for-potential-m6A-binding-proteins-(YTHDF,-HNRNP,-FMRP,-IGF2BP,-G3BP)">Check the test statistics for potential m6A binding proteins (YTHDF, HNRNP, FMRP, IGF2BP, G3BP)<a class="anchor-link" href="#Check-the-test-statistics-for-potential-m6A-binding-proteins-(YTHDF,-HNRNP,-FMRP,-IGF2BP,-G3BP)">&#182;</a></h4><p>There are no RBPs that contains keywords "YTHDF" or "G3BP". Only "HNRNP", "FMR1" and "IGF2BP" are found, including 'IGF2BP3', 'HNRNPUL1', 'HNRNPA1', 'HNRNPM', 'IGF2BP1', 'FMR1', 'HNRNPK', 'HNRNPU', 'IGF2BP2', 'HNRNPC'.</p>
-<h4 id="Perform-Fisher's-exact-test-for-each-microRNA">Perform Fisher's exact test for each microRNA<a class="anchor-link" href="#Perform-Fisher's-exact-test-for-each-microRNA">&#182;</a></h4><p>microRNA blockCount can be 1 or 2. If blockCount is 2, blockSize and blockStarts contain two numbers, binding sites in one block are not continuous.</p>
-<p>For rows whose blockCount is 2, split the row into two rows according to blockSize and blockStarts.</p>
+<h1 id="Enrichment-analysis-for-m6A-peak-with">Enrichment analysis for m6A peak with<a class="anchor-link" href="#Enrichment-analysis-for-m6A-peak-with">&#182;</a></h1><p>Fisher Exact test for m6A peak and RBP binding sites / microRNA.</p>
+<p>Data on <a href="https://github.com/gaow/m6A/blob/master/writeup/Private_Links.md">cloud drive</a></p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -271,7 +263,19 @@ body {
 <span class="kn">from</span> <span class="nn">fisher</span> <span class="k">import</span> <span class="n">pvalue</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/Documents/m6A/&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/Documents/m6A/&quot;</span><span class="p">)</span>
 <span class="n">input_m6A_peak</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/unmerged_peaks_metApeak.bed&quot;</span>
 <span class="n">input_m6A_peak_merged</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/joint_merged_peaks_counts.xlsx&quot;</span>
 <span class="n">input_m6A_nonpeak</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/metApeakFisher/unmerged_nonpeaks_metApeak.bed&quot;</span>
@@ -326,10 +330,21 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Merged-m6A-peaks">Merged m6A peaks<a class="anchor-link" href="#Merged-m6A-peaks">&#182;</a></h3><ol>
-<li>First convert excel to bed, and export bed file. Only need to do it once. bed file must be tab separated, false index, column "chr" rename to "# chr".</li>
-<li>Then sort it and use bedtools to obtain intersect with RBP in bash.</li>
-</ol>
+<h2 id="Step-1:-Data-preprocess">Step 1: Data preprocess<a class="anchor-link" href="#Step-1:-Data-preprocess">&#182;</a></h2><p>Prepare and export bed file; load m6A peak/nonpeak and RBP binding datasets; check data quality before using.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Prepare-m6A-peak/nonpeak-data.">Prepare m6A peak/nonpeak data.<a class="anchor-link" href="#Prepare-m6A-peak/nonpeak-data.">&#182;</a></h3><h4 id="Export-merged-m6A-peaks-bed-file">Export merged m6A peaks bed file<a class="anchor-link" href="#Export-merged-m6A-peaks-bed-file">&#182;</a></h4><ul>
+<li><p>In order to use <code>bedtools</code> to obtain intersection of RBP and m6A peak, first we need to convert the original merged m6A peak, which is an excel, to bed file, then export.</p>
+</li>
+<li><p>Only need to do it once. bed file must be tab separated, false index, column "chr" rename to "# chr".</p>
+</li>
+</ul>
 
 </div>
 </div>
@@ -353,7 +368,7 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Unmerged-m6A-peaks-and-nonpeaks">Unmerged m6A peaks and nonpeaks<a class="anchor-link" href="#Unmerged-m6A-peaks-and-nonpeaks">&#182;</a></h3>
+<h4 id="Load-unmerged-m6A-peaks-and-unmerged-nonpeaks">Load unmerged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Load-unmerged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -424,7 +439,7 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="RBP-binding-sites">RBP binding sites<a class="anchor-link" href="#RBP-binding-sites">&#182;</a></h3>
+<h3 id="Prepare-and-filter-RBP-binding-sites-by-widths">Prepare and filter RBP binding sites by widths<a class="anchor-link" href="#Prepare-and-filter-RBP-binding-sites-by-widths">&#182;</a></h3><h4 id="Load-RBP-binding-sites-and-remove-RBP-binding-sites-less-than-200-bps,-then-display-all-RBPs-after-it.">Load RBP binding sites and remove RBP binding sites less than 200 bps, then display all RBPs after it.<a class="anchor-link" href="#Load-RBP-binding-sites-and-remove-RBP-binding-sites-less-than-200-bps,-then-display-all-RBPs-after-it.">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -464,6 +479,15 @@ body {
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Display-histogram-of-RBP-binding-sites-widths.">Display histogram of RBP binding sites widths.<a class="anchor-link" href="#Display-histogram-of-RBP-binding-sites-widths.">&#182;</a></h4><p>Binding widths concentrate around 30 bps.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -507,13 +531,18 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Use-&quot;bedtools&quot;-in-bash-under-the-depository">Use "bedtools" in bash under the depository<a class="anchor-link" href="#Use-&quot;bedtools&quot;-in-bash-under-the-depository">&#182;</a></h3><p><code>~/Documents/m6A/Data/metApeakFisher</code></p>
+<h2 id="Step-2:-Obtain-intersection-of-m6A-peak-and-RBP">Step 2: Obtain intersection of m6A peak and RBP<a class="anchor-link" href="#Step-2:-Obtain-intersection-of-m6A-peak-and-RBP">&#182;</a></h2><p>For merged/unmerged m6A peak and unmerged nonpeak, obtain their intersections with RBP binding sites respectively.</p>
+<p>Use <code>bedtools</code> in bash under the depository <code>~/Documents/m6A/Data/metApeakFisher</code>.</p>
+<h3 id="Unmerged-m6A-peak/nonpeak">Unmerged m6A peak/nonpeak<a class="anchor-link" href="#Unmerged-m6A-peak/nonpeak">&#182;</a></h3><p>First Sort each m6A peak/nonpeak bed file.</p>
 
 <pre><code>sort -k1,1 -k2,2n unmerged_peaks_metApeak.bed &gt; peaks.bed
-sort -k1,1 -k2,2n unmerged_nonpeaks_metApeak.bed &gt; nonpeaks.bed
-bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.bed -s &gt; peak.intersect.RBP.bed
+sort -k1,1 -k2,2n unmerged_nonpeaks_metApeak.bed &gt; nonpeaks.bed</code></pre>
+<p>Then use <code>bedtools</code> to obtain intersection of m6A and RBP.</p>
+
+<pre><code>bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.bed -s &gt; peak.intersect.RBP.bed
 bedtools intersect -a ../all.RBP.intersect.hg19.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.RBP.bed</code></pre>
-<h4 id="First-sort-merged-peaks,-then-use-the-sorted-to-obtain-intersection-with-RBP-directly">First sort merged peaks, then use the sorted to obtain intersection with RBP directly<a class="anchor-link" href="#First-sort-merged-peaks,-then-use-the-sorted-to-obtain-intersection-with-RBP-directly">&#182;</a></h4>
+<h3 id="Merged-m6A-peak">Merged m6A peak<a class="anchor-link" href="#Merged-m6A-peak">&#182;</a></h3><p>Since we do not have merged m6A nonpeak data, we use unmerged nonpeak instead (already sort and get intersection above).</p>
+
 <pre><code>sort -k1,1 -k2,2n joint_merged_peaks_counts.bed &gt; peaks.merged.bed
 bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; peak.merged.intersect.RBP.bed</code></pre>
 
@@ -524,7 +553,15 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Obtain-Fisher's-exact-test-statistics">Obtain Fisher's exact test statistics<a class="anchor-link" href="#Obtain-Fisher's-exact-test-statistics">&#182;</a></h3>
+<h2 id="Step-3:-Enrichment-analysis-for-m6A-and-RBP">Step 3: Enrichment analysis for m6A and RBP<a class="anchor-link" href="#Step-3:-Enrichment-analysis-for-m6A-and-RBP">&#182;</a></h2><p>Perform Fisher's exact test for each RBP binding site.</p>
+<p>For each RBP, we need to obtain the four following numbers before Fisher's test:</p>
+<ol>
+<li>its number of intersections with m6A peaks</li>
+<li>the total number of intersections for all RBPs with m6A peaks minus (1)</li>
+<li>its number of intersections with m6A nonpeaks</li>
+<li>the total number of intersections for all RBPs with m6A nonpeaks minus (3)</li>
+</ol>
+
 </div>
 </div>
 </div>
@@ -618,8 +655,8 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Potential m6A binding proteins include "YTHDF", "HNRNP", "FMR1", "IGF2BP" and "G3BP".</p>
-<p>The RBP binding sites data do not include "YTHDF" or "G3BP", only include "HNRNP", "FMR1" and "IGF2BP".</p>
+<h3 id="potential-m6A-binding-proteins">potential m6A binding proteins<a class="anchor-link" href="#potential-m6A-binding-proteins">&#182;</a></h3><p>Check the test statistics for potential m6A binding proteins (RBPs contain keywords "YTHDF", "HNRNP", "FMRP", "IGF2BP" or "G3BP").</p>
+<p>There are no RBPs that contains keywords "YTHDF" or "G3BP". Only "HNRNP", "FMR1" and "IGF2BP" are found, including 'IGF2BP3', 'HNRNPUL1', 'HNRNPA1', 'HNRNPM', 'IGF2BP1', 'FMR1', 'HNRNPK', 'HNRNPU', 'IGF2BP2', 'HNRNPC'.</p>
 
 </div>
 </div>
@@ -665,7 +702,7 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Fisher-test-statistics-of-RBP-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of RBP binding sites with merged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-RBP-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h4>
+<h3 id="Fisher-test-statistics-of-RBP-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of RBP binding sites with merged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-RBP-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -1342,13 +1379,20 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Test-statistics-of-potential-m6A-binding-proteins-(merged-m6A-peaks-and-unmerged-nonpeaks)">Test statistics of potential m6A binding proteins (merged m6A peaks and unmerged nonpeaks)<a class="anchor-link" href="#Test-statistics-of-potential-m6A-binding-proteins-(merged-m6A-peaks-and-unmerged-nonpeaks)">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># test statistics of potential m6A binding proteins (merged m6A peaks and unmerged nonpeaks)</span>
-<span class="n">fisher_peak_merge</span><span class="p">[</span><span class="n">fisher_peak_merge</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">RBPs_potential</span><span class="p">)]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fisher_peak_merge</span><span class="p">[</span><span class="n">fisher_peak_merge</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">RBPs_potential</span><span class="p">)]</span>
 </pre></div>
 
 </div>
@@ -1509,7 +1553,7 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Fisher-test-statistics-of-RBP-binding-sites-unmerged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of RBP binding sites unmerged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-RBP-binding-sites-unmerged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h4>
+<h3 id="Test-statistics-of-potential-m6A-binding-proteins-(unmerged-m6A-peaks-and-unmerged-nonpeaks)">Test statistics of potential m6A binding proteins (unmerged m6A peaks and unmerged nonpeaks)<a class="anchor-link" href="#Test-statistics-of-potential-m6A-binding-proteins-(unmerged-m6A-peaks-and-unmerged-nonpeaks)">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -1518,8 +1562,7 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># test statistics of potential m6A binding proteins (unmerged m6A peaks and unmerged nonpeaks)</span>
-<span class="n">fisher_peak_unmerge</span><span class="p">[</span><span class="n">fisher_peak_unmerge</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">RBPs_potential</span><span class="p">)]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fisher_peak_unmerge</span><span class="p">[</span><span class="n">fisher_peak_unmerge</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">RBPs_potential</span><span class="p">)]</span>
 </pre></div>
 
 </div>
@@ -1680,7 +1723,8 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="microRNA:-Fisher's-exact-test-statistics-for-miRNA">microRNA: Fisher's exact test statistics for miRNA<a class="anchor-link" href="#microRNA:-Fisher's-exact-test-statistics-for-miRNA">&#182;</a></h3>
+<h2 id="Step-4:-Enrichment-analysis-for-m6A-and-miRNA">Step 4: Enrichment analysis for m6A and miRNA<a class="anchor-link" href="#Step-4:-Enrichment-analysis-for-m6A-and-miRNA">&#182;</a></h2><p>Perform Fisher's exact test for each microRNA.</p>
+
 </div>
 </div>
 </div>
@@ -1703,7 +1747,7 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>There are 55 microRNAs included in dataset.</p>
-<p>Binding sites in one block are not always unique.</p>
+<p>Binding sites in one block are not always single. For example, "6,1" and "2,5" also exists in "blockSize".</p>
 
 </div>
 </div>
@@ -1746,7 +1790,9 @@ Counter({&#39;7&#39;: 19242, &#39;8&#39;: 9695, &#39;6,1&#39;: 10, &#39;1,6&#39;
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Split-rows-with-two-blockSize/blockStart,-to-set-blockCount-to-1-for-every-row.">Split rows with two blockSize/blockStart, to set blockCount to 1 for every row.<a class="anchor-link" href="#Split-rows-with-two-blockSize/blockStart,-to-set-blockCount-to-1-for-every-row.">&#182;</a></h4><ol>
+<p>microRNA blockCount can be 1 or 2. If blockCount is 2, blockSize and blockStarts contain two numbers, binding sites in one block are not continuous.</p>
+<p>For rows whose blockCount is 2, split the row into two rows according to blockSize and blockStarts.</p>
+<ol>
 <li>For rows with 2-blockstart sites, split blockSize and blockStarts into two rows.</li>
 <li>"start": original start + interval betweem two blockstart sites</li>
 <li>"end": start from last step + blockSize</li>
@@ -1810,6 +1856,15 @@ Counter({&#39;7&#39;: 19242, &#39;8&#39;: 9695, &#39;6,1&#39;: 10, &#39;1,6&#39;
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>An example of splitting a row with two blockSize/blockStarts into two rows.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1916,7 +1971,8 @@ Counter({&#39;7&#39;: 19242, &#39;8&#39;: 9695, &#39;6,1&#39;: 10, &#39;1,6&#39;
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Export-bed-file-of-unique-block-start-and-end-in-each-row">Export bed file of unique block start and end in each row<a class="anchor-link" href="#Export-bed-file-of-unique-block-start-and-end-in-each-row">&#182;</a></h4>
+<p>Export bed file of unique block start and end in each row</p>
+
 </div>
 </div>
 </div>
@@ -1938,11 +1994,21 @@ Counter({&#39;7&#39;: 19242, &#39;8&#39;: 9695, &#39;6,1&#39;: 10, &#39;1,6&#39;
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Use-bedtools-to-obtain-intersect-of-peak/nonpeak-with-miRNA">Use bedtools to obtain intersect of peak/nonpeak with miRNA<a class="anchor-link" href="#Use-bedtools-to-obtain-intersect-of-peak/nonpeak-with-miRNA">&#182;</a></h3><p><code>~/Documents/m6A/Data/metApeakFisher</code></p>
+<h2 id="Obtain-intersection-of-m6A-peak-and-miRNA">Obtain intersection of m6A peak and miRNA<a class="anchor-link" href="#Obtain-intersection-of-m6A-peak-and-miRNA">&#182;</a></h2><p>Use <code>bedtools</code> to obtain intersect of peak/nonpeak with miRNA under the folder
+<code>~/Documents/m6A/Data/metApeakFisher</code></p>
 
 <pre><code>bedtools intersect -a ../miRNA.bed -b peaks.bed -s &gt; peak.intersect.miRNA.bed
 bedtools intersect -a ../miRNA.bed -b peaks.merged.bed -s &gt; peak.merged.intersect.miRNA.bed
 bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miRNA.bed</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Load data of intersections of m6A peak and miRNA.</p>
 
 </div>
 </div>
@@ -1963,14 +2029,6 @@ bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miR
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Fisher-test-statistics-of-microRNA-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of microRNA binding sites with merged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-microRNA-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h4>
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -2589,7 +2647,7 @@ bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miR
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Fisher test statistics (p&lt;0.05) of microRNA binding sites with merged m6A peaks and unmerged nonpeaks.</p>
+<h3 id="Fisher-test-statistics-of-microRNA-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of microRNA binding sites with merged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-microRNA-binding-sites-with-merged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h3><p>Select those miRNA with p-value less than 0.05.</p>
 
 </div>
 </div>
@@ -2910,7 +2968,8 @@ bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miR
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Fisher-test-statistics-of-microRNA-binding-sites-with-unmerged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of microRNA binding sites with unmerged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-microRNA-binding-sites-with-unmerged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h4>
+<h3 id="Fisher-test-statistics-of-microRNA-binding-sites-with-unmerged-m6A-peaks-and-unmerged-nonpeaks">Fisher test statistics of microRNA binding sites with unmerged m6A peaks and unmerged nonpeaks<a class="anchor-link" href="#Fisher-test-statistics-of-microRNA-binding-sites-with-unmerged-m6A-peaks-and-unmerged-nonpeaks">&#182;</a></h3><p>All miRNA and those whose p-value less than 0.05.</p>
+
 </div>
 </div>
 </div>
@@ -3526,15 +3585,6 @@ bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miR
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Fisher test statistics (p&lt;0.05) of microRNA binding sites with unmerged m6A peaks and unmerged nonpeaks.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[30]:</div>
@@ -3819,7 +3869,7 @@ bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miR
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/caca61fcab8be02460bcfa8e02cfa7a554498ede/analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.ipynb"><code>analysis/20180212_Fisher_2by2_RBP-miRNA_with_m6A_peak-nonpeak.ipynb</code></a> committed by Min Qiao on Thu Feb 15 17:49:57 2018 <a href="http://github.com/gaow/m6a/commit/caca61fcab8be02460bcfa8e02cfa7a554498ede">revision 6, caca61f</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/b6c5cf3024a05cb9e352ab2c3551f979c754ba19/analysis/20180212_Enrichment_annalysis_m6A_peak_with_RBP_or_miRNA.ipynb"><code>analysis/20180212_Enrichment_annalysis_m6A_peak_with_RBP_or_miRNA.ipynb</code></a> committed by Min Qiao on Mon Mar 12 01:21:41 2018 <a href="http://github.com/gaow/m6a/commit/b6c5cf3024a05cb9e352ab2c3551f979c754ba19">revision 1, b6c5cf3</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
