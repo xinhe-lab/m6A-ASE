@@ -370,16 +370,18 @@ sos run nb.ipynb quasar</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">wasp</span><span class="p">]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">wasp</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{wasp_dir}/README.md&quot;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="p">[]</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{wasp_dir}/README.md&quot;</span>
 <span class="kn">download:</span> <span class="n">decompress</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">dest_file</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/WASP.zip&#39;</span>
     <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">bmvdgeijn</span><span class="o">/</span><span class="n">WASP</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">zip</span>
 <span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="p">{</span><span class="n">cwd</span><span class="p">}</span><span class="o">/</span><span class="n">WASP</span><span class="o">.</span><span class="n">zip</span>
 
-<span class="p">[</span><span class="n">star</span><span class="p">]</span>
+<span class="p">[</span><span class="n">star</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span><span class="p">]</span>
 <span class="c1"># Quite time &amp; resource consuming (3hrs, 32GB memory)</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="p">[]</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
      <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> \
@@ -400,7 +402,8 @@ sos run nb.ipynb quasar</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Also apparently <code>WASP</code> only works with Python 2 ... need to create a <code>conda</code> environment for it:</p>
 
-<pre><code>conda create -n py27 python=2.7 anaconda</code></pre>
+<pre><code>conda create -n py27 python=2.7
+conda install pytables=2.4.0</code></pre>
 <p>and use</p>
 
 <pre><code>source activate py27</code></pre>
@@ -462,7 +465,7 @@ sos run nb.ipynb quasar</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_1</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">prefiltering</span> <span class="n">alignment</span><span class="p">)]</span>
 <span class="kn">parameter:</span> <span class="n">qual_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span>
+<span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
 <span class="kn">input:</span> <span class="n">fastq</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{sample_dir}/{x}.qual{qual_cutoff}.bam&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
@@ -496,7 +499,7 @@ sos run nb.ipynb quasar</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">intersecting</span> <span class="n">SNP</span><span class="p">)]</span>
 <span class="c1"># WASP finding unbiased reads intersecting with SNP</span>
-<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;wasp&#39;</span><span class="p">)</span>
+<span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;{wasp_dir}/README.md&quot;</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.remap.fq.gz&#39;</span><span class="p">)</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
@@ -736,7 +739,7 @@ sos run nb.ipynb quasar</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/b2380b857ac1c487cbd24723e0be3383b7d7dda8/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Mon Mar 12 19:57:50 2018 <a href="http://github.com/gaow/m6a/commit/b2380b857ac1c487cbd24723e0be3383b7d7dda8">revision 3, b2380b8</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/ca093348ed5c1292b8e87604e9db044b75a6c26f/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Mon Mar 12 20:21:23 2018 <a href="http://github.com/gaow/m6a/commit/ca093348ed5c1292b8e87604e9db044b75a6c26f">revision 4, ca09334</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
