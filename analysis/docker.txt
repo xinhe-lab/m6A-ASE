@@ -1,0 +1,12 @@
+15322  12/03/18 19:07:18 sudo apt-get remove docker docker-engine docker.io
+15323  12/03/18 19:07:34 uname -a
+15325  12/03/18 19:08:00 sudo apt-get install      apt-transport-https      ca-certificates      curl      gnupg2      software-properties-common
+15330  12/03/18 19:09:53 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+15331  12/03/18 19:10:26 sudo apt-key fingerprint 0EBFCD88
+15332  12/03/18 19:10:45 sudo add-apt-repository    "deb [arch=amd64] https://download.docker.com/linux/debian jessie stable"
+15333  12/03/18 19:11:36 sudo apt-get update
+15334  12/03/18 19:11:45 sudo apt-get install docker-ce
+15335  12/03/18 19:12:16 apt-cache madison docker-ce
+15336  12/03/18 19:12:20 sudo docker run hello-world
+15339  12/03/18 19:13:33 sudo gpasswd -a $USER docker
+15340  12/03/18 19:13:40 sudo service docker restart
