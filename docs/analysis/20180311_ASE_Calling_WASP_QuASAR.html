@@ -401,7 +401,9 @@ sos run nb.ipynb quasar</code></pre>
 <p>Also apparently <code>WASP</code> only works with Python 2 ... need to create a <code>conda</code> environment for it:</p>
 
 <pre><code>conda create -n py27 python=2.7
-conda install pytables=2.4.0</code></pre>
+source activate py27
+conda install pytables=2.4.0
+pip install pysam</code></pre>
 <p>and use</p>
 
 <pre><code>source activate py27</code></pre>
@@ -532,14 +534,14 @@ conda install pytables=2.4.0</code></pre>
 
 <span class="p">[</span><span class="n">align_5</span> <span class="p">(</span><span class="n">Merge</span> <span class="n">WASP</span> <span class="n">adjusted</span> <span class="ow">and</span> <span class="n">originally</span> <span class="n">kept</span> <span class="n">BAM</span><span class="p">)]</span>
 <span class="n">kept</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([</span><span class="n">wasp_split</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wasp_split</span><span class="p">),</span> <span class="mi">4</span><span class="p">)])</span>
-<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">paired_with</span> <span class="o">=</span> <span class="s1">&#39;kept&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.keep_remapped.{ext}&#39;</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">paired_with</span> <span class="o">=</span> <span class="s1">&#39;kept&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.keep_remapped.{ext}&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.wasp_remapped.{_ext[0]}&#39;</span><span class="p">)</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">samtools</span> <span class="n">merge</span> <span class="o">-</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_kept</span><span class="p">}</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
     <span class="n">samtools</span> <span class="n">index</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">align_6</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">remove</span> <span class="n">duplicate</span> <span class="n">reads</span> <span class="p">)]</span>
-<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.dedup.bam&#39;</span><span class="p">)</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
@@ -553,7 +555,7 @@ conda install pytables=2.4.0</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/cfd9f6f8e838f062e2a2d819f2da7709268fb75a/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Tue Mar 13 00:42:20 2018 <a href="http://github.com/gaow/m6a/commit/cfd9f6f8e838f062e2a2d819f2da7709268fb75a">revision 5, cfd9f6f</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/64babfdab4115d84e25e306cbf389218a5872633/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Gao Wang on Tue Mar 13 01:02:52 2018 <a href="http://github.com/gaow/m6a/commit/64babfdab4115d84e25e306cbf389218a5872633">revision 6, 64babfd</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
