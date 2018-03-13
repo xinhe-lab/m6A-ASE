@@ -370,18 +370,16 @@ sos run nb.ipynb quasar</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">wasp</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{wasp_dir}/README.md&quot;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="p">[]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">wasp</span><span class="p">]</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{wasp_dir}/README.md&quot;</span>
 <span class="kn">download:</span> <span class="n">decompress</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">dest_file</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/WASP.zip&#39;</span>
     <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">bmvdgeijn</span><span class="o">/</span><span class="n">WASP</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">zip</span>
 <span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="p">{</span><span class="n">cwd</span><span class="p">}</span><span class="o">/</span><span class="n">WASP</span><span class="o">.</span><span class="n">zip</span>
 
-<span class="p">[</span><span class="n">star</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span><span class="p">]</span>
+<span class="p">[</span><span class="n">star</span><span class="p">]</span>
 <span class="c1"># Quite time &amp; resource consuming (3hrs, 32GB memory)</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="p">[]</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
      <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> \
@@ -417,6 +415,7 @@ conda install pytables=2.4.0</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Get-samples">Get samples<a class="anchor-link" href="#Get-samples">&#182;</a></h2><p>FIXME: add description -- what are these samples?</p>
+<p><strong>Caution: these samples are paired end reads.</strong> This is different from Yanyu's workflow and will impact <code>STAR</code> and <code>WASP</code> commands.</p>
 
 </div>
 </div>
@@ -465,7 +464,7 @@ conda install pytables=2.4.0</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_1</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">prefiltering</span> <span class="n">alignment</span><span class="p">)]</span>
 <span class="kn">parameter:</span> <span class="n">qual_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
+<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="n">fastq</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{sample_dir}/{x}.qual{qual_cutoff}.bam&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
@@ -487,7 +486,7 @@ conda install pytables=2.4.0</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="WASP-remap">WASP remap<a class="anchor-link" href="#WASP-remap">&#182;</a></h3><p>Remap with <a href="https://github.com/bmvdgeijn/WASP/tree/master/mapping"><code>WASP</code></a>, followed by <code>STAR</code> alignment and <code>samtools</code> QC.</p>
+<h3 id="WASP-informed-remap">WASP-informed remap<a class="anchor-link" href="#WASP-informed-remap">&#182;</a></h3><p>Remap reads after <a href="https://github.com/bmvdgeijn/WASP/tree/master/mapping"><code>WASP</code></a> adjustment.</p>
 
 </div>
 </div>
@@ -497,239 +496,54 @@ conda install pytables=2.4.0</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">intersecting</span> <span class="n">SNP</span><span class="p">)]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">intersecting</span> <span class="n">SNP</span><span class="p">):</span> <span class="kp">shared</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wasp_split&#39;</span><span class="p">:</span> <span class="s1">&#39;step_output&#39;</span><span class="p">}]</span>
 <span class="c1"># WASP finding unbiased reads intersecting with SNP</span>
-<span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;{wasp_dir}/README.md&quot;</span>
-<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.remap.fq.gz&#39;</span><span class="p">)</span>
+<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;wasp&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="p">[[</span><span class="n">f</span><span class="s2">&quot;{x:n}.remap.fq1.gz&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{x:n}.remap.fq2.gz&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{x:n}.to.remap.bam&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{x:n}.keep.bam&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_input</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
-    <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">find_intersecting_snps</span><span class="o">.</span><span class="n">py</span> \
-        <span class="o">--</span><span class="n">snp_dir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="n">wasp_snp_list</span> <span class="o">--</span><span class="n">is_sorted</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
+    <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">find_intersecting_snps</span><span class="o">.</span><span class="n">py</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">snp_dir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="n">wasp_snp_list</span> \
+        <span class="o">--</span><span class="n">is_sorted</span> <span class="o">--</span><span class="n">is_paired_end</span>
 
 <span class="p">[</span><span class="n">align_3</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">post</span> <span class="n">alignment</span><span class="p">)]</span>
 <span class="c1"># Align WASP remap with STAR</span>
 <span class="c1"># Followd by samtools remove reads with quality less than {qual_cutoff}</span>
 <span class="kn">parameter:</span> <span class="n">qual_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.{qual}.remap.fq.gz&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name}.wasp.qual{qual_cutoff}.bam&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.{qual}.remap.{ext}&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.remapped.qual{qual_cutoff}.bam&#39;</span><span class="p">)</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
         <span class="o">--</span><span class="n">readFilesCommand</span> <span class="n">zcat</span> \
         <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outStd</span> <span class="n">BAM_SortedByCoordinate</span> \
         <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
         <span class="o">--</span><span class="n">sjdbGTFtagExonParentTranscript</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_gtf</span><span class="p">}</span> <span class="o">|</span>
     <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bq</span> <span class="p">{</span><span class="n">qual_cutoff</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
-</pre></div>
 
-</div>
-</div>
-</div>
+<span class="p">[</span><span class="n">align_4</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">remove</span> <span class="n">ambiguously</span> <span class="n">mapped</span> <span class="n">reads</span><span class="p">)]</span>
+<span class="n">to_remap</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([</span><span class="n">wasp_split</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wasp_split</span><span class="p">),</span> <span class="mi">4</span><span class="p">)])</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">paired_with</span> <span class="o">=</span> <span class="s1">&#39;to_remap&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.remapped.{ext}&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.keep_remapped.{_ext[0]}&#39;</span><span class="p">)</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
+    <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">filter_remapped_reads</span><span class="o">.</span><span class="n">py</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_to_remap</span><span class="p">}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">infile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">list_of_snps</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="n">nthreads</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="n">genesymbol</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-<span class="n">genome_folder</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-<span class="n">wasp_path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
-<span class="n">prefix</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-<span class="n">log_idx</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>
-<span class="n">logfilename</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prefix</span><span class="p">,</span> <span class="n">log_idx</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">])</span> 
-<span class="n">logfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;fastq2bam.&#39;</span> <span class="o">+</span> <span class="n">logfilename</span> <span class="o">+</span> <span class="s1">&#39; is generated&#39;</span><span class="p">)</span>
-<span class="n">logfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;The index is &#39;</span> <span class="o">+</span> <span class="n">log_idx</span><span class="p">)</span>
-<span class="n">logfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="p">[</span><span class="n">align_5</span> <span class="p">(</span><span class="n">Merge</span> <span class="n">WASP</span> <span class="n">adjusted</span> <span class="ow">and</span> <span class="n">originally</span> <span class="n">kept</span> <span class="n">BAM</span><span class="p">)]</span>
+<span class="n">kept</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([</span><span class="n">wasp_split</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wasp_split</span><span class="p">),</span> <span class="mi">4</span><span class="p">)])</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">paired_with</span> <span class="o">=</span> <span class="s1">&#39;kept&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.keep_remapped.{ext}&#39;</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.wasp_remapped.{_ext[0]}&#39;</span><span class="p">)</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">samtools</span> <span class="n">merge</span> <span class="o">-</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_kept</span><span class="p">}</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+    <span class="n">samtools</span> <span class="n">index</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
-<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mkdir &#39;</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_align1&#39;</span>
-<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-
-<span class="c1"># ############################################################</span>
-<span class="c1"># #START# STAR pre-filtering alignment #START#</span>
-<span class="c1"># # input/output:</span>
-<span class="c1"># working_folder1 = prefix + &#39;_align1&#39;</span>
-<span class="c1"># inputfile = infile</span>
-<span class="c1"># outputfile = os.sep.join([working_folder1, &#39;Aligned.sortedByCoord.out.bam&#39;])</span>
-<span class="c1"># ###</span>
-<span class="c1"># # cmd:</span>
-<span class="c1"># cmd = &#39;STAR --runThreadN &#39; + nthreads + &#39; \</span>
-<span class="c1"># --genomeDir &#39; + genome_folder + &#39; \</span>
-<span class="c1"># --readFilesIn &#39; + inputfile + &#39; \</span>
-<span class="c1"># --readFilesCommand bzcat \</span>
-<span class="c1"># --outFileNamePrefix &#39; + working_folder1 + &#39;/ \</span>
-<span class="c1"># --outSAMtype BAM SortedByCoordinate \</span>
-<span class="c1"># --sjdbGTFtagExonParentTranscript &#39; + genesymbol + &#39; \</span>
-<span class="c1"># &gt; &#39; + outputfile + &#39;.out&#39;</span>
-<span class="c1"># ###</span>
-<span class="c1"># # run cmd</span>
-<span class="c1"># do_and_report(cmd, logfilename, &#39;STAR-align-prefiltering&#39;)</span>
-<span class="c1"># ###</span>
-<span class="c1"># # post step: release memory</span>
-<span class="c1">#  # cmd = &#39;STAR --genomeLoad Remove&#39;</span>
-<span class="c1"># # do_and_report(cmd, logfilename, &#39;STAR-align-releasing-memory&#39;)</span>
-<span class="c1"># ###</span>
-<span class="c1"># #END# STAR pre-filtering alignment #END#</span>
-<span class="c1">############################################################</span>
-
-
-<span class="c1"># ############################################################</span>
-<span class="c1"># #START# samtools removing reads with quuality less than 10 #START#</span>
-<span class="c1"># # input/output:</span>
-<span class="c1"># inputfile = outputfile</span>
-<span class="c1"># outputfile = os.sep.join([working_folder1, &#39;Aligned.sortedByCoord.out.filtered-quality-10.bam&#39;])</span>
-<span class="c1"># ###</span>
-<span class="c1"># # cmd:</span>
-<span class="c1"># cmd = &#39;samtools view -bq 10 &#39; + inputfile + &#39; &gt; &#39; + outputfile # here the quality is hard coded as 10</span>
-<span class="c1"># ###</span>
-<span class="c1"># # run cmd:</span>
-<span class="c1"># do_and_report(cmd, logfilename, &#39;samtools-filter-quality-less-than-10&#39;)</span>
-<span class="c1"># ###</span>
-<span class="c1"># #END# STAR pre-filtering alignment #END#</span>
-<span class="c1">############################################################</span>
-
-
-<span class="c1">############################################################</span>
-<span class="c1">#START# WASP finding unbiased reads intersecting with SNP #START#</span>
-<span class="c1"># # input/output:</span>
-<span class="c1"># inputfile = outputfile</span>
-<span class="c1"># temp = inputfile.split(&#39;.&#39;)</span>
-<span class="c1"># wasp_name = basename(inputfile)</span>
-<span class="c1"># wasp_name = wasp_name.split(&#39;.&#39;)</span>
-<span class="c1"># wasp_name = &#39;.&#39;.join(wasp_name[ : -1])</span>
-<span class="c1"># outputfile = &#39;.&#39;.join(temp[ : -1] + [&#39;remap.fq.gz&#39;])</span>
-<span class="c1"># ###</span>
-<span class="c1"># # cmd:</span>
-<span class="c1"># cmd = &#39;python-conda &#39; + wasp_path + &#39;/find_intersecting_snps.py \</span>
-<span class="c1"># --snp_dir &#39; + list_of_snps + &#39; \</span>
-<span class="c1"># --is_sorted &#39;\</span>
-<span class="c1"># + inputfile</span>
-<span class="c1"># ###</span>
-<span class="c1"># # run cmd:</span>
-<span class="c1"># do_and_report(cmd, logfilename, &#39;WASP-intersect-without-bias&#39;)</span>
-<span class="c1">###</span>
-<span class="c1">#END# WASP finding unbiased reads intersecting with SNP #END#</span>
-<span class="c1">############################################################</span>
-
-<span class="c1"># cmd = &#39;mkdir &#39; + outputfile + &#39;_align2&#39;</span>
-<span class="c1"># os.system(cmd)</span>
-
-<span class="c1">############################################################</span>
-<span class="c1"># #START# STAR post-filtering alignment #START#</span>
-<span class="c1"># # input/output:</span>
-<span class="c1"># working_folder2 = outputfile + &#39;_align2&#39;</span>
-<span class="c1"># inputfile = outputfile</span>
-<span class="c1"># outputfile = os.sep.join([working_folder2, &#39;Aligned.sortedByCoord.out.bam&#39;])</span>
-<span class="c1"># ###</span>
-<span class="c1"># # cmd:</span>
-<span class="c1"># cmd = &#39;STAR --runThreadN &#39; + nthreads + &#39; \</span>
-<span class="c1"># --genomeDir &#39; + genome_folder + &#39; \</span>
-<span class="c1"># --readFilesIn &#39; + inputfile + &#39; \</span>
-<span class="c1"># --readFilesCommand zcat \</span>
-<span class="c1"># --outFileNamePrefix &#39; + working_folder2 + &#39;/ \</span>
-<span class="c1"># --outSAMtype BAM SortedByCoordinate \</span>
-<span class="c1"># --sjdbGTFtagExonParentTranscript &#39; + genesymbol + &#39; \</span>
-<span class="c1"># &gt; &#39; + outputfile + &#39;.out&#39;</span>
-<span class="c1"># ###</span>
-<span class="c1"># # run cmd:</span>
-<span class="c1"># do_and_report(cmd, logfilename, &#39;STAR-align-postfiltering&#39;)</span>
-<span class="c1"># ###</span>
-<span class="c1"># # post step: release memory</span>
-<span class="c1"># # cmd = &#39;STAR --genomeLoad Remove&#39;</span>
-<span class="c1"># # do_and_report(cmd, logfilename, &#39;STAR-align-releasing-memory&#39;)</span>
-<span class="c1"># ###</span>
-<span class="c1"># #END# STAR post-filtering alignment #END#</span>
-<span class="c1"># ############################################################</span>
-
-
-<span class="c1"># ############################################################</span>
-<span class="c1"># #START# samtools removing reads with quuality less than 10 #START#</span>
-<span class="c1"># # input/output:</span>
-<span class="c1"># inputfile = outputfile</span>
-<span class="c1"># outputfile = os.sep.join([working_folder2, &#39;Aligned.sortedByCoord.out.filtered-quality-10.bam&#39;])</span>
-<span class="c1"># ###</span>
-<span class="c1"># # cmd:</span>
-<span class="c1"># cmd = &#39;samtools view -bq 10 &#39; + inputfile + &#39; &gt; &#39; + outputfile # here the quality is hard coded as 10</span>
-<span class="c1"># ###</span>
-<span class="c1"># # run cmd:</span>
-<span class="c1"># do_and_report(cmd, logfilename, &#39;samtools-filter-quality-less-than-10&#39;)</span>
-<span class="c1"># ###</span>
-<span class="c1"># #END# STAR pre-filtering alignment #END#</span>
-<span class="c1"># ############################################################</span>
-
-
-<span class="c1">############################################################</span>
-<span class="c1">#START# WASP removing ambiguously mapped reads #START#</span>
-<span class="c1"># input/output:</span>
-<span class="n">inputfile_to_remap</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.to.remap.bam&#39;</span><span class="p">])</span>
-<span class="n">inputfile_keep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.keep_remapped.bam&#39;</span><span class="p">])</span>
-<span class="n">inputfile_remap</span> <span class="o">=</span> <span class="n">outputfile</span>
-<span class="n">temp</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
-<span class="n">outputfile</span> <span class="o">=</span> <span class="n">inputfile_keep</span>
-<span class="c1">###</span>
-<span class="c1"># cmd:</span>
-<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;python-conda &#39;</span> <span class="o">+</span> <span class="n">wasp_path</span> <span class="o">+</span> <span class="s1">&#39;/filter_remapped_reads.py &#39;</span>\
-<span class="o">+</span> <span class="n">inputfile_to_remap</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
-<span class="o">+</span> <span class="n">inputfile_remap</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
-<span class="o">+</span> <span class="n">inputfile_keep</span>
-<span class="c1">###</span>
-<span class="c1"># run cmd:</span>
-<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;WASP-remove-ambiguous-reads&#39;</span><span class="p">)</span>
-<span class="c1">###</span>
-<span class="c1">#END# WASP removing ambiguously mapped reads #END#</span>
-<span class="c1">############################################################</span>
-
-
-<span class="c1">############################################################</span>
-<span class="c1">#START# samtools merging kept reads #START#</span>
-<span class="c1"># input/output:</span>
-<span class="n">inputfile1</span> <span class="o">=</span> <span class="n">outputfile</span>
-<span class="n">inputfile2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.keep.bam&#39;</span><span class="p">])</span>
-<span class="n">temp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.merged_keep.bam&#39;</span><span class="p">])</span>
-<span class="n">outputfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="n">wasp_name</span> <span class="o">+</span> <span class="s1">&#39;.merged_keep.sorted.bam&#39;</span><span class="p">])</span>
-<span class="c1">###</span>
-<span class="c1"># cmd:</span>
-<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;samtools merge &#39;</span>\
-<span class="o">+</span> <span class="n">temp</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
-<span class="o">+</span> <span class="n">inputfile1</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
-<span class="o">+</span> <span class="n">inputfile2</span>
-<span class="c1">###</span>
-<span class="c1"># run cmd:</span>
-<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;samtools-merge-unbiased-reads&#39;</span><span class="p">)</span>
-<span class="c1">###</span>
-<span class="c1"># post step:</span>
-<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;samtools sort -o &#39;</span>\
-<span class="o">+</span> <span class="n">outputfile</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
-<span class="o">+</span> <span class="n">temp</span>
-<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;samtools-merge-unbiased-reads-sort&#39;</span><span class="p">)</span>
-<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;samtools index &#39;</span>\
-<span class="o">+</span> <span class="n">outputfile</span>
-<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;samtools-merge-unbiased-reads-index&#39;</span><span class="p">)</span>
-<span class="c1">#END# samtools merging kept reads #END#</span>
-<span class="c1">############################################################</span>
-
-
-<span class="c1">############################################################</span>
-<span class="c1">#START# WASP removing duplicated reads randomly #START#</span>
-<span class="c1"># input/output:</span>
-<span class="n">inputfile</span> <span class="o">=</span> <span class="n">outputfile</span>
-<span class="n">outputfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">working_folder1</span><span class="p">,</span> <span class="s1">&#39;final.bam&#39;</span><span class="p">])</span>
-<span class="c1">###</span>
-<span class="c1"># cmd:</span>
-<span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;python-conda &#39;</span> <span class="o">+</span> <span class="n">wasp_path</span> <span class="o">+</span> <span class="s1">&#39;/rmdup.py &#39;</span>\
-<span class="o">+</span> <span class="n">inputfile</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>\
-<span class="o">+</span> <span class="n">outputfile</span>
-<span class="c1">###</span>
-<span class="c1"># run cmd:</span>
-<span class="n">do_and_report</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="s1">&#39;WASP-remove-duplicated-reads&#39;</span><span class="p">)</span>
-<span class="c1">###</span>
-<span class="c1">#END# WASP removing duplicated reads randomly #END#</span>
-<span class="c1">############################################################</span>
+<span class="p">[</span><span class="n">align_6</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">remove</span> <span class="n">duplicate</span> <span class="n">reads</span> <span class="p">)]</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.dedup.bam&#39;</span><span class="p">)</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
+    <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">rmdup</span><span class="o">.</span><span class="n">py</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -739,7 +553,7 @@ conda install pytables=2.4.0</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/ca093348ed5c1292b8e87604e9db044b75a6c26f/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Mon Mar 12 20:21:23 2018 <a href="http://github.com/gaow/m6a/commit/ca093348ed5c1292b8e87604e9db044b75a6c26f">revision 4, ca09334</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/cfd9f6f8e838f062e2a2d819f2da7709268fb75a/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Tue Mar 13 00:42:20 2018 <a href="http://github.com/gaow/m6a/commit/cfd9f6f8e838f062e2a2d819f2da7709268fb75a">revision 5, cfd9f6f</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
