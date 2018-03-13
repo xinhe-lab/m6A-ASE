@@ -267,6 +267,11 @@ sos run nb.ipynb obtain_samples
 sos run nb.ipynb align
 sos run nb.ipynb call
 sos run nb.ipynb quasar</code></pre>
+<h3 id="Cautions">Cautions<a class="anchor-link" href="#Cautions">&#182;</a></h3><p>A list of cautions learned from running the pipeline:</p>
+<ol>
+<li>The <code>STAR</code> aligner is fast (compared to <code>tophat</code>) but requires over 30GB of memory. A desktop with 32GB of memory will not work for the <code>STAR</code> steps</li>
+<li><code>STAR</code>, when it fails (memory or not), will fail silently.</li>
+</ol>
 
 </div>
 </div>
@@ -555,7 +560,7 @@ pip install pysam</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/64babfdab4115d84e25e306cbf389218a5872633/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Gao Wang on Tue Mar 13 01:02:52 2018 <a href="http://github.com/gaow/m6a/commit/64babfdab4115d84e25e306cbf389218a5872633">revision 6, 64babfd</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/90ca803aee25664beab4d39d896ac52412df4b10/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Gao Wang on Tue Mar 13 17:11:00 2018 <a href="http://github.com/gaow/m6a/commit/90ca803aee25664beab4d39d896ac52412df4b10">revision 7, 90ca803</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
