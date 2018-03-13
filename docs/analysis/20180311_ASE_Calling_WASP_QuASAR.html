@@ -398,6 +398,21 @@ sos run nb.ipynb quasar</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Also apparently <code>WASP</code> only works with Python 2 ... need to create a <code>conda</code> environment for it:</p>
+
+<pre><code>conda create -n py27 python=2.7 anaconda</code></pre>
+<p>and use</p>
+
+<pre><code>source activate py27</code></pre>
+<p>in <code>WASP</code> steps.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Get-samples">Get samples<a class="anchor-link" href="#Get-samples">&#182;</a></h2><p>FIXME: add description -- what are these samples?</p>
 
 </div>
@@ -481,11 +496,12 @@ sos run nb.ipynb quasar</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">intersecting</span> <span class="n">SNP</span><span class="p">)]</span>
 <span class="c1"># WASP finding unbiased reads intersecting with SNP</span>
-<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;wasp&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;tables&#39;</span><span class="p">,</span> <span class="s1">&#39;2.1.2&#39;</span><span class="p">)</span>
+<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;wasp&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.remap.fq.gz&#39;</span><span class="p">)</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">python2</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">find_intersecting_snps</span><span class="o">.</span><span class="n">py</span> \
+    <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
+    <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">find_intersecting_snps</span><span class="o">.</span><span class="n">py</span> \
         <span class="o">--</span><span class="n">snp_dir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="n">wasp_snp_list</span> <span class="o">--</span><span class="n">is_sorted</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">align_3</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">post</span> <span class="n">alignment</span><span class="p">)]</span>
@@ -720,7 +736,7 @@ sos run nb.ipynb quasar</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/437bcd06b7e8376063fac0f885dc68e7e76c18ce/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Mon Mar 12 19:51:36 2018 <a href="http://github.com/gaow/m6a/commit/437bcd06b7e8376063fac0f885dc68e7e76c18ce">revision 2, 437bcd0</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/b2380b857ac1c487cbd24723e0be3383b7d7dda8/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Mon Mar 12 19:57:50 2018 <a href="http://github.com/gaow/m6a/commit/b2380b857ac1c487cbd24723e0be3383b7d7dda8">revision 3, b2380b8</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
