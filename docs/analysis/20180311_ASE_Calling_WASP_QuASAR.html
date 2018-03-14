@@ -259,18 +259,25 @@ body {
 <li>Remove biased reads</li>
 <li>Genotype and ASE calling</li>
 </ol>
-<p>The pipeline is implemented in SoS as displayed in the rest of this SoS notebook. The pipeline can be executed from this notebook directly on local or remote computer. For more information see <a href="https://github.com/vatlab/SOS">SoS website</a>.</p>
+<p>The pipeline is implemented in SoS as displayed in the rest of this SoS notebook. The pipeline can be executed from this notebook directly on local or remote computer (with caveats see below). For more information see <a href="https://github.com/vatlab/SOS">SoS website</a>.</p>
+<ul>
+<li>Some software used (<code>STAR</code>, <code>samtools</code>, <code>bedtools</code>) are loaded from online <code>docker</code> images. This is me being lazy to avoid installing these software on a local computer (which should not take much time anyways). But some cluster system, such as UChicago RCC, does not support <code>docker</code>. Also here I did not configure cluster job queues with <code>task</code> option. So this notebook is intended to run on a local workstation as is, though involves minimal changes to get it work distributively on cluster, given required software are installed there.</li>
+</ul>
 <p>To run the pipeline:</p>
 
 <pre><code>sos run nb.ipynb hg19_reference
 sos run nb.ipynb obtain_samples
-sos run nb.ipynb align
-sos run nb.ipynb call
-sos run nb.ipynb quasar</code></pre>
-<h3 id="Cautions">Cautions<a class="anchor-link" href="#Cautions">&#182;</a></h3><p>A list of cautions learned from running the pipeline:</p>
+sos run nb.ipynb default</code></pre>
+<h3 id="Difference-from-Yanyu's-version">Difference from Yanyu's version<a class="anchor-link" href="#Difference-from-Yanyu's-version">&#182;</a></h3><p>Other than using a formal pipeline tool, differences are:</p>
 <ol>
-<li>The <code>STAR</code> aligner is fast (compared to <code>tophat</code>) but requires over 30GB of memory. A desktop with 32GB of memory will not work for the <code>STAR</code> steps</li>
+<li>Here samples are paired end reads -- this led to minor differences in <code>STAR</code> and <code>WASP</code> command parameters.</li>
+<li>No techinical replicates in this problem -- skipped Yanyu's step of merging technical replicates to one bam file.</li>
+</ol>
+<h3 id="Lessons-learned:-a-retrospective-view">Lessons learned: a retrospective view<a class="anchor-link" href="#Lessons-learned:-a-retrospective-view">&#182;</a></h3><p>A list of cautions learned from running the pipeline:</p>
+<ol>
+<li>The <code>STAR</code> aligner is fast (compared to <code>tophat</code>) but requires over 30GB of memory. A desktop with 32GB of memory will not work for the <code>STAR</code> steps. I actually had to use a 64GB RAM desktop.</li>
 <li><code>STAR</code>, when it fails (memory or not), will fail silently.</li>
+<li>Preparation of <code>STAR</code> database takes long time, but it is portable as long as one changes the absolute path in <code>genomeParameters.txt</code> to relative (ie, remove all the directories from file names only keep the basename). This is what I did. So the resource prepared by <code>[star]</code> workflow (below) can be copied to use in other machines.</li>
 </ol>
 
 </div>
@@ -280,13 +287,13 @@ sos run nb.ipynb quasar</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Environment-configurations">Environment configurations<a class="anchor-link" href="#Environment-configurations">&#182;</a></h3>
+<h3 id="Settings-and-default-workflow">Settings and default workflow<a class="anchor-link" href="#Settings-and-default-workflow">&#182;</a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
@@ -297,12 +304,27 @@ sos run nb.ipynb quasar</code></pre>
 <span class="n">ref_fa</span> <span class="o">=</span> <span class="s2">&quot;hg19.fa&quot;</span>
 <span class="n">ref_gtf</span> <span class="o">=</span> <span class="s1">&#39;Homo_sapiens.GRCh38.91.gtf.gz&#39;</span>
 <span class="n">wasp_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/WASP-master/mapping&quot;</span>
+<span class="n">samtools_snp_list</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/020717_filtered_maf5_blacklist.final.bed&quot;</span>
 <span class="c1"># Sample files</span>
 <span class="n">sample_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/samples&quot;</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="c1">## A list of sample names (keys) and their corresponding FASTQ files (values)</span>
 <span class="n">samples</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s1">&#39;ENCLB279NMT&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF824TZM&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF176JNE&#39;</span><span class="p">]})</span>
 <span class="n">fastq</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([[</span><span class="n">f</span><span class="s2">&quot;{sample_dir}/{s}/{q}.fastq.gz&quot;</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">[</span><span class="n">s</span><span class="p">]]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
+<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;align+call&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -321,7 +343,7 @@ sos run nb.ipynb quasar</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">hg19_reference_1</span> <span class="p">(</span><span class="n">download</span><span class="p">)]</span>
@@ -357,15 +379,6 @@ sos run nb.ipynb quasar</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Additionally <code>WASP</code> uses pre-defined list of SNPs and removes bias caused by them. The list was generated by Yanyu using 1k genome SNP in VCF format with MAF filter as input to <code>WASP/mapping/extract_vcf_snps.sh</code> command. Here I just take this pre-compiled list.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Software-tools">Software tools<a class="anchor-link" href="#Software-tools">&#182;</a></h3>
 </div>
 </div>
@@ -392,6 +405,12 @@ sos run nb.ipynb quasar</code></pre>
         <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">sjdbGTFtagExonParentTranscript</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_gtf</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span>
+
+<span class="p">[</span><span class="n">quasar</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;QuASAR@piquelab/QuASAR&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{resource_dir}/convertPileupToQuasar.R&#39;</span>
+<span class="kn">download:</span> <span class="n">dest_file</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{resource_dir}/convertPileupToQuasar.R&#39;</span>
+    <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">piquelab</span><span class="o">/</span><span class="n">QuASAR</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">convertPileupToQuasar</span><span class="o">.</span><span class="n">R</span>
 </pre></div>
 
 </div>
@@ -422,14 +441,13 @@ pip install pysam</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Get-samples">Get samples<a class="anchor-link" href="#Get-samples">&#182;</a></h2><p>FIXME: add description -- what are these samples?</p>
-<p><strong>Caution: these samples are paired end reads.</strong> This is different from Yanyu's workflow and will impact <code>STAR</code> and <code>WASP</code> commands.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">obtain_samples</span><span class="p">]</span>
@@ -493,7 +511,7 @@ pip install pysam</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="WASP-informed-remap">WASP-informed remap<a class="anchor-link" href="#WASP-informed-remap">&#182;</a></h3><p>Remap reads after <a href="https://github.com/bmvdgeijn/WASP/tree/master/mapping"><code>WASP</code></a> adjustment.</p>
+<h3 id="WASP-informed-remap">WASP-informed remap<a class="anchor-link" href="#WASP-informed-remap">&#182;</a></h3><p>Remap reads after <a href="https://github.com/bmvdgeijn/WASP/tree/master/mapping"><code>WASP</code></a> adjustment. <code>WASP</code> uses pre-defined list of SNPs and removes bias caused by them. The list was generated by Yanyu using 1k genome SNP in VCF format with MAF filter as input to <code>WASP/mapping/extract_vcf_snps.sh</code> command. Here I just take this pre-compiled list from Yanyu.</p>
 
 </div>
 </div>
@@ -533,22 +551,22 @@ pip install pysam</code></pre>
 <span class="n">to_remap</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([</span><span class="n">wasp_split</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wasp_split</span><span class="p">),</span> <span class="mi">4</span><span class="p">)])</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">paired_with</span> <span class="o">=</span> <span class="s1">&#39;to_remap&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.remapped.{ext}&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.keep_remapped.{_ext[0]}&#39;</span><span class="p">)</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span>
     <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
-    <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">filter_remapped_reads</span><span class="o">.</span><span class="n">py</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_to_remap</span><span class="p">}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+    <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">filter_remapped_reads</span><span class="o">.</span><span class="n">py</span> <span class="p">{</span><span class="n">_to_remap</span><span class="p">}</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">align_5</span> <span class="p">(</span><span class="n">Merge</span> <span class="n">WASP</span> <span class="n">adjusted</span> <span class="ow">and</span> <span class="n">originally</span> <span class="n">kept</span> <span class="n">BAM</span><span class="p">)]</span>
 <span class="n">kept</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([</span><span class="n">wasp_split</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wasp_split</span><span class="p">),</span> <span class="mi">4</span><span class="p">)])</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">paired_with</span> <span class="o">=</span> <span class="s1">&#39;kept&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.keep_remapped.{ext}&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.wasp_remapped.{_ext[0]}&#39;</span><span class="p">)</span>
 <span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">samtools</span> <span class="n">merge</span> <span class="o">-</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_kept</span><span class="p">}</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+    <span class="n">samtools</span> <span class="n">merge</span> <span class="o">-</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_kept</span><span class="p">}</span> <span class="o">|</span> <span class="n">samtools</span> <span class="n">sort</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
     <span class="n">samtools</span> <span class="n">index</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">align_6</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">remove</span> <span class="n">duplicate</span> <span class="n">reads</span> <span class="p">)]</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.dedup.bam&#39;</span><span class="p">)</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span>
     <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
     <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">rmdup</span><span class="o">.</span><span class="n">py</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
@@ -558,9 +576,61 @@ pip install pysam</code></pre>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Genotype-and-ASE-calling">Genotype and ASE calling<a class="anchor-link" href="#Genotype-and-ASE-calling">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Pre-QuASAR-calling">Pre-<code>QuASAR</code> calling<a class="anchor-link" href="#Pre-QuASAR-calling">&#182;</a></h3><p>This step extracts count information from BAM file based on SNP list and prepare it into <code>QuASAR</code> input format. Here we need the list of SNPs used in BED format, and reference genome <code>fasta</code> file. Yanyu has previously prepared this BED file. Here I just grab and use it.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">call_1</span> <span class="p">(</span><span class="n">samtools</span> <span class="n">pileup</span><span class="p">)]</span>
+<span class="c1"># A standard samtools mpileup call</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.pileup.gz&#39;</span><span class="p">)</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;bschiffthaler/ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">samtools</span> <span class="n">mpileup</span> <span class="o">-</span><span class="n">f</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="n">samtools_snp_list</span><span class="p">}</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">|</span> <span class="n">bgzip</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+
+<span class="p">[</span><span class="n">call_2</span> <span class="p">(</span><span class="n">awk</span> <span class="o">&amp;</span> <span class="n">bedtools</span> <span class="nb">filter</span> <span class="n">pileup</span><span class="p">)]</span>
+<span class="c1"># Remove bad pileup and intersect only with list of SNPs provided</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.pileup.gz&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.pileup.bed.gz&#39;</span><span class="p">)</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;biocontainers/bedtools&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
+    <span class="n">cat</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">|</span> \
+    <span class="n">awk</span> <span class="o">-</span><span class="n">v</span> <span class="n">OFS</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">t&#39;</span> <span class="s1">&#39;{ if ($4&gt;0 &amp;&amp; $5 !~ /</span><span class="se">\\</span><span class="s1">+[0-9]+[ACGTNacgtn]+/ &amp;&amp; $5 !~ /-[0-9]+[ACGTNacgtn]+/ &amp;&amp; $5 !~ /[^</span><span class="se">\\</span><span class="s1">^]</span><span class="se">\\</span><span class="s1">*/) print $1,$2-1,$2,$3,$4,$5,$6}&#39;</span> <span class="o">|</span> \
+    <span class="n">sortBed</span> <span class="o">-</span><span class="n">i</span> <span class="n">stdin</span> <span class="o">|</span> <span class="n">intersectBed</span> <span class="o">-</span><span class="n">a</span> <span class="n">stdin</span> <span class="o">-</span><span class="n">b</span> <span class="err">$</span><span class="p">{</span><span class="n">samtools_snp_list</span><span class="p">}</span> <span class="o">-</span><span class="n">wo</span> <span class="o">|</span> \
+    <span class="n">cut</span> <span class="o">-</span><span class="n">f</span> <span class="mi">1</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="mi">11</span><span class="o">-</span><span class="mi">14</span> <span class="o">|</span> <span class="n">gzip</span> <span class="o">&gt;</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+
+<span class="p">[</span><span class="n">call_3</span> <span class="p">(</span><span class="n">convert</span> <span class="n">to</span> <span class="n">quasar</span> <span class="n">format</span><span class="p">)]</span>
+<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;quasar&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.pileup.bed.gz&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.quasar.in.gz&#39;</span><span class="p">)</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">R</span> <span class="o">--</span><span class="n">slave</span> <span class="o">--</span><span class="n">args</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&lt;</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="n">convertPileupToQuasar</span><span class="o">.</span><span class="n">R</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/90ca803aee25664beab4d39d896ac52412df4b10/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Gao Wang on Tue Mar 13 17:11:00 2018 <a href="http://github.com/gaow/m6a/commit/90ca803aee25664beab4d39d896ac52412df4b10">revision 7, 90ca803</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/36bb1fe236a40c88a678cce9a1106846c1161cd8/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Tue Mar 13 23:21:46 2018 <a href="http://github.com/gaow/m6a/commit/36bb1fe236a40c88a678cce9a1106846c1161cd8">revision 10, 36bb1fe</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
