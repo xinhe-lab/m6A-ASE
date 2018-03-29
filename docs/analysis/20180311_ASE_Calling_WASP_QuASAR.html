@@ -267,9 +267,11 @@ body {
 </ul>
 <p>To run the pipeline:</p>
 
-<pre><code>sos run nb.ipynb hg19_reference
-sos run nb.ipynb obtain_samples
-sos run nb.ipynb default</code></pre>
+<pre><code>nb=analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb
+sos run $nb hg19_reference
+sos run $nb obtain_samples
+sos run $nb default</code></pre>
+<p>You can use <code>-s force</code> to force redo everything, or <code>-s build</code> to skip existing results merely by file name.</p>
 <h3 id="Difference-from-Yanyu's-version">Difference from Yanyu's version<a class="anchor-link" href="#Difference-from-Yanyu's-version">&#182;</a></h3><p>Other than using a formal pipeline tool, differences are:</p>
 <ol>
 <li>Here samples are paired end reads -- this led to minor differences in <code>STAR</code> and <code>WASP</code> command parameters. I used a global boolean parameter <code>is_paired_end</code> to control for it.</li>
@@ -277,7 +279,7 @@ sos run nb.ipynb default</code></pre>
 </ol>
 <h3 id="Lessons-learned:-a-retrospective-view">Lessons learned: a retrospective view<a class="anchor-link" href="#Lessons-learned:-a-retrospective-view">&#182;</a></h3><p>A list of cautions learned from running the pipeline:</p>
 <ol>
-<li>The <code>STAR</code> aligner is fast (compared to <code>tophat</code>) but requires over 30GB of memory. A desktop with 32GB of memory will not work for the <code>STAR</code> steps. I actually had to use a 64GB RAM desktop.</li>
+<li>The <code>STAR</code> aligner is fast (compared to <code>tophat</code>) but requires over 30GB of memory. A desktop with 32GB of memory will not work for the <code>STAR</code> steps. I actually had to use a 64GB RAM desktop. To save memory, have to use sparse mode for <code>STAR</code> <a href="https://groups.google.com/forum/#!topic/rna-star/7FhgJodsLSQ">with caveats pointed here</a>, which works for under 16GB memory. This is implemented by global parameter <code>sparse_star = True</code>.</li>
 <li><code>STAR</code>, when it fails (memory or not), will fail silently.</li>
 <li>Preparation of <code>STAR</code> database takes long time, but it is portable as long as one changes the absolute path in <code>genomeParameters.txt</code> to relative (ie, remove all the directories from file names only keep the basename). This is what I did. So the resource prepared by <code>[star]</code> workflow (below) can be copied to use in other machines.</li>
 </ol>
@@ -310,9 +312,13 @@ sos run nb.ipynb default</code></pre>
 <span class="c1"># Sample files</span>
 <span class="n">sample_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/samples&quot;</span>
 <span class="n">paired_end</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">sparse_star</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="c1">## A list of sample names (keys) and their corresponding FASTQ files (values)</span>
-<span class="n">samples</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s1">&#39;ENCLB279NMT&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF824TZM&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF176JNE&#39;</span><span class="p">]})</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s1">&#39;ENCLB279NMT&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF824TZM&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF176JNE&#39;</span><span class="p">],</span> 
+                       <span class="s1">&#39;IGF2BP2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF307AUO&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF563WIX&#39;</span><span class="p">],</span> 
+                       <span class="s1">&#39;FTO&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF374PSI&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF877URW&#39;</span><span class="p">],</span> 
+                       <span class="s1">&#39;HNRNPC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF035QUK&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF065BIC&#39;</span><span class="p">]})</span>
 <span class="n">fastq</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([[</span><span class="n">f</span><span class="s2">&quot;{sample_dir}/{s}/{q}.fastq.gz&quot;</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">[</span><span class="n">s</span><span class="p">]]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">])</span>
 </pre></div>
 
@@ -399,15 +405,15 @@ sos run nb.ipynb default</code></pre>
     <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="p">{</span><span class="n">cwd</span><span class="p">}</span><span class="o">/</span><span class="n">WASP</span><span class="o">.</span><span class="n">zip</span>
 
 <span class="p">[</span><span class="n">star</span><span class="p">]</span>
-<span class="c1"># Quite time &amp; resource consuming (3hrs, 32GB memory)</span>
+<span class="c1"># Quite time &amp; resource consuming (3hrs, 32GB memory if sparse_star is False)</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
      <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> \
         <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">sjdbGTFtagExonParentTranscript</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_gtf</span><span class="p">}</span> \
-        <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span>
+        <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="p">{</span><span class="s1">&#39;--genomeSAsparseD 2&#39;</span> <span class="k">if</span> <span class="n">sparse_star</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">quasar</span><span class="p">]</span>
 <span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;QuASAR@piquelab/QuASAR&quot;</span><span class="p">)</span>
@@ -542,7 +548,7 @@ pip install pysam</code></pre>
 <span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="n">fastq</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{sample_dir}/{x}.qual{qual_cutoff}.bam&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
         <span class="o">--</span><span class="n">readFilesCommand</span> <span class="n">zcat</span> \
@@ -588,7 +594,7 @@ pip install pysam</code></pre>
 <span class="kn">parameter:</span> <span class="n">qual_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.{qual}.remap.{ext}&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.remapped.qual{qual_cutoff}.bam&#39;</span><span class="p">)</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
         <span class="o">--</span><span class="n">readFilesCommand</span> <span class="n">zcat</span> \
@@ -609,7 +615,7 @@ pip install pysam</code></pre>
 <span class="n">kept</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([</span><span class="n">wasp_split</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wasp_split</span><span class="p">),</span> <span class="mi">4</span><span class="p">)])</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">paired_with</span> <span class="o">=</span> <span class="s1">&#39;kept&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.keep_remapped.{ext}&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.wasp_remapped.{_ext[0]}&#39;</span><span class="p">)</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">samtools</span> <span class="n">merge</span> <span class="o">-</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_kept</span><span class="p">}</span> <span class="o">|</span> <span class="n">samtools</span> <span class="n">sort</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
     <span class="n">samtools</span> <span class="n">index</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
@@ -653,14 +659,14 @@ pip install pysam</code></pre>
 <span class="c1"># A standard samtools mpileup call</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.pileup.gz&#39;</span><span class="p">)</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">samtools</span> <span class="n">sort</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">|</span> <span class="n">samtools</span> <span class="n">mpileup</span> <span class="o">-</span><span class="n">f</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="n">samtools_snp_list</span><span class="p">}</span> <span class="o">-</span> <span class="o">|</span> <span class="n">gzip</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">call_2</span> <span class="p">(</span><span class="n">awk</span> <span class="o">&amp;</span> <span class="n">bedtools</span> <span class="nb">filter</span> <span class="n">pileup</span><span class="p">)]</span>
 <span class="c1"># Remove bad pileup (indels) and intersect only with list of SNPs provided</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.pileup.gz&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.pileup.bed.gz&#39;</span><span class="p">)</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
+<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
     <span class="c1"># less input.pileup.gz | awk -v OFS=&#39;\t&#39; &#39;{ if ($4&gt;0 &amp;&amp; $5 !~ /[^\^][&lt;&gt;]/ &amp;&amp; $5 !~ /\+[0-9]+[ACGTNacgtn]+/ &amp;&amp; $5 !~ /-[0-9]+[ACGTNacgtn]+/ &amp;&amp; $5 !~ /[^\^]\*/) print $1,$2-1,$2,$3,$4,$5,$6}&#39; | sortBed -i stdin | intersectBed -a stdin -b snps.af.bed -wo | cut -f 1-7,11-14 | gzip &gt; input.pileup.bed.gz</span>
     <span class="n">zcat</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">|</span> \
     <span class="n">awk</span> <span class="o">-</span><span class="n">v</span> <span class="n">OFS</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="s1">&#39;{ if ($4&gt;0 &amp;&amp; $5 !~ /\+[0-9]+[ACGTNacgtn]+/ &amp;&amp; $5 !~ /-[0-9]+[ACGTNacgtn]+/ &amp;&amp; $5 !~ /[^\^]\*/) print $1,$2-1,$2,$3,$4,$5,$6}&#39;</span> <span class="o">|</span> \
@@ -726,7 +732,7 @@ pip install pysam</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/ef75e2355e317c133d86aea261742d727d90a1ae/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Gao Wang on Sun Mar 25 18:22:50 2018 <a href="http://github.com/gaow/m6a/commit/ef75e2355e317c133d86aea261742d727d90a1ae">revision 14, ef75e23</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/93233dc9ffb199a4b47336d0cb66b08cdb84caa2/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Thu Mar 29 16:27:53 2018 <a href="http://github.com/gaow/m6a/commit/93233dc9ffb199a4b47336d0cb66b08cdb84caa2">revision 17, 93233dc</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
