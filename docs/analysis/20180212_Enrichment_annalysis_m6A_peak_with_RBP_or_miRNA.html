@@ -252,7 +252,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -272,7 +272,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/Documents/m6A/&quot;</span><span class="p">)</span>
@@ -301,7 +301,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">save_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
@@ -315,7 +315,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mf">0.05</span>
@@ -351,7 +351,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6A_peaks_merged</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">input_m6A_peak_merged</span><span class="p">,</span> <span class="n">usecols</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
@@ -374,7 +374,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6A_peaks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">input_m6A_peak</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
@@ -390,7 +390,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">m6A_nonpeaks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">input_m6A_nonpeak</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
@@ -406,7 +406,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="n">m6A_peaks</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">m6A_peaks_merged</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">m6A_nonpeaks</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -445,7 +445,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">RBP_binding_sites</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">input_RBP</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
@@ -471,7 +471,7 @@ body {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>{&#39;CSTF2T&#39;, &#39;ILF3&#39;, &#39;FKBP4&#39;, &#39;DDX6&#39;, &#39;XPO5&#39;, &#39;FTO&#39;, &#39;FXR2&#39;, &#39;NOLC1&#39;, &#39;SLTM&#39;, &#39;DDX3X&#39;, &#39;GRWD1&#39;, &#39;HLTF&#39;, &#39;HNRNPC&#39;, &#39;SAFB2&#39;, &#39;RPS11&#39;, &#39;YWHAG&#39;, &#39;U2AF2&#39;, &#39;QKI&#39;, &#39;FUBP1&#39;, &#39;RPS5&#39;, &#39;EWSR1&#39;, &#39;POLR2G&#39;, &#39;DDX24&#39;, &#39;DDX59&#39;, &#39;U2AF1&#39;, &#39;TIA1&#39;, &#39;PUS1&#39;, &#39;RPS3&#39;, &#39;PPIG&#39;, &#39;SF3B4&#39;, &#39;HNRNPM&#39;, &#39;SRSF9&#39;, &#39;FAM120A&#39;, &#39;IGF2BP1&#39;, &#39;SFPQ&#39;, &#39;AUH&#39;, &#39;SLBP&#39;, &#39;TIAL1&#39;, &#39;DDX42&#39;, &#39;TBRG4&#39;, &#39;RBM15&#39;, &#39;NKRF&#39;, &#39;DDX55&#39;, &#39;EIF3H&#39;, &#39;AGGF1&#39;, &#39;XRCC6&#39;, &#39;KHDRBS1&#39;, &#39;SF3A3&#39;, &#39;EIF4G2&#39;, &#39;SUB1&#39;, &#39;YBX3&#39;, &#39;IGF2BP2&#39;, &#39;DHX30&#39;, &#39;LSM11&#39;, &#39;PCBP2&#39;, &#39;RBFOX2&#39;, &#39;SF3B1&#39;, &#39;ZNF622&#39;, &#39;NCBP2&#39;, &#39;SUGP2&#39;, &#39;GEMIN5&#39;, &#39;GPKOW&#39;, &#39;METAP2&#39;, &#39;GTF2F1&#39;, &#39;TARDBP&#39;, &#39;TRA2A&#39;, &#39;DGCR8&#39;, &#39;DROSHA&#39;, &#39;SBDS&#39;, &#39;RBM5&#39;, &#39;CSTF2&#39;, &#39;PPIL4&#39;, &#39;SERBP1&#39;, &#39;SMNDC1&#39;, &#39;FMR1&#39;, &#39;HNRNPUL1&#39;, &#39;SRSF7&#39;, &#39;SUPV3L1&#39;, &#39;SRSF1&#39;, &#39;KHSRP&#39;, &#39;LIN28B&#39;, &#39;BCCIP&#39;, &#39;NONO&#39;, &#39;TNRC6A&#39;, &#39;FUS&#39;, &#39;HNRNPU&#39;, &#39;XRN2&#39;, &#39;RBM22&#39;, &#39;LARP7&#39;, &#39;GRSF1&#39;, &#39;FXR1&#39;, &#39;CDC40&#39;, &#39;BUD13&#39;, &#39;HNRNPK&#39;, &#39;EFTUD2&#39;, &#39;LARP4&#39;, &#39;EXOSC5&#39;, &#39;CPSF6&#39;, &#39;NPM1&#39;, &#39;HNRNPA1&#39;, &#39;EIF3D&#39;, &#39;IGF2BP3&#39;, &#39;ZRANB2&#39;, &#39;PUM2&#39;, &#39;NSUN2&#39;, &#39;TROVE2&#39;, &#39;TAF15&#39;, &#39;UPF1&#39;, &#39;DKC1&#39;, &#39;SND1&#39;, &#39;FUBP3&#39;, &#39;EIF4G1&#39;, &#39;UCHL5&#39;, &#39;NOL12&#39;, &#39;PRPF8&#39;, &#39;PTBP1&#39;, &#39;FASTKD2&#39;, &#39;RBM27&#39;, &#39;MTPAP&#39;, &#39;AKAP8L&#39;, &#39;GNL3&#39;}
+<pre>{&#39;FKBP4&#39;, &#39;NSUN2&#39;, &#39;HNRNPC&#39;, &#39;TIAL1&#39;, &#39;TRA2A&#39;, &#39;IGF2BP1&#39;, &#39;SF3A3&#39;, &#39;UPF1&#39;, &#39;TROVE2&#39;, &#39;FASTKD2&#39;, &#39;KHDRBS1&#39;, &#39;EIF4G1&#39;, &#39;RBM5&#39;, &#39;TBRG4&#39;, &#39;FUS&#39;, &#39;NONO&#39;, &#39;SMNDC1&#39;, &#39;SAFB2&#39;, &#39;SUB1&#39;, &#39;PPIL4&#39;, &#39;LARP4&#39;, &#39;DHX30&#39;, &#39;NCBP2&#39;, &#39;SLTM&#39;, &#39;SUGP2&#39;, &#39;DDX55&#39;, &#39;HNRNPA1&#39;, &#39;SRSF7&#39;, &#39;PUS1&#39;, &#39;DDX24&#39;, &#39;LSM11&#39;, &#39;KHSRP&#39;, &#39;HLTF&#39;, &#39;GEMIN5&#39;, &#39;LIN28B&#39;, &#39;EFTUD2&#39;, &#39;IGF2BP2&#39;, &#39;ILF3&#39;, &#39;RBFOX2&#39;, &#39;PCBP2&#39;, &#39;ZRANB2&#39;, &#39;FXR2&#39;, &#39;ZNF622&#39;, &#39;GTF2F1&#39;, &#39;TNRC6A&#39;, &#39;EIF4G2&#39;, &#39;DDX42&#39;, &#39;FTO&#39;, &#39;HNRNPK&#39;, &#39;DGCR8&#39;, &#39;XPO5&#39;, &#39;GRSF1&#39;, &#39;SFPQ&#39;, &#39;SUPV3L1&#39;, &#39;YWHAG&#39;, &#39;EXOSC5&#39;, &#39;POLR2G&#39;, &#39;SF3B4&#39;, &#39;QKI&#39;, &#39;CPSF6&#39;, &#39;DDX6&#39;, &#39;SLBP&#39;, &#39;DDX59&#39;, &#39;FUBP1&#39;, &#39;U2AF2&#39;, &#39;AUH&#39;, &#39;SRSF9&#39;, &#39;GPKOW&#39;, &#39;GRWD1&#39;, &#39;XRCC6&#39;, &#39;RPS5&#39;, &#39;CSTF2&#39;, &#39;LARP7&#39;, &#39;FMR1&#39;, &#39;NOL12&#39;, &#39;DDX3X&#39;, &#39;TIA1&#39;, &#39;PRPF8&#39;, &#39;SERBP1&#39;, &#39;XRN2&#39;, &#39;BUD13&#39;, &#39;EWSR1&#39;, &#39;FUBP3&#39;, &#39;FAM120A&#39;, &#39;BCCIP&#39;, &#39;SBDS&#39;, &#39;TAF15&#39;, &#39;SF3B1&#39;, &#39;NOLC1&#39;, &#39;NKRF&#39;, &#39;HNRNPM&#39;, &#39;RBM27&#39;, &#39;IGF2BP3&#39;, &#39;SND1&#39;, &#39;HNRNPU&#39;, &#39;DROSHA&#39;, &#39;EIF3D&#39;, &#39;RPS3&#39;, &#39;PPIG&#39;, &#39;FXR1&#39;, &#39;PUM2&#39;, &#39;EIF3H&#39;, &#39;METAP2&#39;, &#39;DKC1&#39;, &#39;U2AF1&#39;, &#39;RBM22&#39;, &#39;UCHL5&#39;, &#39;NPM1&#39;, &#39;RPS11&#39;, &#39;CDC40&#39;, &#39;TARDBP&#39;, &#39;SRSF1&#39;, &#39;RBM15&#39;, &#39;MTPAP&#39;, &#39;HNRNPUL1&#39;, &#39;PTBP1&#39;, &#39;AKAP8L&#39;, &#39;YBX3&#39;, &#39;GNL3&#39;, &#39;AGGF1&#39;, &#39;CSTF2T&#39;}
 </pre>
 </div>
 </div>
@@ -491,7 +491,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">peak_width</span> <span class="o">=</span> <span class="n">RBP_binding_sites</span><span class="p">[</span><span class="s2">&quot;peak_width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -567,7 +567,7 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">read_intersect</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">head</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;chromStart&quot;</span><span class="p">,</span> <span class="s2">&quot;chromEnd&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;inter_width&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]):</span>
@@ -581,7 +581,7 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_fisher</span><span class="p">(</span><span class="n">peak_fn</span><span class="p">,</span> <span class="n">nonpeak_fn</span><span class="p">,</span> <span class="n">peak_merge</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;n_inter_peak&#39;</span><span class="p">,</span> <span class="s1">&#39;n_inter_nonpeak&#39;</span><span class="p">,</span> 
@@ -623,7 +623,7 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">fn1</span> <span class="o">=</span> <span class="n">input_intersect_peak_merged</span>
@@ -640,7 +640,7 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">save_data</span><span class="p">(</span><span class="n">fisher_peak_merge</span><span class="p">,</span> <span class="n">output_RBP_fisher</span><span class="p">)</span>
@@ -663,7 +663,7 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">RBP_potential</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;YTHDF&quot;</span><span class="p">,</span> <span class="s2">&quot;HNRNP&quot;</span><span class="p">,</span> <span class="s2">&quot;FMR1&quot;</span><span class="p">,</span> <span class="s2">&quot;IGF2BP&quot;</span><span class="p">,</span> <span class="s2">&quot;G3BP&quot;</span><span class="p">]</span>
@@ -676,24 +676,6 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[&#39;IGF2BP3&#39;, &#39;HNRNPUL1&#39;, &#39;HNRNPA1&#39;, &#39;HNRNPM&#39;, &#39;IGF2BP1&#39;, &#39;FMR1&#39;, &#39;HNRNPK&#39;, &#39;HNRNPU&#39;, &#39;IGF2BP2&#39;, &#39;HNRNPC&#39;]
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -1375,6 +1357,23 @@ bedtools intersect -a ../all.RBP.intersect.hg19.bed -b peaks.merged.bed -s &gt; 
 
 </div>
 
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">output_RBP_fisher</span><span class="p">)</span>
+<span class="n">output_RBP_fisher_excel</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/output/output_RBP_fisher.xlsx&quot;</span>
+<span class="n">writer</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">output_RBP_fisher_excel</span><span class="p">)</span>
+<span class="n">res</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+<span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+
+</div>
 </div>
 </div>
 
@@ -3869,7 +3868,7 @@ bedtools intersect -a ../miRNA.bed -b nonpeaks.bed -s &gt; nonpeak.intersect.miR
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/b6c5cf3024a05cb9e352ab2c3551f979c754ba19/analysis/20180212_Enrichment_annalysis_m6A_peak_with_RBP_or_miRNA.ipynb"><code>analysis/20180212_Enrichment_annalysis_m6A_peak_with_RBP_or_miRNA.ipynb</code></a> committed by Min Qiao on Mon Mar 12 01:21:41 2018 <a href="http://github.com/gaow/m6a/commit/b6c5cf3024a05cb9e352ab2c3551f979c754ba19">revision 1, b6c5cf3</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/d71b8f480698543ea3ba5e6793ef85f0a802c545/analysis/20180212_Enrichment_annalysis_m6A_peak_with_RBP_or_miRNA.ipynb"><code>analysis/20180212_Enrichment_annalysis_m6A_peak_with_RBP_or_miRNA.ipynb</code></a> committed by Min Qiao on Wed Mar 28 20:03:22 2018 <a href="http://github.com/gaow/m6a/commit/d71b8f480698543ea3ba5e6793ef85f0a802c545">revision 2, d71b8f4</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
