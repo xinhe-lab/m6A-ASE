@@ -262,7 +262,7 @@ body {
 </ol>
 <p>The pipeline is implemented in SoS as displayed in the rest of this SoS notebook. The pipeline can be executed from this notebook directly on local or remote computer (with caveats see below). For more information see <a href="https://github.com/vatlab/SOS">SoS website</a>.</p>
 <ul>
-<li>Some NGS software used are loaded from online <code>docker</code> images. This is me being lazy to avoid installing these software on a local computer (which should not take much time anyways). But some cluster system, such as UChicago RCC, does not support <code>docker</code>. Also here I did not configure cluster job queues with <code>task</code> option. So this notebook is intended to run on a local workstation as is, though involves minimal changes to get it work distributively on cluster, given required software are installed there.</li>
+<li>Some NGS software used are loaded from <a href="https://hub.docker.com/u/gaow">online <code>docker</code> images</a>. This is me being lazy to avoid installing these software on a local computer (which should not take much time anyways). But some cluster system, such as UChicago RCC, does not support <code>docker</code>. Also here I did not configure cluster job queues with <code>task</code> option. So this notebook is intended to run on a local workstation as is, though involves minimal changes to get it work distributively on cluster, given required software are installed there.</li>
 <li><code>bedtools</code> is needed by <code>QuASAR</code> thus cannot be loaded from a docker image. It is installed from standard software repo (Debian's <code>apt-get install bedtools</code>).</li>
 </ul>
 <p>To run the pipeline:</p>
@@ -307,7 +307,7 @@ sos run $nb default</code></pre>
 <span class="n">resource_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/hg19&quot;</span>
 <span class="n">ref_fa</span> <span class="o">=</span> <span class="s2">&quot;hg19.fa&quot;</span>
 <span class="n">ref_gtf</span> <span class="o">=</span> <span class="s1">&#39;Homo_sapiens.GRCh38.91.gtf.gz&#39;</span>
-<span class="n">wasp_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/WASP-master/mapping&quot;</span>
+<span class="n">wasp_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;/opt/WASP/mapping&quot;</span><span class="p">)</span>
 <span class="n">samtools_snp_list</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/020717_filtered_maf5_blacklist.final.bed&quot;</span>
 <span class="c1"># Sample files</span>
 <span class="n">sample_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/samples&quot;</span>
@@ -397,14 +397,7 @@ sos run $nb default</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">wasp</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{wasp_dir}/README.md&quot;</span>
-<span class="kn">download:</span> <span class="n">decompress</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">dest_file</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/WASP.zip&#39;</span>
-    <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">bmvdgeijn</span><span class="o">/</span><span class="n">WASP</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">zip</span>
-<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="p">{</span><span class="n">cwd</span><span class="p">}</span><span class="o">/</span><span class="n">WASP</span><span class="o">.</span><span class="n">zip</span>
-
-<span class="p">[</span><span class="n">star</span><span class="p">]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">star</span><span class="p">]</span>
 <span class="c1"># Quite time &amp; resource consuming (3hrs, 32GB memory if sparse_star is False)</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
@@ -426,24 +419,6 @@ sos run $nb default</code></pre>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Also apparently <code>WASP</code> only works with Python 2 ... need to create a <code>conda</code> environment for it:</p>
-
-<pre><code>conda create -n py27 python=2.7
-source activate py27
-conda install pytables=2.4.0
-pip install pysam</code></pre>
-<p>and use</p>
-
-<pre><code>source activate py27</code></pre>
-<p>in <code>WASP</code> steps.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -485,10 +460,10 @@ pip install pysam</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">gaow</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">wasp</span><span class="o">.</span><span class="n">png</span> <span class="o">-</span><span class="n">n</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">../</span><span class="n">writeup</span><span class="o">/</span><span class="n">wasp</span><span class="o">.</span><span class="n">png</span> <span class="o">-</span><span class="n">n</span>
 </pre></div>
 
 </div>
@@ -506,7 +481,7 @@ pip install pysam</code></pre>
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> /home/gaow/tmp/wasp.png (109.4 KiB):</div>
+<div class="sos_hint">> ../writeup/wasp.png (109.4 KiB):</div>
 </div>
 
 </div>
@@ -579,13 +554,11 @@ pip install pysam</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">intersecting</span> <span class="n">SNP</span><span class="p">):</span> <span class="kp">shared</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wasp_split&#39;</span><span class="p">:</span> <span class="s1">&#39;step_output&#39;</span><span class="p">}]</span>
 <span class="c1"># WASP finding unbiased reads intersecting with SNP</span>
-<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;wasp&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input:n}.remap.fq1.gz&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{_input:n}.remap.fq2.gz&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{_input:n}.to.remap.bam&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{_input:n}.keep.bam&quot;</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/wasp&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{resource_dir}/wasp_snp_list:{wasp_dir:d}/examples&#39;</span><span class="p">],</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">find_intersecting_snps</span><span class="o">.</span><span class="n">py</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> \
-        <span class="o">--</span><span class="n">snp_dir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="n">wasp_snp_list</span> \
+        <span class="o">--</span><span class="n">snp_dir</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">:</span><span class="n">d</span><span class="p">}</span><span class="o">/</span><span class="n">examples</span> \
         <span class="o">--</span><span class="n">is_sorted</span> <span class="p">{</span><span class="s1">&#39;--is_paired_end&#39;</span> <span class="k">if</span> <span class="n">paired_end</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">align_3</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">post</span> <span class="n">alignment</span><span class="p">)]</span>
@@ -607,8 +580,7 @@ pip install pysam</code></pre>
 <span class="n">to_remap</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([</span><span class="n">wasp_split</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wasp_split</span><span class="p">),</span> <span class="mi">4</span><span class="p">)])</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">paired_with</span> <span class="o">=</span> <span class="s1">&#39;to_remap&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.remapped.{ext}&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.keep_remapped.{_ext[0]}&#39;</span><span class="p">)</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span>
-    <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/wasp&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span>
     <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="n">filter_remapped_reads</span><span class="o">.</span><span class="n">py</span> <span class="p">{</span><span class="n">_to_remap</span><span class="p">}</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">align_5</span> <span class="p">(</span><span class="n">Merge</span> <span class="n">WASP</span> <span class="n">adjusted</span> <span class="ow">and</span> <span class="n">originally</span> <span class="n">kept</span> <span class="n">BAM</span><span class="p">)]</span>
@@ -622,8 +594,7 @@ pip install pysam</code></pre>
 <span class="p">[</span><span class="n">align_6</span> <span class="p">(</span><span class="n">WASP</span> <span class="n">remove</span> <span class="n">duplicate</span> <span class="n">reads</span> <span class="p">)]</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.bam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_name[0]}.dedup.bam&#39;</span><span class="p">)</span>
-<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span>
-    <span class="n">source</span> <span class="n">activate</span> <span class="n">py27</span>
+<span class="kn">bash:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/wasp&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span>
     <span class="n">python</span> <span class="p">{</span><span class="n">wasp_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="s1">&#39;rmdup_pe.py&#39;</span> <span class="k">if</span> <span class="n">paired_end</span> <span class="k">else</span> <span class="s1">&#39;rmdup.py&#39;</span><span class="p">}</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
@@ -732,7 +703,7 @@ pip install pysam</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/6682f83402fbf5424fdaf1969803ce643384fc1e/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Gao Wang on Thu Mar 29 21:03:20 2018 <a href="http://github.com/gaow/m6a/commit/6682f83402fbf5424fdaf1969803ce643384fc1e">revision 18, 6682f83</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/7c0297d1efadc698033d662ef5d45403a1f6a367/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Gao Wang on Fri Mar 30 00:54:20 2018 <a href="http://github.com/gaow/m6a/commit/7c0297d1efadc698033d662ef5d45403a1f6a367">revision 19, 7c0297d</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
