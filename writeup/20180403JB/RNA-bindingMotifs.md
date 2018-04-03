@@ -60,7 +60,7 @@ Determined sequence preferences for 207 RBPs (from 193 unique RBP-encoding genes
     - A2BP1/RBFOX1, BRUNO/ARET
     - all RBPs in the SUP12–RBM24–RBM38 cluster prefer similar (G+U)-rich sequences.
 - Subtle differences between more distantly related proteins are found.
-    -  family members from fungi, protists and algae maintained the presumed ancestral CAC core-recognition specificity17, but differ in their preferenceforflanking nucleotides
+    -  family members from fungi, protists and algae maintained the presumed ancestral CAC core-recognition specificity, but differ in their preferenceforflanking nucleotides
 
 ## Figure 4
 ![Ray D., et al. Nature 2013, Fig 2](img/f2.jpg){ width=90% }
