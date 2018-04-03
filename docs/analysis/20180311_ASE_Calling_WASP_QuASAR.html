@@ -245,7 +245,7 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="ASE-calling-pipeline">ASE calling pipeline<a class="anchor-link" href="#ASE-calling-pipeline">&#182;</a></h1><p>Mostly based on Yanyu's work in 2017. The pipeline aligns <code>fastq</code> sequences to <code>bam</code> using <code>STAR</code>, then adjust the mapping via <code>WASP</code> to account for allele specificity, and finally call genotype and ASE via <code>QuASAR</code>.</p>
+<h1 id="ASE-calling-pipeline">ASE calling pipeline<a class="anchor-link" href="#ASE-calling-pipeline">&#182;</a></h1><p>Mostly based on Yanyu's work in 2017. The pipeline aligns <code>fastq</code> sequences to <code>bam</code> using <a href="https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf"><code>STAR</code></a>, then adjust the mapping via <a href="https://github.com/bmvdgeijn/WASP"><code>WASP</code></a> to account for allele specificity, and finally call genotype and ASE via <a href="https://github.com/piquelab/QuASAR"><code>QuASAR</code></a>.</p>
 
 </div>
 </div>
@@ -315,9 +315,9 @@ sos run $nb default</code></pre>
 <span class="n">sparse_star</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="c1">## A list of sample names (keys) and their corresponding FASTQ files (values)</span>
-<span class="n">samples</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s1">&#39;ENCLB279NMT&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF824TZM&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF176JNE&#39;</span><span class="p">],</span> 
+<span class="n">samples</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s1">&#39;ENCLB279NMT&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF824TZM&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF176JNE&#39;</span><span class="p">],</span>
                        <span class="s1">&#39;IGF2BP2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF307AUO&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF563WIX&#39;</span><span class="p">],</span> 
-                       <span class="s1">&#39;FTO&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF374PSI&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF877URW&#39;</span><span class="p">],</span> 
+                       <span class="s1">&#39;FTO&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF374PSI&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF877URW&#39;</span><span class="p">],</span>
                        <span class="s1">&#39;HNRNPC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF035QUK&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF065BIC&#39;</span><span class="p">]})</span>
 <span class="n">fastq</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([[</span><span class="n">f</span><span class="s2">&quot;{sample_dir}/{s}/{q}.fastq.gz&quot;</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">[</span><span class="n">s</span><span class="p">]]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">])</span>
 </pre></div>
@@ -413,6 +413,8 @@ sos run $nb default</code></pre>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{resource_dir}/convertPileupToQuasar.R&#39;</span>
 <span class="kn">download:</span> <span class="n">dest_file</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{resource_dir}/convertPileupToQuasar.R&#39;</span>
     <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">piquelab</span><span class="o">/</span><span class="n">QuASAR</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">convertPileupToQuasar</span><span class="o">.</span><span class="n">R</span>
+<span class="kn">run:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">perl</span> <span class="o">-</span><span class="n">pi</span><span class="o">.</span><span class="n">bak</span> <span class="o">-</span><span class="n">e</span> <span class="s2">&quot;s/less/zcat/&quot;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -703,7 +705,7 @@ sos run $nb default</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/7c0297d1efadc698033d662ef5d45403a1f6a367/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Gao Wang on Fri Mar 30 00:54:20 2018 <a href="http://github.com/gaow/m6a/commit/7c0297d1efadc698033d662ef5d45403a1f6a367">revision 19, 7c0297d</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/8cfae6b616a51f364182eb2ab50e000dc489db84/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Fri Mar 30 15:24:49 2018 <a href="http://github.com/gaow/m6a/commit/8cfae6b616a51f364182eb2ab50e000dc489db84">revision 21, 8cfae6b</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
