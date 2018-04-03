@@ -19,7 +19,7 @@
 - RNA recognition motif, hnRNP K-homology (KH), zinc finger domains, etc.
 
 ## Motivation: study of post-transcriptional regulation
-Post-transcriptional regulation Contributes substantially to gene expression across human tissues.
+Post-transcriptional regulation contributes substantially to gene expression across human tissues.
 However,
 
 - Lack of motifs for the vast majority of RBPs across all branches of eukaryotes.
@@ -51,7 +51,7 @@ Determined sequence preferences for 207 RBPs (from 193 unique RBP-encoding genes
 - The `RNAcompete` motif substantially outperforms the literature motif by AUROC analysis.
     - Fig. 1c: AUROC
 
-## Figure 1
+## Large-scale analysis of RBPs
 ![Ray D., et al. Nature 2013, Fig 1](img/f1.jpg){ width=60% }
 
 ## Conservation of ancient motifs
@@ -64,12 +64,12 @@ Determined sequence preferences for 207 RBPs (from 193 unique RBP-encoding genes
 ## Conservation of ancient motifs
 ![Ray D., et al. Nature 2013, Fig 2](img/f2.jpg){ width=90% }
 
-## RBD sequence identity enables inference of RNA motifs
+## RBD based inference of RNA motifs
 - Amino acid sequence identity higher than ~70% yields very similar motifs
 - `RNAcompete` data captured 57% of all human RBPs contained multiple RBDs, assuming 70% sequence identity
 - Validation of motifs predicted for proteins at 61–96% amino acid identity
 
-## RBD sequence identity enables inference of RNA motifs
+## RBD based inference of RNA motifs
 ![Ray D., et al. Nature 2013, Fig 3](img/f3.jpg){ width=90% }
 
 ## Sequence conservation of motif matches
