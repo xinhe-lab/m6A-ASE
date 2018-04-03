@@ -41,7 +41,7 @@
 \setcounter{secnumdepth}{0}
 
 \title{A compendium of RNA-binding motifs for decoding gene regulation}
-\author{Ray D., et al. Nature, 2013, vol.~499, pp.~172-177}
+\author{Ray D., et al.~Nature, 2013, vol.~499, pp.~172-177}
 \date{\today}
 
 \InputIfFileExists{macro.tex}{}{}
@@ -55,9 +55,12 @@
 \begin{document}
 \frame{\titlepage}
 
-\section{Introduction}\label{introduction}
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
 
-\begin{frame}{RNA-binding proteins (RBPs)}
+\begin{frame}{%
+\protect\hypertarget{rna-binding-proteins-rbps}{%
+RNA-binding proteins (RBPs)}}
 
 \begin{itemize}
 \tightlist
@@ -76,17 +79,21 @@
 
 \end{frame}
 
-\begin{frame}{Figure 1}
+\begin{frame}{%
+\protect\hypertarget{rna-binding-proteins-rbps-1}{%
+RNA-binding proteins (RBPs)}}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.80000\textwidth]{img/RBPs1.jpg}
-\caption{Sutherland JM., et al. Asian J Androl 2015}
+\includegraphics[width=0.8\textwidth,height=\textheight]{img/RBPs1.jpg}
+\caption{Sutherland JM., et al.~Asian J Androl 2015}
 \end{figure}
 
 \end{frame}
 
-\begin{frame}{RNA-binding domains (RBDs)}
+\begin{frame}{%
+\protect\hypertarget{rna-binding-domains-rbds}{%
+RNA-binding domains (RBDs)}}
 
 \begin{block}{Functions}
 
@@ -112,15 +119,12 @@
 
 \end{frame}
 
-\begin{frame}{Post-transcriptional regulation}
+\begin{frame}{%
+\protect\hypertarget{motivation-study-of-post-transcriptional-regulation}{%
+Motivation: study of post-transcriptional regulation}}
 
-\begin{itemize}
-\tightlist
-\item
-  Contributes substantially to gene expression across human tissues.
-\end{itemize}
-
-However,
+Post-transcriptional regulation Contributes substantially to gene
+expression across human tissues. However,
 
 \begin{itemize}
 \tightlist
@@ -132,7 +136,7 @@ However,
   \tightlist
   \item
     Due to higher flexibility of the RNA-protein interface for major
-    types of BRPs;
+    types of RBPs;
   \item
     Example: only 15\% of human RBD-containing proteins have known
     RNA-binding motifs.
@@ -143,15 +147,19 @@ However,
 
 \end{frame}
 
-\section{Methods}\label{methods}
+\hypertarget{methods}{%
+\section{Methods}\label{methods}}
 
-\begin{frame}{\texttt{RNAcompete} experiments}
+\begin{frame}{%
+\protect\hypertarget{rnacompete-experiments}{%
+\texttt{RNAcompete} experiments}}
 
 \begin{itemize}
 \tightlist
 \item
-  An \emph{in vitro} method for the analysis of RNA binding preferences
-  of hundreds of RBD-containing RBPs, from diverse eukaryotes.
+  An \emph{in vitro}, high-throughput method for the analysis of RNA
+  binding preferences of hundreds of RBD-containing RBPs, from diverse
+  eukaryotes.
 \item
   Rely on binding reaction between RBD and RNA-binding motifs.
 
@@ -170,19 +178,24 @@ However,
 
 \end{frame}
 
-\begin{frame}{Figure 2}
+\begin{frame}{%
+\protect\hypertarget{rnacompete-experiments-1}{%
+\texttt{RNAcompete} experiments}}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.80000\textwidth]{img/RNAcompete.png}
-\caption{Ray D., et al. Nature 2009, Fig 1}
+\includegraphics[width=0.8\textwidth,height=\textheight]{img/RNAcompete.png}
+\caption{Ray D., et al.~Nature Biotechnol. 2009, Fig 1}
 \end{figure}
 
 \end{frame}
 
-\section{Results}\label{results}
+\hypertarget{results}{%
+\section{Results}\label{results}}
 
-\begin{frame}{Large-scale analysis of RBPs}
+\begin{frame}[fragile]{%
+\protect\hypertarget{large-scale-analysis-of-rbps}{%
+Large-scale analysis of RBPs}}
 
 Determined sequence preferences for 207 RBPs (from 193 unique
 RBP-encoding genes), 85 from human.
@@ -208,8 +221,8 @@ RBP-encoding genes), 85 from human.
     Biotech 2006)
   \end{itemize}
 \item
-  The RNAcompete motif substantially outperforms the literature motif by
-  AUROC analysis.
+  The \texttt{RNAcompete} motif substantially outperforms the literature
+  motif by AUROC analysis.
 
   \begin{itemize}
   \tightlist
@@ -220,17 +233,21 @@ RBP-encoding genes), 85 from human.
 
 \end{frame}
 
-\begin{frame}{Figure 3}
+\begin{frame}{%
+\protect\hypertarget{figure-1}{%
+Figure 1}}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.60000\textwidth]{img/f1.jpg}
-\caption{Ray D., et al. Nature 2013, Fig 1}
+\includegraphics[width=0.6\textwidth,height=\textheight]{img/f1.jpg}
+\caption{Ray D., et al.~Nature 2013, Fig 1}
 \end{figure}
 
 \end{frame}
 
-\begin{frame}{Conservation of ancient motifs}
+\begin{frame}{%
+\protect\hypertarget{conservation-of-ancient-motifs}{%
+Conservation of ancient motifs}}
 
 \begin{itemize}
 \tightlist
@@ -243,8 +260,8 @@ RBP-encoding genes), 85 from human.
   \item
     A2BP1/RBFOX1, BRUNO/ARET
   \item
-    all RBPs in the SUP12--RBM24--RBM38 cluster prefer similar
-    (G+U)-rich sequences.
+    all RBPs in the SUP12–RBM24–RBM38 cluster prefer similar (G+U)-rich
+    sequences.
   \end{itemize}
 \item
   Subtle differences between more distantly related proteins are found.
@@ -254,23 +271,27 @@ RBP-encoding genes), 85 from human.
   \item
     family members from fungi, protists and algae maintained the
     presumed ancestral CAC core-recognition specificity, but differ in
-    their preferenceforflanking nucleotides
+    their preference for flanking nucleotides
   \end{itemize}
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Figure 4}
+\begin{frame}{%
+\protect\hypertarget{conservation-of-ancient-motifs-1}{%
+Conservation of ancient motifs}}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.90000\textwidth]{img/f2.jpg}
-\caption{Ray D., et al. Nature 2013, Fig 2}
+\includegraphics[width=0.9\textwidth,height=\textheight]{img/f2.jpg}
+\caption{Ray D., et al.~Nature 2013, Fig 2}
 \end{figure}
 
 \end{frame}
 
-\begin{frame}{Figure 5}
+\begin{frame}[fragile]{%
+\protect\hypertarget{rbd-sequence-identity-enables-inference-of-rna-motifs}{%
+RBD sequence identity enables inference of RNA motifs}}
 
 \begin{itemize}
 \tightlist
@@ -278,26 +299,30 @@ RBP-encoding genes), 85 from human.
   Amino acid sequence identity higher than \textasciitilde{}70\% yields
   very similar motifs
 \item
-  RNAcompete data captured 57\% of all human RBPs contained multiple
-  RBDs, assuming 70\% sequence identity
+  \texttt{RNAcompete} data captured 57\% of all human RBPs contained
+  multiple RBDs, assuming 70\% sequence identity
 \item
-  Validation of motifs predicted for proteins at 61--96\% amino acid
+  Validation of motifs predicted for proteins at 61–96\% amino acid
   identity
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Figure 5}
+\begin{frame}{%
+\protect\hypertarget{rbd-sequence-identity-enables-inference-of-rna-motifs-1}{%
+RBD sequence identity enables inference of RNA motifs}}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.90000\textwidth]{img/f3.jpg}
-\caption{Ray D., et al. Nature 2013, Fig 3}
+\includegraphics[width=0.9\textwidth,height=\textheight]{img/f3.jpg}
+\caption{Ray D., et al.~Nature 2013, Fig 3}
 \end{figure}
 
 \end{frame}
 
-\begin{frame}{Sequence conservation of motif matches}
+\begin{frame}{%
+\protect\hypertarget{sequence-conservation-of-motif-matches}{%
+Sequence conservation of motif matches}}
 
 \begin{itemize}
 \tightlist
@@ -308,17 +333,21 @@ RBP-encoding genes), 85 from human.
 
 \end{frame}
 
-\begin{frame}{Figure 6}
+\begin{frame}{%
+\protect\hypertarget{sequence-conservation-of-motif-matches-1}{%
+Sequence conservation of motif matches}}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.70000\textwidth]{img/f4.jpg}
-\caption{Ray D., et al. Nature 2013, Fig 4}
+\includegraphics[width=0.7\textwidth,height=\textheight]{img/f4.jpg}
+\caption{Ray D., et al.~Nature 2013, Fig 4}
 \end{figure}
 
 \end{frame}
 
-\begin{frame}{Insights into RBP multi-functionality}
+\begin{frame}{%
+\protect\hypertarget{insights-into-rbp-multi-functionality}{%
+Insights into RBP multi-functionality}}
 
 \begin{itemize}
 \tightlist
@@ -345,25 +374,30 @@ RBP-encoding genes), 85 from human.
 
 \end{frame}
 
-\begin{frame}{Figure 7}
+\begin{frame}{%
+\protect\hypertarget{insights-into-rbp-multi-functionality-1}{%
+Insights into RBP multi-functionality}}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.70000\textwidth]{img/f5.jpg}
-\caption{Ray D., et al. Nature 2013, Fig 5}
+\includegraphics[width=0.7\textwidth,height=\textheight]{img/f5.jpg}
+\caption{Ray D., et al.~Nature 2013, Fig 5}
 \end{figure}
 
 \end{frame}
 
-\section{Discussion}\label{discussion}
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
 
-\begin{frame}{Significance}
+\begin{frame}{%
+\protect\hypertarget{significance-of-identified-motifs}{%
+Significance of identified motifs}}
 
 \begin{itemize}
 \tightlist
 \item
-  The resulting motifs represent an unprecedented resource for the
-  analysis of post-transcriptional regulation across eukaryotes;
+  represent an unprecedented resource for the analysis of
+  post-transcriptional regulation across eukaryotes;
 \item
   provide insight into the function and evolution of both RBPs and their
   binding sites;
