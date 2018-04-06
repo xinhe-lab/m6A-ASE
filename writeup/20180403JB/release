@@ -15,22 +15,21 @@ run: expand = True
 [2]
 depends: executable('pandoc')
 output: f'{_input:n}.tex'
-run: expand = True
+run: docker_image = "gaow/debian-texlive", expand = True
      pandoc -t beamer --template {theme} -s -o {_output} {_input}
 
 [3]
 depends: executable('pdflatex')
 output: f'{_input:n}.pdf'
-#run: expand = True, stdout = f'{_input:n}.err'
-run: expand = True
+run: docker_image = "gaow/debian-texlive", expand = True
      pdflatex -output-directory={_input:d} {_input} 
      pdflatex -output-directory={_input:d} {_input} 
-     if [ -f "{_input:n}bib*" ]; then
+     if [ -f "{_input:n}.bib" ]; then
         openout_any=a bibtex {_input:n}.aux
         pdflatex -output-directory={_input:d} {_input}
      fi
 
 [4]
-to_remove = paths([f'{_input:n}.' + x for x in ['aux', 'bbl', 'blg', 'log', 'out', 'err', 'nav', 'snm', 'toc', 'vrb']])
+to_remove = paths([f'{_input:n}.' + x for x in ['aux', 'bbl', 'blg', 'log', 'out', 'nav', 'snm', 'toc', 'vrb']])
 run: expand = True
   rm -f {to_remove}
