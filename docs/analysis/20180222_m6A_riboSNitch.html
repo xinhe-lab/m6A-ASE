@@ -272,7 +272,6 @@ body {
 <span class="n">intron_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/intron_m6AQTLs.txt&quot;</span>
 <span class="n">output_intron_m6AQTL</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/intron_m6AQTLs.bed&quot;</span>
 <span class="n">output_dbSNP</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/dbSNP/dbSNP.vcf.gz&quot;</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">200</span>
 </pre></div>
 
 </div>
@@ -322,7 +321,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">load_m6AQTL</span><span class="p">(</span><span class="n">data_path</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">load_m6AQTL</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">n_width</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">])</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">([[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]])</span>
@@ -330,11 +329,13 @@ body {
     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;gene_symbol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;peakID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pos1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">n</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pos2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1">#     data[&quot;gap&quot;] = data.apply(lambda row: row[&quot;start&quot;] - row[&quot;pos&quot;], axis = 1)</span>
+<span class="c1">#     data[&quot;in&quot;] = data.apply(lambda row: 1 if row[&quot;pos&quot;] &gt;= row[&quot;start&quot;] and row[&quot;pos&quot;] &lt;= row[&quot;end&quot;] else 0,axis=1)</span>
+    <span class="c1"># only keep those width &lt;= 1000</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">n_width</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">data</span>
 </pre></div>
 
@@ -348,7 +349,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intron_m6AQTL</span> <span class="o">=</span> <span class="n">load_m6AQTL</span><span class="p">(</span><span class="n">intron_m6AQTL</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intron_m6AQTL</span> <span class="o">=</span> <span class="n">load_m6AQTL</span><span class="p">(</span><span class="n">intron_m6AQTL</span><span class="p">,</span> <span class="p">)</span>
 <span class="n">exon_m6AQTL</span> <span class="o">=</span> <span class="n">load_m6AQTL</span><span class="p">(</span><span class="n">exon_m6AQTL</span><span class="p">)</span>
 </pre></div>
 
@@ -379,7 +380,7 @@ body {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>(12743, 18) (2997, 18)
+<pre>(9312, 16) (2254, 16)
 </pre>
 </div>
 </div>
@@ -393,7 +394,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intron_m6AQTL</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;snpID&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;gap&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exon_m6AQTL</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;peakID&quot;</span><span class="p">,</span> <span class="s2">&quot;snpID&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -431,6 +432,7 @@ body {
       <th></th>
       <th>chr</th>
       <th>pos</th>
+      <th>peakID</th>
       <th>snpID</th>
       <th>start</th>
       <th>end</th>
@@ -438,79 +440,78 @@ body {
       <th>pos1</th>
       <th>pos2</th>
       <th>gene_symbol</th>
-      <th>gap</th>
       <th>strand</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>chr1</td>
-      <td>899937</td>
-      <td>rs143296006</td>
-      <td>981788</td>
-      <td>981988</td>
-      <td>200</td>
-      <td>899737</td>
-      <td>900137</td>
-      <td>AGRN</td>
-      <td>81851</td>
-      <td>+</td>
-    </tr>
-    <tr>
       <th>1</th>
       <td>chr1</td>
-      <td>899938</td>
-      <td>rs147467971</td>
-      <td>981788</td>
-      <td>981988</td>
-      <td>200</td>
-      <td>899738</td>
-      <td>900138</td>
-      <td>AGRN</td>
-      <td>81850</td>
+      <td>943468</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs3121567</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>51</td>
+      <td>943268</td>
+      <td>943668</td>
+      <td>ISG15</td>
       <td>+</td>
     </tr>
     <tr>
       <th>2</th>
       <td>chr1</td>
-      <td>899942</td>
-      <td>rs71509448</td>
-      <td>981788</td>
-      <td>981988</td>
-      <td>200</td>
-      <td>899742</td>
-      <td>900142</td>
-      <td>AGRN</td>
-      <td>81846</td>
+      <td>947538</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs2465125</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>51</td>
+      <td>947338</td>
+      <td>947738</td>
+      <td>ISG15</td>
       <td>+</td>
     </tr>
     <tr>
       <th>3</th>
       <td>chr1</td>
-      <td>943468</td>
-      <td>rs3121567</td>
+      <td>948421</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs113047134</td>
       <td>949466</td>
       <td>949516</td>
-      <td>50</td>
-      <td>943268</td>
-      <td>943668</td>
+      <td>51</td>
+      <td>948221</td>
+      <td>948621</td>
       <td>ISG15</td>
-      <td>5998</td>
       <td>+</td>
     </tr>
     <tr>
       <th>4</th>
       <td>chr1</td>
-      <td>945612</td>
-      <td>rs3121565</td>
+      <td>948846</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs3841266</td>
       <td>949466</td>
       <td>949516</td>
-      <td>50</td>
-      <td>945412</td>
-      <td>945812</td>
+      <td>51</td>
+      <td>948646</td>
+      <td>949046</td>
       <td>ISG15</td>
-      <td>3854</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>chr1</td>
+      <td>948921</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs15842</td>
+      <td>949466</td>
+      <td>949516</td>
+      <td>51</td>
+      <td>948721</td>
+      <td>949121</td>
+      <td>ISG15</td>
       <td>+</td>
     </tr>
   </tbody>
@@ -529,7 +530,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exon_m6AQTL</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;snpID&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;gap&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intron_m6AQTL</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;peakID&quot;</span><span class="p">,</span> <span class="s2">&quot;snpID&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -567,6 +568,7 @@ body {
       <th></th>
       <th>chr</th>
       <th>pos</th>
+      <th>peakID</th>
       <th>snpID</th>
       <th>start</th>
       <th>end</th>
@@ -574,7 +576,6 @@ body {
       <th>pos1</th>
       <th>pos2</th>
       <th>gene_symbol</th>
-      <th>gap</th>
       <th>strand</th>
     </tr>
   </thead>
@@ -582,71 +583,71 @@ body {
     <tr>
       <th>0</th>
       <td>chr1</td>
-      <td>889403</td>
-      <td>rs62639963</td>
-      <td>879858</td>
-      <td>881654</td>
-      <td>1796</td>
-      <td>889203</td>
-      <td>889603</td>
-      <td>NOC2L</td>
-      <td>-9545</td>
-      <td>-</td>
+      <td>899937</td>
+      <td>AGRN_981788_981988_+</td>
+      <td>rs143296006</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>201</td>
+      <td>899737</td>
+      <td>900137</td>
+      <td>AGRN</td>
+      <td>+</td>
     </tr>
     <tr>
       <th>1</th>
       <td>chr1</td>
-      <td>943468</td>
-      <td>rs3121567</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>50</td>
-      <td>943268</td>
-      <td>943668</td>
-      <td>ISG15</td>
-      <td>5998</td>
+      <td>899938</td>
+      <td>AGRN_981788_981988_+</td>
+      <td>rs147467971</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>201</td>
+      <td>899738</td>
+      <td>900138</td>
+      <td>AGRN</td>
       <td>+</td>
     </tr>
     <tr>
       <th>2</th>
       <td>chr1</td>
-      <td>947538</td>
-      <td>rs2465125</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>50</td>
-      <td>947338</td>
-      <td>947738</td>
-      <td>ISG15</td>
-      <td>1928</td>
+      <td>899942</td>
+      <td>AGRN_981788_981988_+</td>
+      <td>rs71509448</td>
+      <td>981788</td>
+      <td>981988</td>
+      <td>201</td>
+      <td>899742</td>
+      <td>900142</td>
+      <td>AGRN</td>
       <td>+</td>
     </tr>
     <tr>
       <th>3</th>
       <td>chr1</td>
-      <td>948421</td>
-      <td>rs113047134</td>
+      <td>943468</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs3121567</td>
       <td>949466</td>
       <td>949516</td>
-      <td>50</td>
-      <td>948221</td>
-      <td>948621</td>
+      <td>51</td>
+      <td>943268</td>
+      <td>943668</td>
       <td>ISG15</td>
-      <td>1045</td>
       <td>+</td>
     </tr>
     <tr>
       <th>4</th>
       <td>chr1</td>
-      <td>948846</td>
-      <td>rs3841266</td>
+      <td>945612</td>
+      <td>ISG15_949466_949516_+</td>
+      <td>rs3121565</td>
       <td>949466</td>
       <td>949516</td>
-      <td>50</td>
-      <td>948646</td>
-      <td>949046</td>
+      <td>51</td>
+      <td>945412</td>
+      <td>945812</td>
       <td>ISG15</td>
-      <td>620</td>
       <td>+</td>
     </tr>
   </tbody>
@@ -665,37 +666,15 @@ body {
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n1</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="c1"># gap = intron_m6AQTL[&quot;gap&quot;].tolist()</span>
-<span class="n">intron_gap</span> <span class="o">=</span> <span class="n">intron_m6AQTL</span><span class="p">[(</span><span class="n">intron_m6AQTL</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">n1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">intron_m6AQTL</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">n1</span><span class="p">)][</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">intron_gap</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of gap in introns (the distance between SNP pos and start of peak)&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># n1 = 1000</span>
+<span class="c1"># # gap = intron_m6AQTL[&quot;gap&quot;].tolist()</span>
+<span class="c1"># intron_gap = intron_m6AQTL[(intron_m6AQTL[&quot;gap&quot;] &lt;= n1) &amp; (intron_m6AQTL[&quot;gap&quot;] &gt;= -n1)][&quot;gap&quot;].tolist()</span>
+<span class="c1"># plt.hist(intron_gap, bins = 30)</span>
+<span class="c1"># plt.title(&quot;Histogram of gap in introns (the distance between SNP pos and start of peak)&quot;)</span>
+<span class="c1"># plt.show()</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeMAAAEICAYAAABs9Jx5AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDIuMS4xLCBodHRwOi8vbWF0cGxvdGxpYi5vcmcvAOZPmwAAHuFJREFUeJzt3Xm4HVWZqPH3kzDKEJDgRaaAoA1eFSQqXiceQQQUoR2hHUCx0Vav2mILjo023aDt2K224tCiIoM4cZ0RibQDaEDGjsggQyBAIkTgqij69R9rba1s9j5Dck7Wydnv73n2k13Trq9WraqvatU6lchMJElSO/drHYAkSaPOZCxJUmMmY0mSGjMZS5LUmMlYkqTGTMaSJDU2Jck4Iq6IiL2n4rfWVhHx1xFxY0TcHRF7NIzjBRHxnVVc9s0R8YmpjmlNiIj9IuIrY0zfOyKWTNO650dERsScOvzNiDh8OtY13SLiiIj4Qes41EZEfDoijm8dx6qIiIdGxM8i4q6IeM0aXO/Qc0tEPCIifjSR3xk3GUfEdRGxb9+4lQ7YzHxYZi4c53dWOmHNQu8BXp2ZG2fmz1oFkZmnZOZ+q7jsv2TmyyYyb0QcFxGfW5X1TJN/AU7sDdS6tnOLQDLzgMw8ebz5WsY4HdaGRB4RcyPiUxFxSz1p/yIijulMz4i4LCLu1xl3fER8un7vncfurp/rIuLYBpsyo0xFXY6IhRExofPPEG8EFmbmJpn5b6sTy1TJzEuBFRFx0Hjzzppm6hmQ5HcArmgcw4wRxRqpXxHxaGCzzDx/TaxPa7X3AxsDuwKbAc8Erumb50HAoeP8ztzM3Bg4DHh7ROw/1YGOiik8V8zUc/ApwMvHnSszx/wA1wH79o07AvjBoHmAxwCLgDuBW4H31fE3AAncXT+Po1wMvBW4HrgN+AzlpNr73RfXab8C3ta3nuOAM4HP1XW9rK77x8AKYCnwIWC9zu8l8ErgKuAu4J+AB9dl7gTO6M7ft80DYwXWr9uTwP8Hrhmy/H7AlcCvgY8A3wdeVqc9GPhe3c7ldefN7SvfNwH/DdwB/CewwZD19O+bBF5Rt/kO4MNADFn2OOBz9fv8uuzhdd8tB95Sp+0P/B74Q932S+r4hcA/Az8EfgvsTDmxnQXcDlwN/G3f+s6oZXkX5UBa0Jl+DHBTnXYlsM+QuN8OfKIzfF5nf9wNPB/YG1gCHF3331LgJZ1l1qe0btxAqbcfBTYcsr516rzLgWuBV9X1zemUQ2/f7lz39a/r/KePEePmwNeAZXVffQ3YtrPehZQ6+8NaJt8BtuxMfwLwI0r9vxE4YhW27Yj6+/9eY/55t9wpdf6TtfxuAo6v5bEr8Dvgj3V7VgA71n/vV5f9BHBb57c+B7xurN/tzPtSYHEtl28DO6xiHb8cOGSM811S6t1Vnf15PPDpvuNiTmeZnwJvGPBbvXmPAm6u23Z0X537QJ12c/2+fp22Zd3/KyjHzn/1ynHAej5Y9/edwIXAEydxjO0BXFSnnQ6cBhw/ZD1TXZe754pTat35Xf2NDw2J4Zl1G1bU39i1jv9e3/IPGbDsQuAE4Cd1G74KbNGZvhd/OX4uAfbuTHsJpf7dRTnmX96ZtjewpDP8Gsq5ets6vE3dxvWH1bvMnJZk/GPgRfX7xsBeY1Til1JO0DvVeb8EfLZO260W6hOA9Sgnkz+wcjL+A3AIJVFuCOxZC3ROXd9i6sHeOdDOAjYFHgbcA5xT179ZLcDDh5TD0Fg7v73zkGW3pBwoz6qxvbbG3j1hP5VycM6jVO4P9JXv5cB2wBaUCjzsgOnfN0k5EOYC21MOjv2HLHsc903GH69l+8haXrv2z9tX2W+oZTsHWJdy8H4E2ADYva5/n85v/A44kHJCPwE4v057KOUE86BOPA8eEvcXgH8YcFLduTO8N3Av8M4a14HAb4DN6/QP1LqxBbAJ8P+AE4as7xWUJNXbH+cyPBmfCryFUkc3AJ4wRowPAJ4NbFRj+ALwlb7yvQZ4SN0nC4ET67TtKSeKw+r2PQDYfRW27YhaTn9ff+f5lBPXFnX6V4CPAfcHtqKc2F4+qO7VcTcAe9bvV1JOZLt2pu0xgd89hHLs7UqpV28FfrSKdfwTlJP5S4BdBkxPYBdKUuvtw4HJGAjg8ZR6dJ8Lxc68p9bteniNrXcOeydwft3eeZRE8E912gmUi6Z16+eJDL/AeGHd33MoF5u3UC/WGfsYW49yc9Hb18+hnJeGnVumui73nysW9sp8yPofQkn4T63zv7HWi/X6j7shyy+kXOj977o/vshfznfbUG6GDqzb99Q6PK9OfzrlpimAJ9d9/qjOuWVJ/f42ysXNvL513wk8YlhsmRNPxr0r3d7nNwxPxucB76Bzxd5fiTvjzgFe2Rl+aK0Mcyh3O6d2pm1EuRvrJuPzxon9dcCX+yrM4zvDFwLHdIbfSycJ9v3W0FgHVca+ZV8M/LgzHJREM7DiUE4+P+sr31d0hg9k+B34Edw3GXcPmjOAY4csexz3Tcbdq9mfAIf2z9tX2d/ZGd6OcrW6SWfcCfzlxHYc8N3OtN2A39bvO1PuYPcF1h1nP5/dLZ8hJ4e9KVen3fp3G+XiLSgH+YM70x4H/HLI+r7Xtz/2Y3gy/gxwUrcch8U4YPruwB195fvWzvArgW/V72+iU9f76tpktu0Iyl1adMb9BHgR8EDKBdmGnWmHAecOqnt13GeB1wP/i5KM3025mPnzXfMEfvebwJGdafejnIN2WIU6viHwZsqx/wfKyfyA/n1COcZuoFwgD0rGKyh3fIuB1wxZV2/ev+qMezfwyfr9GuDAzrSnAdfV7++k3LkNrR9j1Js7gEdO4Bh70oB9/SOGJ+Oprsvv7JtnIWMn07cBZ/TVg5uod7ATWH4h9eK1Uxa/p1ykHEPn5qpO/zbDb86+Ary2ft+7xvE+4Ad0Wnc7898EPGms/TbRdvpDMnNu70M5CQxzJOUK5ucR8dOIeMYY8z6IcmXWcz0lET+wTruxNyEzf0O5Uum6sTsQEQ+JiK/Vzhl3Ujr1bNm3zK2d778dMLzxKsQ6nv5tSUqTaS/urSLitIi4qcb9uQFxd7f1+vqbE3VL5/tvGL6NU7FsN84HAbdn5l2dcddTrkKH/f4GETEnM6+mXEwdB9xWy2fYNt9Bufoez68y896+9W1MuSvZCLgwIlZExArgW3X8ICvtT1auF/3eSEmIP6l/dfDSYTNGxEYR8bGIuL7Wg/OAuRGxTme2YftjO+777JNV2DaAm2od7enVtx0odyRLO7/1Mcqd3TDfp5ysnlS3ZyHlzuLJwH9l5p8m8Ls7AB/sTLudUqZj1aOB9TQzf5ulo+KelLu3M4AvRMQWffN9g5KMjxqyXVtm5uaZuWuO31lo2LE76JzSm/avlAuF70TEtWN1EouIoyNicUT8upbPZqx8/hh4jNV1DdrXw0x1Xb5xyOLDrFRete7cyMr1YDz9+2JdSlntADy3V8dqOT4B2LpuzwERcX5E3F6nHcjKZTyXUldOyMxfD1jvJpQLuKGmvINNZl6VmYdRDqR3AWdGxP0pV079bqYUQs/2lCayWynPV7btTYiIDSkHz0qr6xv+D0rz4S6ZuSnlCjhWfWsmHOt4+rclusOUu8WkNGNsSml26o97u7513zzhyKfHoP3ZP/5mYIuI6CbK7SlXieOvIPPzmfkESrknpT4NcinlAnBVLadciD2sc9G5WZYOOoMs5b77Y6DMvCUz/zYzH0TpxPGRMXqdHk1pcXlsrQdPquMnUodvpDSj9ZvstgFsU+toT6++3Ui5g92y81ubZubDeps74Le+T2li3bt+/wGlaffJdbgX+1i/eyOlyXpu57NhZk7oT0aGyczeBfv9KXfq/d5KaZbdaHXWw/Bjd9A55eYa212ZeXRm7gQcBLw+Ivbp/+GIeCLlru55lEcucymPFSZSZ5YyeF8PNA11ub++DDun9KxUXjXu7Zjg+aTq3xd/oBwjN1LujLt17P6ZeWJErE9p0n4P8MBaxt/o25Y7gGcA/xkRj++usN5ErEdpGRpqypNxRLwwIubVq5belcAfKc9K/kR55tpzKvD3EbFjRGxMOTBOr3cvZwIHRcT/iYj1KE3f41WwTSht83dHxF8BfzdlGzZ2rOP5OvDwiDikXpG+itJs1437bkoX+G2AfxjwG6+KiG3rFfybKZ0tWroVmD9WL8jMvJHS7HVCRGwQEY+gtJycMt6PR/mbwafUA+F3lITyxyGzf4Nycu+Pb6cB8w6K80+UZ+Pvj4it6vq3iYinDVnkDOA1dX9sDox11/LciOhdeN1BOeH0tqM/xk0o27mi7ud/nEj81SnAvhHxvIiYExEPiIjdV2HboFxIvyYi1o2I51Ke1X4jM5dSOo29NyI2jYj7RcSDI6JX9rcC29bjFSgX53WbXkh5rNTr2PlsajKewO9+FHhTRDysxr9ZjWvSIuJtEfHoiFgvIjag9N9YwYATZZY/17yM0olxdbyt3ik+jPKsunfsngq8NSLmRcSWlEdzn6txPiMidq4J505KnRlU/zeh3BQsA+ZExNspfWIm4sd12dfUOvMsSifYgdZAXR7vmD0DeHpE7BMR61IS/j2Uc8xEvTAidouIjSiPAs7MzD9Syv2giHhaRKxTz1d71+1dj/K4Yhlwb0QcQHk0tZJaX14AfDkiHtuZtDfwvcy8Z6zApuNPT/YHroiIuym9/A7NzN/VZuZ/Bn5YmwH2Aj5FeaZ0HvBLykn3/wJk5hX1+2mUK7i7KM/4xtqgNwB/U+f9OFObsIbGOp7MXA48l/K86FeUZxWL+Mu2vAN4FOWK9uuUzmH9Pk85YV1bP63/MP8L9d9fRcRFY8x3GOXZ2c3Al4F/zMyzJ/D761P+bng5pZltK8pFyH1k5kXAr/sOgOOAk2tde94E1ncMpVnw/Nqs9l3Klf0gH6c8T7qE0llj0P7qeTRwQT0ezqI8Z/rlkBg/QHmmuZzSsedbE4gbgMy8gdJ0djSlGfdiSqe7yW4bwAWUTkzLKcfsczKz94joxZSTU69n/5nUpjzKs/QrgFsiYnnn975PeURwQ2c4gO7f4w/93cz8MqVV5LQa/+XAAeMWymBJ+WuE5ZQ6+VTg6Zl595D530rp+LY6vk8p/3OA92Rm76U8x1POA5dSkv5F/OW43oWyn+6mJM2P5OB3OXyb8kz9F5Rm198xwebfzPw9pVPpEZQyfz5t6/IHgedExB0RcZ+m/8y8knJR9+/1dw8CDqrbMVGfBT5N7eRG6fncu3E4mHKOWUYpw3+g9GC/q853BqWc/qZu/33Uc9tLgLMiYs86+gWUC8oxxcqPC2aueje6gtIE/cvx5p/J6t3kEuAFmXnuBOa/jtIx4bvTHdvaKiL2o3SwO6R1LBKUF4RQLtzXnWALmqZRRCykdDpdY28ZjIiHAydl5uPGm3dGv/QjIg6qzTv3p7TXX0bpWbzWqc0fc2uza+9Zti+pmCKZ+R0TsaSZJDMvm0gihhmejCnNBr0/iN+F0uS9dtzK39fjKL1de80rh2Tmb9uGJEmaCdaaZmpJkmarmX5nLEnSrNf6P1dYa2y55ZY5f/781mFI0lrlwgsvXJ6ZY71kRpiMJ2z+/PksWrSodRiStFaJiLHe6qXKZmpJkhozGUuS1JjJWJKkxkzGkiQ1ZjKWJKkxk7EkSY2ZjCVJasxkLElSYyZjSZIa8w1c0hSZf+zXJzzvdSc+fRojkbS28c5YkqTGTMaSJDVmMpYkqTGTsSRJjZmMJUlqzGQsSVJjJmNJkhozGUuS1JjJWJKkxkzGkiQ1NhLJOCLWiYifRcTX6vCOEXFBRFwVEadHxHqtY5Qkja6RSMbAa4HFneF3Ae/PzF2AO4Ajm0QlSRIjkIwjYlvg6cAn6nAATwHOrLOcDBzSJjpJkkYgGQMfAN4I/KkOPwBYkZn31uElwDaDFoyIoyJiUUQsWrZs2fRHKkkaSbM6GUfEM4DbMvPC7ugBs+ag5TPzpMxckJkL5s2bNy0xSpI02/8/48cDz4yIA4ENgE0pd8pzI2JOvTveFri5YYySpBE3q++MM/NNmbltZs4HDgW+l5kvAM4FnlNnOxz4aqMQJUma3cl4DMcAr4+IqynPkD/ZOB5J0gib7c3Uf5aZC4GF9fu1wGNaxiNJUs+o3hlLkjRjmIwlSWrMZCxJUmMmY0mSGjMZS5LUmMlYkqTGTMaSJDVmMpYkqTGTsSRJjZmMJUlqzGQsSVJjJmNJkhozGUuS1JjJWJKkxkzGkiQ1ZjKWJKkxk7EkSY2ZjCVJasxkLElSYyZjSZIaMxlLktSYyViSpMZMxpIkNWYyliSpMZOxJEmNmYwlSWrMZCxJUmMmY0mSGjMZS5LUmMlYkqTGTMaSJDVmMpYkqTGTsSRJjZmMJUlqzGQsSVJjJmNJkhozGUuS1JjJWJKkxkzGkiQ1NuuTcURsEBE/iYhLIuKKiHhHHb9jRFwQEVdFxOkRsV7rWCVJo2nWJ2PgHuApmflIYHdg/4jYC3gX8P7M3AW4AziyYYySpBE265NxFnfXwXXrJ4GnAGfW8ScDhzQIT5Kk2Z+MASJinYi4GLgNOBu4BliRmffWWZYA2wxY7qiIWBQRi5YtW7bmApYkjZSRSMaZ+cfM3B3YFngMsOug2QYsd1JmLsjMBfPmzZvuMCVJI2okknFPZq4AFgJ7AXMjYk6dtC1wc6u4JEmjbdYn44iYFxFz6/cNgX2BxcC5wHPqbIcDX20ToSRp1M0Zf5a13tbAyRGxDuXi44zM/FpE/DdwWkQcD/wM+GTLICVJo2vWJ+PMvBTYY8D4aynPj6UxzT/2661DkDTLzfpmakmSZjqTsSRJjZmMJUlqzGQsSVJjs74Dl2aPiXakuu7Ep09zJJI0tbwzliSpMZOxJEmNmYwlSWrMZCxJUmMmY0mSGjMZS5LUmMlYkqTGTMaSJDVmMpYkqTHfwKVp4xuzVp9lKI0G74wlSWrMZCxJUmMmY0mSGjMZS5LUmMlYkqTGTMaSJDVmMpYkqTGTsSRJjfnSj7WUL4NYfRMtQ6nLY0/TwTtjSZIaMxlLktSYyViSpMZMxpIkNWYHLknCDn1qyztjSZIaMxlLktSYyViSpMZMxpIkNWYHLkmrzLdRSVPDO2NJkhozGUuS1JjJWJKkxkzGkiQ1ZgcuzTq+SUnS2mbW3xlHxHYRcW5ELI6IKyLitXX8FhFxdkRcVf/dvHWskqTRNOuTMXAvcHRm7grsBbwqInYDjgXOycxdgHPqsCRJa9ysT8aZuTQzL6rf7wIWA9sABwMn19lOBg5pE6EkadSN1DPjiJgP7AFcADwwM5dCSdgRsdWA+Y8CjgLYfvvtV2vdM/3lCDM9vtnG59qSumb9nXFPRGwMfBF4XWbeOZFlMvOkzFyQmQvmzZs3vQFKkkbWSCTjiFiXkohPycwv1dG3RsTWdfrWwG2t4pMkjbZZn4wjIoBPAosz832dSWcBh9fvhwNfXdOxSZIEo/HM+PHAi4DLIuLiOu7NwInAGRFxJHAD8NxG8UmSRtysT8aZ+QMghkzeZ03GosHszKTpZP3S2mDWN1NLkjTTmYwlSWrMZCxJUmMmY0mSGpv1HbgkadT4Rr21j3fGkiQ1ZjKWJKkxk7EkSY2ZjCVJaswOXDOMbwvSdGrVsWcy9dpORRpF3hlLktSYyViSpMZMxpIkNWYyliSpMTtwSdI08C1YmgzvjCVJasxkLElSYyZjSZIaMxlLktSYHbhmOd/oJWkYO5nNHN4ZS5LUmMlYkqTGTMaSJDXmM2NNis+gJWnqeWcsSVJjJmNJkhozGUuS1JjJWJKkxuzAJWlG8UUUw9mBcvbyzliSpMZMxpIkNWYyliSpMZOxJEmNmYwlSWrMZCxJUmMmY0mSGjMZS5LUmMlYkqTGfAOXNAv4Zqa1l/tOMAJ3xhHxqYi4LSIu74zbIiLOjoir6r+bt4xRkjTaZn0yBj4N7N837ljgnMzcBTinDkuS1MSsT8aZeR5we9/og4GT6/eTgUPWaFCSJHXM+mQ8xAMzcylA/XerxvFIkkbYqCbjCYmIoyJiUUQsWrZsWetwJEmz1Kgm41sjYmuA+u9tg2bKzJMyc0FmLpg3b94aDVCSNDpGNRmfBRxevx8OfLVhLJKkETfrk3FEnAr8GHhoRCyJiCOBE4GnRsRVwFPrsCRJTcz6l35k5mFDJu2zRgORNKV8WYZmk1l/ZyxJ0kxnMpYkqTGTsSRJjZmMJUlqzGQsSVJjJmNJkhozGUuS1JjJWJKkxkzGkiQ1NuvfwCVp8ny7lbRmeWcsSVJjJmNJkhozGUuS1JjJWJKkxkzGkiQ1ZjKWJKkxk7EkSY2ZjCVJasxkLElSYyZjSZIaMxlLktSYyViSpMZMxpIkNWYyliSpMZOxJEmNmYwlSWrMZCxJUmMmY0mSGjMZS5LUmMlYkqTGTMaSJDVmMpYkqTGTsSRJjZmMJUlqzGQsSVJjJmNJkhozGUuS1JjJWJKkxkzGkiQ1ZjKWJKmxkU7GEbF/RFwZEVdHxLGt45EkjaaRTcYRsQ7wYeAAYDfgsIjYrW1UkqRRNLLJGHgMcHVmXpuZvwdOAw5uHJMkaQTNaR1AQ9sAN3aGlwCP7c4QEUcBR9XBuyPiytVY35bA8tVYfroY1+QY1+QY1+TMyLjiXasV1w5TGctsNcrJOAaMy5UGMk8CTpqSlUUsyswFU/FbU8m4Jse4Jse4Jse4RtcoN1MvAbbrDG8L3NwoFknSCBvlZPxTYJeI2DEi1gMOBc5qHJMkaQSNbDN1Zt4bEa8Gvg2sA3wqM6+YxlVOSXP3NDCuyTGuyTGuyTGuERWZOf5ckiRp2oxyM7UkSTOCyViSpMZMxlMgIp4bEVdExJ8iYkHftDfV121eGRFP64wf+CrO2qHsgoi4KiJOr53LpiLG0yPi4vq5LiIuruPnR8RvO9M+2llmz4i4rMb4bxEx6M/BVjeu4yLips76D+xMm1TZTXFc/xoRP4+ISyPiyxExt45vWl5DYm3yWteI2C4izo2IxbX+v7aOn/Q+nab4rqv74+KIWFTHbRERZ9fj6+yI2LyOj7rPrq77/FHTFNNDO+VycUTcGRGva1FmEfGpiLgtIi7vjJt0+UTE4XX+qyLi8KmKb+Rkpp/V/AC7Ag8FFgILOuN3Ay4B1gd2BK6hdBZbp37fCVivzrNbXeYM4ND6/aPA301DvO8F3l6/zwcuHzLfT4DHUf4m+5vAAdMQy3HAGwaMn3TZTXFc+wFz6vd3Ae+aCeU1YJ1rpDyGrHtr4FH1+ybAL+p+m9Q+ncb4rgO27Bv3buDY+v3Yzn49sO6zAPYCLlhD++4Wyksx1niZAU8CHtWtz5MtH2AL4Nr67+b1++Zrov7Nto93xlMgMxdn5qC3cx0MnJaZ92TmL4GrKa/hHPgqznon9RTgzLr8ycAhUxlrXcfzgFPHmW9rYNPM/HGWo+4zUx3LOCZVdlO98sz8TmbeWwfPp/wd+lANy6vZa10zc2lmXlS/3wUsprzZbphh+3RNOphyXMHKx9fBwGeyOB+YW/fpdNoHuCYzrx9jnmkrs8w8D7h9wPomUz5PA87OzNsz8w7gbGD/qYhv1JiMp9egV25uM8b4BwArOkmgN34qPRG4NTOv6ozbMSJ+FhHfj4gndmJfMiDG6fDq2vT1qV6zGJMvu+n0UspdQU/r8upqUR73ERHzgT2AC+qoyezT6ZLAdyLiwiivtgV4YGYuhXIxAWzVKDYo7zboXhTPhDKbbPnMiPo3G5iMJygivhsRlw/4jHUXMuyVm5MdP5UxHsbKJ4ClwPaZuQfweuDzEbHp6sYyibj+A3gwsHuN5b29xYasf03F1ZvnLcC9wCl11LSX1yS1Wu9fAojYGPgi8LrMvJPJ79Pp8vjMfBTlf2Z7VUQ8aYx512hsUfqCPBP4Qh01U8psmGk/HkfdyL70Y7Iyc99VWGysV24OGr+c0vwzp94dT+oVnePFGBFzgGcBe3aWuQe4p36/MCKuAR5SY+82za7y60InWnYR8XHga3VwsmU35XHVzijPAPapTc9rpLwmqelrXSNiXUoiPiUzvwSQmbd2pk90n065zLy5/ntbRHyZ0rx7a0RsnZlLazPrbS1io1wgXNQrq5lSZky+fJYAe/eNXziN8c1a3hlPr7OAQyNi/YjYEdiF0sln4Ks46wn/XOA5dfnDga9OYTz7Aj/PzD83p0bEvCj/tzMRsVON8draRHVXROxVnzO/eIpj6a2/+1zur4Fez85Jld00xLU/cAzwzMz8TWd80/IaoNlrXet2fhJYnJnv64yf7D6djtjuHxGb9L5TOuRdXmPo9fjtHl9nAS+uvYb3An7da66dJiu1UM2EMuusbzLl821gv4jYvDat71fHabJa9yCbDR/KwbOEcsd0K/DtzrS3UHpAXkmndy2ld+Iv6rS3dMbvRDnYrqY0Ya0/hXF+GnhF37hnA1dQemxeBBzUmbaAclK4BvgQ9Y1tU1x2nwUuAy6lHPBbr2rZTXFcV1OehV1cPx+dCeU1JNZpL48h630CpUny0k45Hbgq+3QaYtup7qNL6v56Sx3/AOAc4Kr67xZ1fAAfrrFdRuevIqYhto2AXwGbdcat8TKjXAwsBf5AOX8duSrlQ+lTcXX9vGRN1b/Z9vF1mJIkNWYztSRJjZmMJUlqzGQsSVJjJmNJkhozGUuS1JjJWJKkxkzGkiQ19j+FlgcQAdD1RwAAAABJRU5ErkJggg==
-"
->
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -705,35 +684,13 @@ body {
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exon_gap</span> <span class="o">=</span> <span class="n">exon_m6AQTL</span><span class="p">[(</span><span class="n">exon_m6AQTL</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">n1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">exon_m6AQTL</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">n1</span><span class="p">)][</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">exon_gap</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of gap in exons (the distance between SNP pos and start of peak)&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># exon_gap = exon_m6AQTL[(exon_m6AQTL[&quot;gap&quot;] &lt;= n1) &amp; (exon_m6AQTL[&quot;gap&quot;] &gt;= -n1)][&quot;gap&quot;].tolist()</span>
+<span class="c1"># plt.hist(exon_gap, bins = 30)</span>
+<span class="c1"># plt.title(&quot;Histogram of gap in exons (the distance between SNP pos and start of peak)&quot;)</span>
+<span class="c1"># plt.show()</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAd0AAAEICAYAAAAazi7yAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDIuMS4xLCBodHRwOi8vbWF0cGxvdGxpYi5vcmcvAOZPmwAAIABJREFUeJzt3Xm8HFWZ//HPl4RNCISQCxPCEpaoBEdZogYXBoUfIqDJjII4ikGZyai4MONC1PkpjowsMy7MyIgoSlRkEUUQN0KGREG2REDAoAkhkJCQBRITXNDgM3+c01A03XdJbp++6f6+X69+3a79qVNV56k6VV1XEYGZmZm13hbtDsDMzKxbOOmamZkV4qRrZmZWiJOumZlZIU66ZmZmhTjpmpmZFTIoSVfSvZIOH4x5ba4k/a2kJZIel3RQG+N4i6Tr2rX8VpN0lqTTehl+hqRvtmjZJ0u6sdL9uKR9WrGsVpN0saQz2x2HtYekxZKObHccG6NddW1vdYuk90k6uz/z6TPpNto49ZVPRBwQEbP7mM84SSFpeH8C2wz9J/CeiNg+Iu5oVxARcUlEHNWu5beSpB7gbcCXcvfhkpa2K568rRf1Nk67Y2yFzSFhSzpA0nWS1khaK2mepGPysMNzXXR+3TQ3Sjo5fz9Z0pO5Yl8n6U5Jx7VhVYaMwdqXc9nvtwmzGBJ1bZ0LgbdK2qWvETumeXkIJPO9gHvbHEOnOxn4YUT8od2B2JD3fWAmsCuwC/A+YF1l+O+At0ka18s8bo6I7YGRwEXAFZJGtSTaLjCIdfSQq2sj4o/Aj0gXBb0arOblp66GJb1E0tx8drhC0mfzaD/Nf9fms8dDJW0h6V8lPShppaSvS9qxMt+35WGPSvr/dcs5Q9KVkr4paR1wcl72zfnMdrmkL0jaqjK/kPRuSQskrZf0KUn75mnWSbqiOn7dOjaMVdLWkh4HhgF3Sbq/yfRHSfq1pN9K+h9JcyT9Qx62r6T/zeu5WtIlkkbWle9HJP0qn7l/TdI2TZZT3wQakt6Z13mNpPMlqZd1nC7p/hzLU5WMpDdJWiRph9z9WkmP5KtPJL1M0u15/W6X9LLKfGfnsr4pl/t1kkbnYdvkbfho3m63S9q1UXzAa4E5ebrtSDv5bnl/elzSbnm8rfL2Wa9062NiJZbdJH1H0ipJD0h6X5NlIWlnSdfkfeM2YN+64U+dsUs6Jm+f9ZIelvTBZjH2cz9tus0k/aOk+XlZv5J08EDXLRstaWaezxxJe1WW8fw87LG8356Q+08D3gJ8OK/P9yW9XdL3K9MulHRFpXuJpAN7m28etrWk/5T0kFLdcYGkbfOwwyUtlfQBpeNvuaS3N9luo4G9gS9HxJ/y56aIuLEy2lrgYuATfZQREfEX4KvAtsCzbifkY+4mSf+d9//7JB1RGb5b3o8ey2Xzj5VhzerL+mXsJOnavG3X5O+7V4Y3Pcby8JP0dF36sd7WtwX78qmSFgALJNXywF15Hm9qsPxNrWtDqbl3kVJ9+h+StqgMf0c+ftZI+kndfn9e3l/XKbWOvLLJMraUdGk+3mrrOxs4treyBSAiev0Ai4Ej6/qdDNzYaBzgZuCk/H17YFL+Pg4IYHhluncAC0k78vbAd4Fv5GETgMeBVwBbkZoU/lxZzhm5ewrp5GFb4BBgEjA8L28+cFpleQFcA+wAHAA8AczKy98R+BUwtUk5NI21Mu/9mkw7mnSW/Xc5tvfn2P8hD98P+H/A1kAP6QTl83Xlew+wBzAKuAk4s8my6rdNANeSztb3BFYBRzeZ9jTgFmD3HMuXgEsrwy8hVVQ7A8uA43L/UcAa4KS8fm/O3Tvn4bOB+4Hn5u00Gzg7D/sn0lXJc0gH0yHADk3iWwW8uNJ9OLC0bpwzgD8Cx+T5nQXckodtAcwDPk7ap/YBFgGvabK8y4ArgO2AFwAPNyjb/fL35cAr8/edgIN7ibE/+2nDbQYcn+N4MaC87+y1Eet2MbAeOCxv6/Nq65bXdwnw9hzjwcBq4IDKtGdW5rUPKYltAYwBHgQergxbk4f1Nd/Pk47PUcCIvF+cVSnHDcC/AVvm7ft7YKcG6yZgQS7DKcCudcMPB5YCf0U6Lp+X+98InFx/HPH0Mbse2LHJMbcB+Occ25uA3wKj8vA5wP8A2wAH5u15RG/1ZYNl7Ay8gXScjAC+DXyvMnw2zY+xWl1a29afzfEe2WRZg70vz8zbdNu+6spNrWsrw2/Iy9wT+A1P17VT8rz3zzH/K/DzyrRvzWU9HPgA8AiwTaVu+WYu3x+QjoNhlWkPBh5rFtdT4/U5QqrwHycdVLXP72medH8KfBIYXTefcTw76c4C3l3pfh4pGQ0nVR7VCv85wJ94ZtL9aR+xnwZcVbcxXl7pngecXun+DJVkVzevprH2tSOQmhxurqsUltR2hAbjTwHuqCvfd1a6jwHubzLtyTw7Mbyi0n0FML3JtPPJlUHuHlO3jiOBh4C7gS9VxjsJuK1uXjfzdAU2G/jXyrB3Az+uHGA/B17Yj33xz8DzK92H0zjpXl/pngD8IX9/KfBQ3fgfAb7WYFnDGizv0w3KtpZ0HyKdQOxQN59nxdjP/bThNgN+Ary/wTz6vW552MXAZZXu7YEnSSd2bwJ+Vjf+l4BPVKY9s274ElKlcyLp/tZtwPNJCfaaPE7T+ZKOid8B+1aGHQo8UCnHP/DM+mMlzZPU7sAXSInoL6R6aXz9NgHOBS7P3+uT7gZSfbeadDLaLEmdTDoJVaXfbaTjYo9criMqw84CLs7fG9aX/TgWDgTWVLpn0/wY+3jdtt6OSl3aYN6DvS+/um6cvpLmRte1leFHV7rfDczK338EnFIZtgUpn+3VZF5rgBfl72eQTgrnAP9V3d55+Hjgyb62XX+bl6dExMjaJ69EM6eQzrbuU2oq7O3hg91IZ8U1D5IS7q552JLagIj4PfBo3fRLqh2SnpubXR5RanL+NOkqs2pF5fsfGnRvvxGx9qV+XYJ0pl2LexdJl+WmnHWks6n6uKvr+mCeZ389Uvn+e5qv417AVbmpaC0pCT9JXseIWEs6w34B6QSlpr5sajGO7UcM3yAlksskLZN0rqQtm8S3hnSW35f6ZW2jdD9pL1Lz2NrKOn6Uxtuwh7R968u9mTeQToYeVGqqPbTZiP3cT5uV1x6kRFJvIOtWU90nHwceI23LvYCX1s3rLaQrw2bmkCrlw/L32cDf5M+cSozN5ttDOrGeVxn249y/5tGI2FDpbrovR8TSiHhPROybl/s74OsNRj0HeI2kFzUYdkuu80ZHxKSIuL6X9X84H9c1tWN0N9LVz/q6YbVjo1/1paTnSPpSbnJdR0rWIyUNq4zWbJ+pr39+x7Pr0qrB3peXNJi0N5tS1zZaZrW+3As4r7KPPUY64RsLoHT7Yr7SbYK1pBbQ6vpMAl5IakWobm9IddNv+wps0B+kiogFEfFm0sML5wBX5vsB9QFCOjvcq9K9J+nscgWpiaN6z2Jb0mX/MxZX1/1F4D7SGe0OpEqn4f3LjdBbrH2pXxdVu0lnvkG62tuB1MRRH/cedcte1u/I+28J8NrqCVZEbBMRD+e4DyRdmV5KOtOrqS+bWowP97XAiPhzRHwyIiYALwOOo/nDCL8kVVBPTd6flapYQrpyqq7fiIg4psG4q0jbt77cG4qI2yNiMmm//x7p6rRZjJuyny6h7t5ypX9/163mqXWTtD2pOW5ZntecunltHxHv6mWdakn3lfn7HJ6ddHub72rSSe8BlWE7RnqQaZNExBLgfNLJYv2wR0nN2p/axMWMzcd1Te0YXQaMkjSibtjDefnN6st6HyBd8b007zOH5f792W+W88xt/RyeXZc+pQX78kCP002pa2ua1ZdLgH+q2we3jYif5/u3pwMnkG5bjCQl0er6XEeqr2fp2c+e7A/c1Vdgg550Jb1VUk+khw/W5t5Pkiqxv/DMBxEuBf5Z0t75oP80qalnA3Al8DqlB3S2IjXB9LWDjSDdo3lc0vOBd/Ux/kD0FmtffgD8taQp+YrrVJ551TCC3IQvaSzwoQbzOFXS7koPNn0UuHxTVqaJC4B/rz1YIKlH0uT8fRvSFfhHSU2GYyXVWjx+CDxX0t9LGp4fjphAuqfWK0mvkvTX+Yx9HakZ6ckmo/+QVInXrAB2VuXhuz7cBqyTdLqkbSUNk/QCSS+uHzEiniTdSzojX2VMAKY2WYetlH4fvWNE/DmvR20dGsW4KfvpV4APSjpEyX55e/V73SqOkfSKfHx9Crg1J6hrSdvzJKUHRraU9GJJ+1fWqf6BojnAq0j37ZYCPwOOJlXutZ91NJ1vri++DHxO+WcXksZKes0AyoY83U6SPpnLZgulB4reQWoibuSzpBO+/ZsM749dgPfldTo+z+uHuTx/Dpyl9NDgC0lXt5fkWJvVl/VGkE5K1uY64BMDiO1K4LjKtv43mtT9hfblRvtP1abUtTUfyvvBHqT78bX68gLgI5IOAFB6QOv4yrpsIOWq4ZI+Tnr+5xki4lzgW6TEW70K/htS83WvWvGToaOBe5WeMjsPODEi/pibh/8duClf2k8iPRH4DVJTyQOkB2DeCxAR9+bvl5HO1NaT7uE80cuyPwj8fR73ywxuYmoaa18iYjXpAZhzSc06E4C5PL0unyTdD/stKUF/t8FsvkU6y1qUP634neR5pHsW10laT6qkXpqHnUW6n/PFiHiCdDV+pqTx+WrhONLZ+KPAh0kPWa3uxzL/ilQprCM1Z88hJfdGvk5KFNsCRMR9pAN0Ud6nem1yz4n0daT7YQ+Qrq6+QmpCauQ9pCa6R0j3Mb/Wy+xPAhbnJrZ3ksqnWYwbvZ9GxLdJx9G38vTfIz2wM9B1I8/jE6QmtkNITb3kptCjSPdnl+X1P4f0EA6kn89MyOvzvTzNb0gnjj/L3etI++lNObb+zPd00kMut+RyvJ50dTdQfyI9Q3I9ab+6h3Ssndxo5BzruaQr/Y11K+me3mrS9nljPi4gPVg4jrTOV5Hujc/MwxrWlw3m/3nSAzy1+8s/7m9guS49lbS9l5Nu0/T2e9tW78tnADPyPE5oMHyj69qKq0nP7NxJqlMvyutwFWmfuyyv3z2kX0VAus31I9KDVw/m5TZsGo+IT5GOvesljcoXJccAM/oKTM9ulh6a8hnPWlIzxgPtjmdTKD2+vhR4S0Tc0I/xF5MeuurtnlJXkPRpYGVEfL7dsZhB+skQ6fh8RbtjsfSTIVKeWFhwme8F9oiID/c1brtfKNErSa8jPckm0k+G7iY9ybvZyc1kt5KaiD5EWqdmzV3WRER8tN0xmJlVRcR/93fcof5Gqsk8/TDCeFLTy+Zxaf5sh5KeOl1NagacEn6zkplZV9lsmpfNzMw2d0P9StfMzKxjDOl7uu02evToGDduXLvDMDPbrMybN291RPT0PWb3cdLtxbhx45g7d267wzAz26xI6u3tbV3NzctmZmaFOOmamZkV4qRrZmZWiJOumZlZIU66ZmZmhTjpmpmZFeKka2ZmVoiTrpmZWSFOumZmZoX4jVRmQ8y46T/o13iLzz62xZGY2WDzla6ZmVkhTrpmZmaFuHnZbBO4KdjMBsJXumZmZoU46ZqZmRXipGtmZlaIk66ZmVkhTrpmZmaFOOmamZkV4qRrZmZWiJOumZlZIX45hlkB/X2Jhpl1Nl/pmpmZFeKka2ZmVkhHJl1JIyVdKek+SfMlHSpplKSZkhbkvzu1O04zM+suHZl0gfOAH0fE84EXAfOB6cCsiBgPzMrdZmZmxXRc0pW0A3AYcBFARPwpItYCk4EZebQZwJT2RGhmZt2q45IusA+wCviapDskfUXSdsCuEbEcIP/dpZ1BmplZ9+nEpDscOBj4YkQcBPyOATQlS5omaa6kuatWrWpVjGZm1oU6MekuBZZGxK25+0pSEl4haQxA/ruy0cQRcWFETIyIiT09PUUCNjOz7tBxSTciHgGWSHpe7nUE8CvgGmBq7jcVuLoN4ZmZWRfr1DdSvRe4RNJWwCLg7aQTjCsknQI8BBzfxvjMzKwLdWTSjYg7gYkNBh1ROhYzM7OajmteNjMzG6qcdM3MzApx0jUzMyvESdfMzKwQJ10zM7NCnHTNzMwKcdI1MzMrxEnXzMysECddMzOzQpx0zczMCnHSNTMzK8RJ18zMrBAnXTMzs0KcdM3MzApx0jUzMyvESdfMzKwQJ10zM7NCnHTNzMwKcdI1MzMrxEnXzMysECddMzOzQpx0zczMCnHSNTMzK2R4uwNoBUmLgfXAk8CGiJgoaRRwOTAOWAycEBFr2hWjmZl1n06+0n1VRBwYERNz93RgVkSMB2blbjMzs2I6OenWmwzMyN9nAFPaGIuZmXWhTk26AVwnaZ6kabnfrhGxHCD/3aXRhJKmSZorae6qVasKhWtmZt2gI+/pAi+PiGWSdgFmSrqvvxNGxIXAhQATJ06MVgVoZmbdpyOvdCNiWf67ErgKeAmwQtIYgPx3ZfsiNDOzbtRxSVfSdpJG1L4DRwH3ANcAU/NoU4Gr2xOhmZl1q05sXt4VuEoSpPX7VkT8WNLtwBWSTgEeAo5vY4xmZtaFOi7pRsQi4EUN+j8KHFE+IjMzs6TjmpfNzMyGKiddMzOzQpx0zczMCnHSNTMzK8RJ18zMrBAnXTMzs0KcdM3MzApx0jUzMyvESdfMzKwQJ10zM7NCOu41kNZZxk3/Qb/GW3z2sS2OxMxs0/lK18zMrBAnXTMzs0KcdM3MzApx0jUzMyvESdfMzKwQJ10zM7NCnHTNzMwKcdI1MzMrxEnXzMysECddMzOzQpx0zczMCunYpCtpmKQ7JF2bu/eWdKukBZIul7RVu2M0M7Pu0rFJF3g/ML/SfQ7wuYgYD6wBTmlLVGZm1rU6MulK2h04FvhK7hbwauDKPMoMYEp7ojMzs27VkUkX+DzwYeAvuXtnYG1EbMjdS4GxjSaUNE3SXElzV61a1fpIzcysa3Rc0pV0HLAyIuZVezcYNRpNHxEXRsTEiJjY09PTkhjNzKw7deI/sX858HpJxwDbADuQrnxHShqer3Z3B5a1MUYzM+tCHXelGxEfiYjdI2IccCLwvxHxFuAG4I15tKnA1W0K0czMulTHJd1enA78i6SFpHu8F7U5HjMz6zKd2Lz8lIiYDczO3xcBL2lnPGZm1t266UrXzMysrTr6StdsY42b/oN2h2BmHchXumZmZoU46ZqZmRXipGtmZlaIk66ZmVkhTrpmZmaF+Oll6wj9fdp48dnHtjgSM7PmfKVrZmZWiJOumZlZIU66ZmZmhTjpmpmZFeKka2ZmVoifXjbbTPmJbbPNj690zczMCnHSNTMzK8RJ18zMrBAnXTMzs0KcdM3MzApx0jUzMyvESdfMzKwQJ10zM7NCnHTNzMwK6cikK2kbSbdJukvSvZI+mfvvLelWSQskXS5pq3bHamZm3aMjky7wBPDqiHgRcCBwtKRJwDnA5yJiPLAGOKWNMZqZWZfpyKQbyeO5c8v8CeDVwJW5/wxgShvCMzOzLtWx//BA0jBgHrAfcD5wP7A2IjbkUZYCYxtMNw2YBrDnnnuWCbZD9PcF/NC+l/APJEYzs8HWkVe6ABHxZEQcCOwOvATYv9FoDaa7MCImRsTEnp6eVodpZmZdpGOTbk1ErAVmA5OAkZJqV/e7A8vaFZeZmXWfjky6knokjczftwWOBOYDNwBvzKNNBa5uT4RmZtaNOvWe7hhgRr6vuwVwRURcK+lXwGWSzgTuAC5qZ5BmZtZdOjLpRsQvgYMa9F9Eur9rZmZWXEc2L5uZmQ1FTrpmZmaFOOmamZkV4qRrZmZWiJOumZlZIU66ZmZmhTjpmpmZFeKka2ZmVoiTrpmZWSEd+UYqM3taf/+d4WD/u8V2LddsKPOVrpmZWSFOumZmZoW4ednMBqS/zcabAzeBW2m+0jUzMyvESdfMzKwQJ10zM7NCnHTNzMwKcdI1MzMrxEnXzMysEP9kyMw6Tif9rMk6i690zczMCnHSNTMzK6Tjkq6kPSTdIGm+pHslvT/3HyVppqQF+e9O7Y7VzMy6S8clXWAD8IGI2B+YBJwqaQIwHZgVEeOBWbnbzMysmI5LuhGxPCJ+kb+vB+YDY4HJwIw82gxgSnsiNDOzbtVxSbdK0jjgIOBWYNeIWA4pMQO7NJlmmqS5kuauWrWqVKhmZtYFOjbpStoe+A5wWkSs6+90EXFhREyMiIk9PT2tC9DMzLpORyZdSVuSEu4lEfHd3HuFpDF5+BhgZbviMzOz7tRxSVeSgIuA+RHx2cqga4Cp+ftU4OrSsZmZWXfrxDdSvRw4Cbhb0p2530eBs4ErJJ0CPAQc36b4zMysS3Vc0o2IGwE1GXxEyVjMzMyqOi7pmlnnatc7lfu73MVnH9viSGxz13H3dM3MzIYqJ10zM7NCnHTNzMwKcdI1MzMrxEnXzMysECddMzOzQvyToSHAP0cwM+sOvtI1MzMrxEnXzMysEDcvm1lbtestU63gW0XWF1/pmpmZFeKka2ZmVoibl61PndT8Z2bWTr7SNTMzK8RJ18zMrBA3L7eQm2Wbc9kMPd4mZq3nK10zM7NCnHTNzMwKcfNyB3IzoZnZ0OQrXTMzs0KcdM3MzArpyOZlSV8FjgNWRsQLcr9RwOXAOGAxcEJErGlXjGbWvVrxjma/93nz0KlXuhcDR9f1mw7MiojxwKzcbWZmVkxHJt2I+CnwWF3vycCM/H0GMKVoUGZm1vU6Muk2sWtELAfIf3dpNJKkaZLmSpq7atWqogGamVln66ak2y8RcWFETIyIiT09Pe0Ox8zMOkg3Jd0VksYA5L8r2xyPmZl1mW5KutcAU/P3qcDVbYzFzMy6UKf+ZOhS4HBgtKSlwCeAs4ErJJ0CPAQc374IN47fNGXWXXzMd56OTLoR8eYmg44oGoiZmVlFNzUvm5mZtZWTrpmZWSFOumZmZoU46ZqZmRXSkQ9SmZlZY/7HCO3lK10zM7NCnHTNzMwKcdI1MzMrxEnXzMysECddMzOzQpx0zczMCnHSNTMzK8RJ18zMrBAnXTMzs0KcdM3MzApx0jUzMyvESdfMzKwQJ10zM7NCnHTNzMwKcdI1MzMrxEnXzMysECddMzOzQpx0zczMCum6pCvpaEm/lrRQ0vR2x2NmZt2jq5KupGHA+cBrgQnAmyVNaG9UZmbWLboq6QIvARZGxKKI+BNwGTC5zTGZmVmXGN7uAAobCyypdC8FXlodQdI0YFrufFzSrzdiOaOB1RsVYesN1dgc18AN1dgc18ANudh0DrDxce01qMF0kG5LumrQL57REXEhcOEmLUSaGxETN2UerTJUY3NcAzdUY3NcAzdUYxuqcW3Ouq15eSmwR6V7d2BZm2IxM7Mu021J93ZgvKS9JW0FnAhc0+aYzMysS3RV83JEbJD0HuAnwDDgqxFxbwsWtUnN0y02VGNzXAM3VGNzXAM3VGMbqnFtthQRfY9lZmZmm6zbmpfNzMzaxknXzMysECfdjSDpeEn3SvqLpIl1wz6SXzH5a0mvqfRv+PrJ/FDXrZIWSLo8P+A1GDFeLunO/Fks6c7cf5ykP1SGXVCZ5hBJd+cY/0tSo59YDUZsZ0h6uBLDMZVhAyq/QY7rPyTdJ+mXkq6SNDL3b3uZ1cXZtleZStpD0g2S5udj4P25/4C3aYviW5y3x52S5uZ+oyTNzMfYTEk75f7K22xh3uYHtyim51XK5U5J6ySd1o4yk/RVSSsl3VPpN+DykTQ1j79A0tTBiq8rRIQ/A/wA+wPPA2YDEyv9JwB3AVsDewP3kx7YGpa/7wNslceZkKe5Ajgxf78AeFcL4v0M8PH8fRxwT5PxbgMOJf2e+UfAa1tUfmcAH2zQf8DlN8hxHQUMz9/PAc4ZKmVWWV6Rsuhl+WOAg/P3EcBv8nYb0DZtYXyLgdF1/c4Fpufv0yvb9Zi8zQRMAm4tUH7DgEdIL48oXmbAYcDB1f15oOUDjAIW5b875e87ldoHN/ePr3Q3QkTMj4hGb6qaDFwWEU9ExAPAQtKrJxu+fjJfFb0auDJPPwOYMpix5mWcAFzax3hjgB0i4uZIR9bXBzuWfhhQ+Q32wiPiuojYkDtvIf2Ou6k2lVlbX2UaEcsj4hf5+3pgPulNb80026YlTSYdW/DMY2wy8PVIbgFG5m3aSkcA90fEg72M07Iyi4ifAo81WN5Ayuc1wMyIeCwi1gAzgaMHI75u4KQ7uBq9ZnJsL/13BtZWKvpa/8H0SmBFRCyo9Ntb0h2S5kh6ZSX2pQ1ibJX35Carr9aasxh4+bXSO0hn+TVDocxqyyxdFg1JGgccBNyaew1km7ZKANdJmqf0SleAXSNiOaSTBmCXNsUG6d0A1RPgoVBmAy2fIbMPbo6cdJuQdL2kexp8eruqaPaayYH2H8wY38wzD/LlwJ4RcRDwL8C3JO2wqbEMMLYvAvsCB+Z4PlObrEkMgxZbf8pM0seADcAluVeRMuvvKrRhmc8OQtoe+A5wWkSsY+DbtFVeHhEHk/6T2KmSDutl3KKxKT2v8Xrg27nXUCmzZlp+PHajrno5xkBExJEbMVlvr5ls1H81qclmeL7aHdBrKfuKUdJw4O+AQyrTPAE8kb/Pk3Q/8Nwce7U5dZNekdnf8pP0ZeDa3DnQ8hv0uPJDIccBR+Qm42Jl1k9tf5WppC1JCfeSiPguQESsqAzv7zYddBGxLP9dKekqUrPsCkljImJ5bh5d2Y7YSCcCv6iV1VApMwZePkuBw+v6z25hfB3FV7qD6xrgRElbS9obGE960Kbh6ydzpX4D8MY8/VTg6kGM50jgvoh4qglUUo/S/xVG0j45xkW5WWm9pEn5PvDbBjmWp9TdN/tboPYk5YDKrwVxHQ2cDrw+In5f6d/2Mqto66tM83peBMyPiM9W+g90m7Yitu0kjah9Jz0Yd0+OofaEbfUYuwZ4W35KdxLw21oza4s8o9VpKJRZZXkDKZ+fAEdJ2ik3iR+V+1l/tPtJrs3xQzpAlpKuflYAP6kM+xjpacNfU3mSlfQk4G/ysI9V+u9DOqAWkpqdth7EOC8G3lnX7w3AvaSnI38BvK4ybCLpwL8f+AJiXRrYAAAAs0lEQVT5jWUtKL9vAHcDvyQd2GM2tvwGOa6FpHtVd+bPBUOlzOribHlZ9LLsV5CaEn9ZKadjNmabtiC2ffI2uitvr4/l/jsDs4AF+e+o3F/A+Tm2u6n8EqEFsT0HeBTYsdKveJmRkv5y4M+kOuyUjSkf0jMPC/Pn7SX3wc3949dAmpmZFeLmZTMzs0KcdM3MzApx0jUzMyvESdfMzKwQJ10zM7NCnHTNzMwKcdI1MzMr5P8AOqviMC8pp+kAAAAASUVORK5CYII=
-"
->
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -846,6 +803,10 @@ body {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_m6AQTL</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dbSNP</span><span class="p">,</span> <span class="n">how</span> <span class="o">=</span> <span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">left_on</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;snpID&quot;</span><span class="p">],</span> <span class="n">right_on</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;POS&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">])</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="p">[((</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;pos1&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;pos2&quot;</span><span class="p">]))</span> 
+              <span class="o">|</span> <span class="p">((</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;pos1&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;pos2&quot;</span><span class="p">]))</span> 
+              <span class="o">|</span> <span class="p">((</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;pos1&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;pos2&quot;</span><span class="p">]))]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">set_index</span><span class="p">([[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]])</span>
     <span class="n">res</span><span class="p">[[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> 
                                                                    <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#CHROM&quot;</span><span class="p">,</span> <span class="s2">&quot;POS&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;REF&quot;</span><span class="p">,</span> <span class="s2">&quot;ALT&quot;</span><span class="p">,</span> <span class="s2">&quot;strand&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;pos1&quot;</span><span class="p">,</span> <span class="s2">&quot;pos2&quot;</span><span class="p">,</span> 
@@ -894,7 +855,7 @@ body {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>(12537, 14) (2958, 14)
+<pre>(188, 14) (378, 14)
 </pre>
 </div>
 </div>
@@ -908,7 +869,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exon_m6AQTL</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exon_m6AQTL</span>
 </pre></div>
 
 </div>
@@ -964,90 +925,1043 @@ body {
     <tr>
       <th>0</th>
       <td>1</td>
-      <td>889403</td>
-      <td>rs62639963</td>
-      <td>T</td>
+      <td>15756642</td>
+      <td>rs116128102</td>
+      <td>G</td>
       <td>A</td>
-      <td>-</td>
-      <td>879858</td>
-      <td>881654</td>
-      <td>1796</td>
-      <td>NOC2L</td>
-      <td>889203</td>
-      <td>889603</td>
-      <td>0.457022</td>
-      <td>0.053686</td>
+      <td>+</td>
+      <td>15756567</td>
+      <td>15756765</td>
+      <td>199</td>
+      <td>EFHD2</td>
+      <td>15756442</td>
+      <td>15756842</td>
+      <td>-0.456230</td>
+      <td>3.193890e-02</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
-      <td>943468</td>
-      <td>rs3121567</td>
-      <td>T</td>
+      <td>28212975</td>
+      <td>rs6564</td>
       <td>C</td>
+      <td>T</td>
       <td>+</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>50</td>
-      <td>ISG15</td>
-      <td>943268</td>
-      <td>943668</td>
-      <td>0.175897</td>
-      <td>0.081956</td>
+      <td>28212824</td>
+      <td>28213122</td>
+      <td>299</td>
+      <td>THEMIS2</td>
+      <td>28212775</td>
+      <td>28213175</td>
+      <td>-0.163325</td>
+      <td>5.168226e-02</td>
     </tr>
     <tr>
       <th>2</th>
       <td>1</td>
-      <td>947538</td>
-      <td>rs2465125</td>
-      <td>C</td>
+      <td>28213157</td>
+      <td>rs6565</td>
       <td>T</td>
+      <td>C</td>
       <td>+</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>50</td>
-      <td>ISG15</td>
-      <td>947338</td>
-      <td>947738</td>
-      <td>0.183229</td>
-      <td>0.045959</td>
+      <td>28212824</td>
+      <td>28213122</td>
+      <td>299</td>
+      <td>THEMIS2</td>
+      <td>28212957</td>
+      <td>28213357</td>
+      <td>-0.163325</td>
+      <td>5.168226e-02</td>
     </tr>
     <tr>
       <th>3</th>
       <td>1</td>
-      <td>948421</td>
-      <td>rs113047134</td>
-      <td>A</td>
-      <td>AAAC</td>
+      <td>46810670</td>
+      <td>rs17361763</td>
+      <td>T</td>
+      <td>C</td>
       <td>+</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>50</td>
-      <td>ISG15</td>
-      <td>948221</td>
-      <td>948621</td>
-      <td>0.236611</td>
-      <td>0.089250</td>
+      <td>46810516</td>
+      <td>46810766</td>
+      <td>251</td>
+      <td>NSUN4</td>
+      <td>46810470</td>
+      <td>46810870</td>
+      <td>0.819328</td>
+      <td>2.263735e-07</td>
     </tr>
     <tr>
       <th>4</th>
       <td>1</td>
-      <td>948846</td>
-      <td>rs3841266</td>
+      <td>46810842</td>
+      <td>rs6684274</td>
+      <td>C</td>
       <td>T</td>
-      <td>TA</td>
       <td>+</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>50</td>
-      <td>ISG15</td>
-      <td>948646</td>
-      <td>949046</td>
-      <td>0.190571</td>
-      <td>0.013104</td>
+      <td>46810516</td>
+      <td>46810766</td>
+      <td>251</td>
+      <td>NSUN4</td>
+      <td>46810642</td>
+      <td>46811042</td>
+      <td>0.819328</td>
+      <td>2.263735e-07</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1</td>
+      <td>46830257</td>
+      <td>rs6683192</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>46830199</td>
+      <td>46830349</td>
+      <td>151</td>
+      <td>NSUN4</td>
+      <td>46830057</td>
+      <td>46830457</td>
+      <td>-0.696185</td>
+      <td>1.186266e-03</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>46830430</td>
+      <td>rs10252</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>46830199</td>
+      <td>46830349</td>
+      <td>151</td>
+      <td>NSUN4</td>
+      <td>46830230</td>
+      <td>46830630</td>
+      <td>-0.368553</td>
+      <td>8.971765e-02</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>46830447</td>
+      <td>rs12062</td>
+      <td>A</td>
+      <td>C</td>
+      <td>+</td>
+      <td>46830199</td>
+      <td>46830349</td>
+      <td>151</td>
+      <td>NSUN4</td>
+      <td>46830247</td>
+      <td>46830647</td>
+      <td>-0.696185</td>
+      <td>1.186266e-03</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1</td>
+      <td>55316322</td>
+      <td>rs7374</td>
+      <td>A</td>
+      <td>G</td>
+      <td>-</td>
+      <td>55316022</td>
+      <td>55316670</td>
+      <td>649</td>
+      <td>DHCR24</td>
+      <td>55316122</td>
+      <td>55316522</td>
+      <td>0.200277</td>
+      <td>7.071380e-04</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>1</td>
+      <td>145441620</td>
+      <td>rs7211</td>
+      <td>T</td>
+      <td>A,C</td>
+      <td>+</td>
+      <td>145441816</td>
+      <td>145441866</td>
+      <td>51</td>
+      <td>TXNIP</td>
+      <td>145441420</td>
+      <td>145441820</td>
+      <td>-0.350243</td>
+      <td>7.529982e-02</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>1</td>
+      <td>145441840</td>
+      <td>rs3832003</td>
+      <td>TA</td>
+      <td>T</td>
+      <td>+</td>
+      <td>145441816</td>
+      <td>145441866</td>
+      <td>51</td>
+      <td>TXNIP</td>
+      <td>145441640</td>
+      <td>145442040</td>
+      <td>-0.349128</td>
+      <td>9.328973e-02</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>1</td>
+      <td>155289545</td>
+      <td>rs11264361</td>
+      <td>T</td>
+      <td>A,G</td>
+      <td>+</td>
+      <td>155289703</td>
+      <td>155290382</td>
+      <td>680</td>
+      <td>FDPS</td>
+      <td>155289345</td>
+      <td>155289745</td>
+      <td>0.327422</td>
+      <td>7.226476e-06</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>1</td>
+      <td>167674287</td>
+      <td>rs532648085</td>
+      <td>CAGCTAATTT</td>
+      <td>C</td>
+      <td>+</td>
+      <td>167674265</td>
+      <td>167674464</td>
+      <td>200</td>
+      <td>RCSD1</td>
+      <td>167674087</td>
+      <td>167674487</td>
+      <td>0.893350</td>
+      <td>2.076683e-03</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>1</td>
+      <td>167674303</td>
+      <td>rs4656551</td>
+      <td>T</td>
+      <td>C,G</td>
+      <td>+</td>
+      <td>167674265</td>
+      <td>167674464</td>
+      <td>200</td>
+      <td>RCSD1</td>
+      <td>167674103</td>
+      <td>167674503</td>
+      <td>0.964278</td>
+      <td>1.331959e-04</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>1</td>
+      <td>167674306</td>
+      <td>rs552388500</td>
+      <td>CTAAT</td>
+      <td>C</td>
+      <td>+</td>
+      <td>167674265</td>
+      <td>167674464</td>
+      <td>200</td>
+      <td>RCSD1</td>
+      <td>167674106</td>
+      <td>167674506</td>
+      <td>0.964278</td>
+      <td>1.331959e-04</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>1</td>
+      <td>167674311</td>
+      <td>rs146056978</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>167674265</td>
+      <td>167674464</td>
+      <td>200</td>
+      <td>RCSD1</td>
+      <td>167674111</td>
+      <td>167674511</td>
+      <td>0.964278</td>
+      <td>1.331959e-04</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>1</td>
+      <td>167674312</td>
+      <td>rs145024614</td>
+      <td>T</td>
+      <td>G</td>
+      <td>+</td>
+      <td>167674265</td>
+      <td>167674464</td>
+      <td>200</td>
+      <td>RCSD1</td>
+      <td>167674112</td>
+      <td>167674512</td>
+      <td>0.964278</td>
+      <td>1.331959e-04</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>1</td>
+      <td>167674653</td>
+      <td>rs2297777</td>
+      <td>C</td>
+      <td>G</td>
+      <td>+</td>
+      <td>167674265</td>
+      <td>167674464</td>
+      <td>200</td>
+      <td>RCSD1</td>
+      <td>167674453</td>
+      <td>167674853</td>
+      <td>0.908348</td>
+      <td>1.071866e-02</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>1</td>
+      <td>202861463</td>
+      <td>rs201067798</td>
+      <td>TCTG</td>
+      <td>T</td>
+      <td>-</td>
+      <td>202861544</td>
+      <td>202861693</td>
+      <td>150</td>
+      <td>KLHL12</td>
+      <td>202861263</td>
+      <td>202861663</td>
+      <td>0.591088</td>
+      <td>6.755276e-03</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>1</td>
+      <td>202861566</td>
+      <td>rs1042990</td>
+      <td>A</td>
+      <td>G</td>
+      <td>-</td>
+      <td>202861544</td>
+      <td>202861693</td>
+      <td>150</td>
+      <td>KLHL12</td>
+      <td>202861366</td>
+      <td>202861766</td>
+      <td>0.591088</td>
+      <td>6.755276e-03</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>1</td>
+      <td>209952865</td>
+      <td>rs623360</td>
+      <td>C</td>
+      <td>G</td>
+      <td>+</td>
+      <td>209952704</td>
+      <td>209952952</td>
+      <td>249</td>
+      <td>TRAF3IP3</td>
+      <td>209952665</td>
+      <td>209953065</td>
+      <td>-0.326555</td>
+      <td>3.201475e-02</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>1</td>
+      <td>214820299</td>
+      <td>rs3748698</td>
+      <td>A</td>
+      <td>G</td>
+      <td>+</td>
+      <td>214820311</td>
+      <td>214820711</td>
+      <td>401</td>
+      <td>CENPF</td>
+      <td>214820099</td>
+      <td>214820499</td>
+      <td>-0.334450</td>
+      <td>9.370009e-04</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>1</td>
+      <td>214820494</td>
+      <td>rs3790648</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>214820311</td>
+      <td>214820711</td>
+      <td>401</td>
+      <td>CENPF</td>
+      <td>214820294</td>
+      <td>214820694</td>
+      <td>-0.334450</td>
+      <td>9.370009e-04</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>1</td>
+      <td>214820524</td>
+      <td>rs3790649</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>214820311</td>
+      <td>214820711</td>
+      <td>401</td>
+      <td>CENPF</td>
+      <td>214820324</td>
+      <td>214820724</td>
+      <td>-0.334450</td>
+      <td>9.370009e-04</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>10</td>
+      <td>3178865</td>
+      <td>rs543</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>3178015</td>
+      <td>3178923</td>
+      <td>909</td>
+      <td>PFKP</td>
+      <td>3178665</td>
+      <td>3179065</td>
+      <td>-0.268602</td>
+      <td>9.222012e-02</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>10</td>
+      <td>5781628</td>
+      <td>rs2254067</td>
+      <td>T</td>
+      <td>G</td>
+      <td>+</td>
+      <td>5781827</td>
+      <td>5782326</td>
+      <td>500</td>
+      <td>FAM208B</td>
+      <td>5781428</td>
+      <td>5781828</td>
+      <td>0.352813</td>
+      <td>2.296571e-02</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>10</td>
+      <td>5781969</td>
+      <td>rs2797486</td>
+      <td>A</td>
+      <td>T</td>
+      <td>+</td>
+      <td>5781827</td>
+      <td>5782326</td>
+      <td>500</td>
+      <td>FAM208B</td>
+      <td>5781769</td>
+      <td>5782169</td>
+      <td>0.352813</td>
+      <td>2.296571e-02</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>10</td>
+      <td>72059506</td>
+      <td>rs10762360</td>
+      <td>G</td>
+      <td>C</td>
+      <td>-</td>
+      <td>72059495</td>
+      <td>72059694</td>
+      <td>200</td>
+      <td>LRRC20</td>
+      <td>72059306</td>
+      <td>72059706</td>
+      <td>0.285578</td>
+      <td>2.778509e-02</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>10</td>
+      <td>91099593</td>
+      <td>rs34407818</td>
+      <td>A</td>
+      <td>G</td>
+      <td>+</td>
+      <td>91099654</td>
+      <td>91100202</td>
+      <td>549</td>
+      <td>IFIT3</td>
+      <td>91099393</td>
+      <td>91099793</td>
+      <td>0.250755</td>
+      <td>5.216162e-02</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>10</td>
+      <td>91100068</td>
+      <td>rs10887948</td>
+      <td>C</td>
+      <td>A</td>
+      <td>+</td>
+      <td>91099654</td>
+      <td>91100202</td>
+      <td>549</td>
+      <td>IFIT3</td>
+      <td>91099868</td>
+      <td>91100268</td>
+      <td>0.225057</td>
+      <td>1.910779e-03</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>348</th>
+      <td>7</td>
+      <td>64437832</td>
+      <td>rs7810102</td>
+      <td>A</td>
+      <td>T</td>
+      <td>-</td>
+      <td>64437039</td>
+      <td>64437734</td>
+      <td>696</td>
+      <td>ZNF117</td>
+      <td>64437632</td>
+      <td>64438032</td>
+      <td>0.619720</td>
+      <td>2.110247e-05</td>
+    </tr>
+    <tr>
+      <th>349</th>
+      <td>7</td>
+      <td>76255836</td>
+      <td>rs73705109</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>76255434</td>
+      <td>76256081</td>
+      <td>648</td>
+      <td>LOC100133091</td>
+      <td>76255636</td>
+      <td>76256036</td>
+      <td>0.715343</td>
+      <td>5.477747e-02</td>
+    </tr>
+    <tr>
+      <th>350</th>
+      <td>7</td>
+      <td>76256578</td>
+      <td>rs562560419</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>76256429</td>
+      <td>76256479</td>
+      <td>51</td>
+      <td>LOC100133091</td>
+      <td>76256378</td>
+      <td>76256778</td>
+      <td>0.613969</td>
+      <td>4.562503e-02</td>
+    </tr>
+    <tr>
+      <th>351</th>
+      <td>7</td>
+      <td>76256674</td>
+      <td>rs376774216</td>
+      <td>C</td>
+      <td>A</td>
+      <td>+</td>
+      <td>76256429</td>
+      <td>76256479</td>
+      <td>51</td>
+      <td>LOC100133091</td>
+      <td>76256474</td>
+      <td>76256874</td>
+      <td>0.650592</td>
+      <td>4.800594e-02</td>
+    </tr>
+    <tr>
+      <th>352</th>
+      <td>7</td>
+      <td>92760738</td>
+      <td>rs10282508</td>
+      <td>T</td>
+      <td>G</td>
+      <td>-</td>
+      <td>92760584</td>
+      <td>92760833</td>
+      <td>250</td>
+      <td>SAMD9L</td>
+      <td>92760538</td>
+      <td>92760938</td>
+      <td>0.334275</td>
+      <td>3.837576e-03</td>
+    </tr>
+    <tr>
+      <th>353</th>
+      <td>7</td>
+      <td>128589427</td>
+      <td>rs10954213</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>128588632</td>
+      <td>128589426</td>
+      <td>795</td>
+      <td>IRF5</td>
+      <td>128589227</td>
+      <td>128589627</td>
+      <td>-0.182481</td>
+      <td>2.283409e-02</td>
+    </tr>
+    <tr>
+      <th>354</th>
+      <td>7</td>
+      <td>128589488</td>
+      <td>rs11770589</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>128588632</td>
+      <td>128589426</td>
+      <td>795</td>
+      <td>IRF5</td>
+      <td>128589288</td>
+      <td>128589688</td>
+      <td>-0.164631</td>
+      <td>7.839162e-02</td>
+    </tr>
+    <tr>
+      <th>355</th>
+      <td>7</td>
+      <td>133749164</td>
+      <td>rs6953296</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>133749090</td>
+      <td>133749240</td>
+      <td>151</td>
+      <td>EXOC4</td>
+      <td>133748964</td>
+      <td>133749364</td>
+      <td>-0.454762</td>
+      <td>4.230318e-03</td>
+    </tr>
+    <tr>
+      <th>356</th>
+      <td>7</td>
+      <td>134850588</td>
+      <td>rs111327468</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>134849817</td>
+      <td>134850650</td>
+      <td>834</td>
+      <td>TMEM140</td>
+      <td>134850388</td>
+      <td>134850788</td>
+      <td>-0.426385</td>
+      <td>2.250657e-03</td>
+    </tr>
+    <tr>
+      <th>357</th>
+      <td>7</td>
+      <td>150070630</td>
+      <td>rs1051760</td>
+      <td>A</td>
+      <td>G</td>
+      <td>+</td>
+      <td>150070714</td>
+      <td>150070961</td>
+      <td>248</td>
+      <td>REPIN1</td>
+      <td>150070430</td>
+      <td>150070830</td>
+      <td>0.316757</td>
+      <td>3.361276e-02</td>
+    </tr>
+    <tr>
+      <th>358</th>
+      <td>7</td>
+      <td>150070663</td>
+      <td>rs1051764</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>150070714</td>
+      <td>150070961</td>
+      <td>248</td>
+      <td>REPIN1</td>
+      <td>150070463</td>
+      <td>150070863</td>
+      <td>0.349593</td>
+      <td>6.318251e-05</td>
+    </tr>
+    <tr>
+      <th>359</th>
+      <td>7</td>
+      <td>150070814</td>
+      <td>rs1051823</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>150070714</td>
+      <td>150070961</td>
+      <td>248</td>
+      <td>REPIN1</td>
+      <td>150070614</td>
+      <td>150071014</td>
+      <td>0.349593</td>
+      <td>6.318251e-05</td>
+    </tr>
+    <tr>
+      <th>360</th>
+      <td>7</td>
+      <td>150094853</td>
+      <td>rs7780011</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>150094755</td>
+      <td>150094805</td>
+      <td>51</td>
+      <td>ZNF775</td>
+      <td>150094653</td>
+      <td>150095053</td>
+      <td>0.402474</td>
+      <td>1.096456e-02</td>
+    </tr>
+    <tr>
+      <th>361</th>
+      <td>7</td>
+      <td>150095271</td>
+      <td>rs7393</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>150095101</td>
+      <td>150095596</td>
+      <td>496</td>
+      <td>ZNF775</td>
+      <td>150095071</td>
+      <td>150095471</td>
+      <td>0.205026</td>
+      <td>7.170437e-02</td>
+    </tr>
+    <tr>
+      <th>362</th>
+      <td>8</td>
+      <td>22477014</td>
+      <td>rs7825134</td>
+      <td>C</td>
+      <td>G</td>
+      <td>+</td>
+      <td>22476836</td>
+      <td>22477415</td>
+      <td>580</td>
+      <td>CCAR2</td>
+      <td>22476814</td>
+      <td>22477214</td>
+      <td>0.309681</td>
+      <td>3.667858e-02</td>
+    </tr>
+    <tr>
+      <th>363</th>
+      <td>8</td>
+      <td>22477131</td>
+      <td>rs10551411</td>
+      <td>ACAT</td>
+      <td>A</td>
+      <td>+</td>
+      <td>22476836</td>
+      <td>22477415</td>
+      <td>580</td>
+      <td>CCAR2</td>
+      <td>22476931</td>
+      <td>22477331</td>
+      <td>0.284725</td>
+      <td>2.203442e-02</td>
+    </tr>
+    <tr>
+      <th>364</th>
+      <td>8</td>
+      <td>22477242</td>
+      <td>rs7846186</td>
+      <td>G</td>
+      <td>A,C</td>
+      <td>+</td>
+      <td>22476836</td>
+      <td>22477415</td>
+      <td>580</td>
+      <td>CCAR2</td>
+      <td>22477042</td>
+      <td>22477442</td>
+      <td>0.315464</td>
+      <td>1.975586e-02</td>
+    </tr>
+    <tr>
+      <th>365</th>
+      <td>8</td>
+      <td>23290304</td>
+      <td>rs60497420</td>
+      <td>C</td>
+      <td>T</td>
+      <td>-</td>
+      <td>23290337</td>
+      <td>23290437</td>
+      <td>101</td>
+      <td>ENTPD4</td>
+      <td>23290104</td>
+      <td>23290504</td>
+      <td>0.469506</td>
+      <td>4.727837e-02</td>
+    </tr>
+    <tr>
+      <th>366</th>
+      <td>8</td>
+      <td>23429536</td>
+      <td>rs8346</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>23429449</td>
+      <td>23429647</td>
+      <td>199</td>
+      <td>SLC25A37</td>
+      <td>23429336</td>
+      <td>23429736</td>
+      <td>0.457361</td>
+      <td>6.271886e-05</td>
+    </tr>
+    <tr>
+      <th>367</th>
+      <td>8</td>
+      <td>70745171</td>
+      <td>rs3750268</td>
+      <td>C</td>
+      <td>A</td>
+      <td>-</td>
+      <td>70744722</td>
+      <td>70745465</td>
+      <td>744</td>
+      <td>SLCO5A1</td>
+      <td>70744971</td>
+      <td>70745371</td>
+      <td>0.270035</td>
+      <td>2.075779e-02</td>
+    </tr>
+    <tr>
+      <th>368</th>
+      <td>8</td>
+      <td>144103435</td>
+      <td>rs4464948</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>144103263</td>
+      <td>144103607</td>
+      <td>345</td>
+      <td>LY6E</td>
+      <td>144103235</td>
+      <td>144103635</td>
+      <td>0.288879</td>
+      <td>6.539704e-08</td>
+    </tr>
+    <tr>
+      <th>369</th>
+      <td>8</td>
+      <td>144687721</td>
+      <td>rs896961</td>
+      <td>C</td>
+      <td>T</td>
+      <td>-</td>
+      <td>144687545</td>
+      <td>144688270</td>
+      <td>726</td>
+      <td>PYCRL</td>
+      <td>144687521</td>
+      <td>144687921</td>
+      <td>0.370943</td>
+      <td>6.936429e-03</td>
+    </tr>
+    <tr>
+      <th>370</th>
+      <td>9</td>
+      <td>35088822</td>
+      <td>rs79276933</td>
+      <td>G</td>
+      <td>C</td>
+      <td>-</td>
+      <td>35088759</td>
+      <td>35089156</td>
+      <td>398</td>
+      <td>PIGO</td>
+      <td>35088622</td>
+      <td>35089022</td>
+      <td>0.378849</td>
+      <td>7.147639e-02</td>
+    </tr>
+    <tr>
+      <th>371</th>
+      <td>9</td>
+      <td>91992573</td>
+      <td>rs9445</td>
+      <td>A</td>
+      <td>C,T</td>
+      <td>-</td>
+      <td>91992209</td>
+      <td>91992809</td>
+      <td>601</td>
+      <td>SEMA4D</td>
+      <td>91992373</td>
+      <td>91992773</td>
+      <td>-0.154351</td>
+      <td>7.142517e-02</td>
+    </tr>
+    <tr>
+      <th>372</th>
+      <td>9</td>
+      <td>134406650</td>
+      <td>rs7041225</td>
+      <td>C</td>
+      <td>T</td>
+      <td>-</td>
+      <td>134405962</td>
+      <td>134406490</td>
+      <td>529</td>
+      <td>UCK1</td>
+      <td>134406450</td>
+      <td>134406850</td>
+      <td>0.349496</td>
+      <td>3.781191e-02</td>
+    </tr>
+    <tr>
+      <th>373</th>
+      <td>9</td>
+      <td>136271571</td>
+      <td>rs7033317</td>
+      <td>T</td>
+      <td>C</td>
+      <td>-</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>300</td>
+      <td>REXO4</td>
+      <td>136271371</td>
+      <td>136271771</td>
+      <td>0.472724</td>
+      <td>5.219326e-07</td>
+    </tr>
+    <tr>
+      <th>374</th>
+      <td>9</td>
+      <td>136271744</td>
+      <td>rs2285481</td>
+      <td>A</td>
+      <td>G</td>
+      <td>-</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>300</td>
+      <td>REXO4</td>
+      <td>136271544</td>
+      <td>136271944</td>
+      <td>0.490878</td>
+      <td>4.315411e-08</td>
+    </tr>
+    <tr>
+      <th>375</th>
+      <td>9</td>
+      <td>136271792</td>
+      <td>rs2285482</td>
+      <td>G</td>
+      <td>T</td>
+      <td>-</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>300</td>
+      <td>REXO4</td>
+      <td>136271592</td>
+      <td>136271992</td>
+      <td>0.490878</td>
+      <td>4.315411e-08</td>
+    </tr>
+    <tr>
+      <th>376</th>
+      <td>9</td>
+      <td>136271838</td>
+      <td>rs2285483</td>
+      <td>G</td>
+      <td>A</td>
+      <td>-</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>300</td>
+      <td>REXO4</td>
+      <td>136271638</td>
+      <td>136272038</td>
+      <td>0.490878</td>
+      <td>4.315411e-08</td>
+    </tr>
+    <tr>
+      <th>377</th>
+      <td>9</td>
+      <td>136271841</td>
+      <td>rs2285484</td>
+      <td>C</td>
+      <td>A,G</td>
+      <td>-</td>
+      <td>136271755</td>
+      <td>136272054</td>
+      <td>300</td>
+      <td>REXO4</td>
+      <td>136271641</td>
+      <td>136272041</td>
+      <td>0.490878</td>
+      <td>4.315411e-08</td>
     </tr>
   </tbody>
 </table>
+<p>378 rows × 14 columns</p>
 </div>
 </div>
 
@@ -1059,10 +1973,10 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intron_m6AQTL</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intron_m6AQTL</span>
 </pre></div>
 
 </div>
@@ -1075,7 +1989,7 @@ body {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[18]:</div>
+<div class="prompt output_prompt">Out[15]:</div>
 
 
 
@@ -1118,90 +2032,1043 @@ body {
     <tr>
       <th>0</th>
       <td>1</td>
-      <td>899937</td>
-      <td>rs143296006</td>
-      <td>G</td>
+      <td>46810670</td>
+      <td>rs17361763</td>
       <td>T</td>
+      <td>C</td>
       <td>+</td>
-      <td>981788</td>
-      <td>981988</td>
-      <td>200</td>
-      <td>AGRN</td>
-      <td>899737</td>
-      <td>900137</td>
-      <td>0.209051</td>
-      <td>0.099675</td>
+      <td>46810516</td>
+      <td>46810766</td>
+      <td>251</td>
+      <td>NSUN4</td>
+      <td>46810470</td>
+      <td>46810870</td>
+      <td>0.819328</td>
+      <td>2.263735e-07</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
-      <td>899938</td>
-      <td>rs147467971</td>
-      <td>G</td>
-      <td>C,T</td>
+      <td>46810842</td>
+      <td>rs6684274</td>
+      <td>C</td>
+      <td>T</td>
       <td>+</td>
-      <td>981788</td>
-      <td>981988</td>
-      <td>200</td>
-      <td>AGRN</td>
-      <td>899738</td>
-      <td>900138</td>
-      <td>0.209051</td>
-      <td>0.099675</td>
+      <td>46810516</td>
+      <td>46810766</td>
+      <td>251</td>
+      <td>NSUN4</td>
+      <td>46810642</td>
+      <td>46811042</td>
+      <td>0.819328</td>
+      <td>2.263735e-07</td>
     </tr>
     <tr>
       <th>2</th>
       <td>1</td>
-      <td>899942</td>
-      <td>rs71509448</td>
-      <td>G</td>
-      <td>A</td>
-      <td>+</td>
-      <td>981788</td>
-      <td>981988</td>
-      <td>200</td>
-      <td>AGRN</td>
-      <td>899742</td>
-      <td>900142</td>
-      <td>0.256919</td>
-      <td>0.053348</td>
+      <td>155226233</td>
+      <td>rs115599747</td>
+      <td>T</td>
+      <td>C</td>
+      <td>-</td>
+      <td>155225843</td>
+      <td>155226040</td>
+      <td>198</td>
+      <td>SCAMP3</td>
+      <td>155226033</td>
+      <td>155226433</td>
+      <td>0.459673</td>
+      <td>3.113221e-02</td>
     </tr>
     <tr>
       <th>3</th>
       <td>1</td>
-      <td>943468</td>
-      <td>rs3121567</td>
+      <td>155289545</td>
+      <td>rs11264361</td>
       <td>T</td>
-      <td>C</td>
+      <td>A,G</td>
       <td>+</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>50</td>
-      <td>ISG15</td>
-      <td>943268</td>
-      <td>943668</td>
-      <td>0.175897</td>
-      <td>0.081956</td>
+      <td>155289703</td>
+      <td>155290382</td>
+      <td>680</td>
+      <td>FDPS</td>
+      <td>155289345</td>
+      <td>155289745</td>
+      <td>0.327422</td>
+      <td>7.226476e-06</td>
     </tr>
     <tr>
       <th>4</th>
       <td>1</td>
-      <td>945612</td>
-      <td>rs3121565</td>
+      <td>209952865</td>
+      <td>rs623360</td>
+      <td>C</td>
+      <td>G</td>
+      <td>+</td>
+      <td>209952704</td>
+      <td>209952952</td>
+      <td>249</td>
+      <td>TRAF3IP3</td>
+      <td>209952665</td>
+      <td>209953065</td>
+      <td>-0.326555</td>
+      <td>3.201475e-02</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>10</td>
+      <td>3178865</td>
+      <td>rs543</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>3178015</td>
+      <td>3178923</td>
+      <td>909</td>
+      <td>PFKP</td>
+      <td>3178665</td>
+      <td>3179065</td>
+      <td>-0.268602</td>
+      <td>9.222012e-02</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>10</td>
+      <td>5781628</td>
+      <td>rs2254067</td>
+      <td>T</td>
+      <td>G</td>
+      <td>+</td>
+      <td>5781827</td>
+      <td>5782326</td>
+      <td>500</td>
+      <td>FAM208B</td>
+      <td>5781428</td>
+      <td>5781828</td>
+      <td>0.352813</td>
+      <td>2.296571e-02</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>10</td>
+      <td>5781969</td>
+      <td>rs2797486</td>
+      <td>A</td>
+      <td>T</td>
+      <td>+</td>
+      <td>5781827</td>
+      <td>5782326</td>
+      <td>500</td>
+      <td>FAM208B</td>
+      <td>5781769</td>
+      <td>5782169</td>
+      <td>0.352813</td>
+      <td>2.296571e-02</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>10</td>
+      <td>91099593</td>
+      <td>rs34407818</td>
+      <td>A</td>
+      <td>G</td>
+      <td>+</td>
+      <td>91099654</td>
+      <td>91100202</td>
+      <td>549</td>
+      <td>IFIT3</td>
+      <td>91099393</td>
+      <td>91099793</td>
+      <td>0.250755</td>
+      <td>5.216162e-02</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>10</td>
+      <td>91100068</td>
+      <td>rs10887948</td>
+      <td>C</td>
+      <td>A</td>
+      <td>+</td>
+      <td>91099654</td>
+      <td>91100202</td>
+      <td>549</td>
+      <td>IFIT3</td>
+      <td>91099868</td>
+      <td>91100268</td>
+      <td>0.225057</td>
+      <td>1.910779e-03</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>10</td>
+      <td>91100258</td>
+      <td>rs1141862</td>
+      <td>T</td>
+      <td>A</td>
+      <td>+</td>
+      <td>91099654</td>
+      <td>91100202</td>
+      <td>549</td>
+      <td>IFIT3</td>
+      <td>91100058</td>
+      <td>91100458</td>
+      <td>0.205349</td>
+      <td>4.617628e-02</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>10</td>
+      <td>100189138</td>
+      <td>rs1061135</td>
+      <td>A</td>
+      <td>G</td>
+      <td>-</td>
+      <td>100189014</td>
+      <td>100189360</td>
+      <td>347</td>
+      <td>HPS1</td>
+      <td>100188938</td>
+      <td>100189338</td>
+      <td>0.483274</td>
+      <td>1.374589e-04</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>10</td>
+      <td>100189173</td>
+      <td>rs74154473</td>
+      <td>G</td>
+      <td>A</td>
+      <td>-</td>
+      <td>100189014</td>
+      <td>100189360</td>
+      <td>347</td>
+      <td>HPS1</td>
+      <td>100188973</td>
+      <td>100189373</td>
+      <td>-0.529313</td>
+      <td>9.803664e-02</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>10</td>
+      <td>114187827</td>
+      <td>rs11195956</td>
+      <td>T</td>
+      <td>A</td>
+      <td>+</td>
+      <td>114187814</td>
+      <td>114188063</td>
+      <td>250</td>
+      <td>ACSL5</td>
+      <td>114187627</td>
+      <td>114188027</td>
+      <td>0.511994</td>
+      <td>3.481202e-03</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>10</td>
+      <td>114188086</td>
+      <td>rs3184349</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>114187814</td>
+      <td>114188063</td>
+      <td>250</td>
+      <td>ACSL5</td>
+      <td>114187886</td>
+      <td>114188286</td>
+      <td>0.511994</td>
+      <td>3.481202e-03</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>10</td>
+      <td>129907741</td>
+      <td>rs2065718</td>
+      <td>G</td>
+      <td>A</td>
+      <td>-</td>
+      <td>129907474</td>
+      <td>129907574</td>
+      <td>101</td>
+      <td>MKI67</td>
+      <td>129907541</td>
+      <td>129907941</td>
+      <td>-0.195491</td>
+      <td>6.465461e-03</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>11</td>
+      <td>838419</td>
+      <td>rs1130678</td>
+      <td>A</td>
+      <td>G,T</td>
+      <td>+</td>
+      <td>838411</td>
+      <td>838610</td>
+      <td>200</td>
+      <td>CD151</td>
+      <td>838219</td>
+      <td>838619</td>
+      <td>0.330977</td>
+      <td>6.649862e-02</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>11</td>
+      <td>838424</td>
+      <td>rs1130680</td>
       <td>C</td>
       <td>T</td>
       <td>+</td>
-      <td>949466</td>
-      <td>949516</td>
-      <td>50</td>
-      <td>ISG15</td>
-      <td>945412</td>
-      <td>945812</td>
-      <td>0.193259</td>
-      <td>0.040843</td>
+      <td>838411</td>
+      <td>838610</td>
+      <td>200</td>
+      <td>CD151</td>
+      <td>838224</td>
+      <td>838624</td>
+      <td>0.332152</td>
+      <td>6.220541e-02</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>11</td>
+      <td>838542</td>
+      <td>rs1130698</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>838411</td>
+      <td>838610</td>
+      <td>200</td>
+      <td>CD151</td>
+      <td>838342</td>
+      <td>838742</td>
+      <td>0.340578</td>
+      <td>5.695003e-02</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>11</td>
+      <td>838634</td>
+      <td>rs8672</td>
+      <td>C</td>
+      <td>G</td>
+      <td>+</td>
+      <td>838411</td>
+      <td>838610</td>
+      <td>200</td>
+      <td>CD151</td>
+      <td>838434</td>
+      <td>838834</td>
+      <td>0.340091</td>
+      <td>8.224138e-02</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>11</td>
+      <td>6504061</td>
+      <td>rs9802</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>6504042</td>
+      <td>6504441</td>
+      <td>400</td>
+      <td>TIMM10B</td>
+      <td>6503861</td>
+      <td>6504261</td>
+      <td>-0.432604</td>
+      <td>1.423346e-03</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>11</td>
+      <td>6504196</td>
+      <td>rs10136</td>
+      <td>T</td>
+      <td>G</td>
+      <td>+</td>
+      <td>6504042</td>
+      <td>6504441</td>
+      <td>400</td>
+      <td>TIMM10B</td>
+      <td>6503996</td>
+      <td>6504396</td>
+      <td>-0.432604</td>
+      <td>1.423346e-03</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>11</td>
+      <td>6504444</td>
+      <td>rs73400862</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>6504042</td>
+      <td>6504441</td>
+      <td>400</td>
+      <td>TIMM10B</td>
+      <td>6504244</td>
+      <td>6504644</td>
+      <td>-0.434632</td>
+      <td>3.234969e-03</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>11</td>
+      <td>6504450</td>
+      <td>rs74055813</td>
+      <td>G</td>
+      <td>C</td>
+      <td>+</td>
+      <td>6504042</td>
+      <td>6504441</td>
+      <td>400</td>
+      <td>TIMM10B</td>
+      <td>6504250</td>
+      <td>6504650</td>
+      <td>-0.434632</td>
+      <td>3.234969e-03</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>11</td>
+      <td>6504587</td>
+      <td>rs73400864</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>6504042</td>
+      <td>6504441</td>
+      <td>400</td>
+      <td>TIMM10B</td>
+      <td>6504387</td>
+      <td>6504787</td>
+      <td>-0.434632</td>
+      <td>3.234969e-03</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>11</td>
+      <td>70230030</td>
+      <td>rs57810426</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>70229887</td>
+      <td>70229986</td>
+      <td>100</td>
+      <td>PPFIA1</td>
+      <td>70229830</td>
+      <td>70230230</td>
+      <td>-0.399371</td>
+      <td>7.311346e-03</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>11</td>
+      <td>71145687</td>
+      <td>rs7690</td>
+      <td>T</td>
+      <td>A,C,G</td>
+      <td>-</td>
+      <td>71145580</td>
+      <td>71145975</td>
+      <td>396</td>
+      <td>DHCR7</td>
+      <td>71145487</td>
+      <td>71145887</td>
+      <td>0.166936</td>
+      <td>5.264681e-02</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>12</td>
+      <td>56325006</td>
+      <td>rs772701</td>
+      <td>C</td>
+      <td>G</td>
+      <td>+</td>
+      <td>56324970</td>
+      <td>56325851</td>
+      <td>882</td>
+      <td>DGKA</td>
+      <td>56324806</td>
+      <td>56325206</td>
+      <td>-0.457031</td>
+      <td>5.405544e-03</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>12</td>
+      <td>56325208</td>
+      <td>rs1681088</td>
+      <td>A</td>
+      <td>G</td>
+      <td>+</td>
+      <td>56324970</td>
+      <td>56325851</td>
+      <td>882</td>
+      <td>DGKA</td>
+      <td>56325008</td>
+      <td>56325408</td>
+      <td>-0.443492</td>
+      <td>1.107442e-02</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>12</td>
+      <td>56325211</td>
+      <td>rs1701702</td>
+      <td>A</td>
+      <td>G</td>
+      <td>+</td>
+      <td>56324970</td>
+      <td>56325851</td>
+      <td>882</td>
+      <td>DGKA</td>
+      <td>56325011</td>
+      <td>56325411</td>
+      <td>-0.457031</td>
+      <td>5.405544e-03</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>158</th>
+      <td>6</td>
+      <td>32412004</td>
+      <td>rs539718048</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>32411578</td>
+      <td>32412457</td>
+      <td>880</td>
+      <td>HLA-DRA</td>
+      <td>32411804</td>
+      <td>32412204</td>
+      <td>-0.228416</td>
+      <td>9.678498e-02</td>
+    </tr>
+    <tr>
+      <th>159</th>
+      <td>6</td>
+      <td>32412005</td>
+      <td>rs115317719</td>
+      <td>G</td>
+      <td>T</td>
+      <td>+</td>
+      <td>32411578</td>
+      <td>32412457</td>
+      <td>880</td>
+      <td>HLA-DRA</td>
+      <td>32411805</td>
+      <td>32412205</td>
+      <td>-0.228416</td>
+      <td>9.678498e-02</td>
+    </tr>
+    <tr>
+      <th>160</th>
+      <td>6</td>
+      <td>32412279</td>
+      <td>rs9281809</td>
+      <td>G</td>
+      <td>GAACTAACT</td>
+      <td>+</td>
+      <td>32411578</td>
+      <td>32412457</td>
+      <td>880</td>
+      <td>HLA-DRA</td>
+      <td>32412079</td>
+      <td>32412479</td>
+      <td>0.220793</td>
+      <td>3.496738e-07</td>
+    </tr>
+    <tr>
+      <th>161</th>
+      <td>6</td>
+      <td>32412398</td>
+      <td>rs4935354</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>32411578</td>
+      <td>32412457</td>
+      <td>880</td>
+      <td>HLA-DRA</td>
+      <td>32412198</td>
+      <td>32412598</td>
+      <td>0.223552</td>
+      <td>8.709481e-08</td>
+    </tr>
+    <tr>
+      <th>162</th>
+      <td>6</td>
+      <td>32546953</td>
+      <td>rs9269697</td>
+      <td>G</td>
+      <td>A</td>
+      <td>-</td>
+      <td>32546814</td>
+      <td>32546864</td>
+      <td>51</td>
+      <td>HLA-DRB1</td>
+      <td>32546753</td>
+      <td>32547153</td>
+      <td>0.907284</td>
+      <td>1.232565e-03</td>
+    </tr>
+    <tr>
+      <th>163</th>
+      <td>6</td>
+      <td>32547053</td>
+      <td>rs9269701</td>
+      <td>A</td>
+      <td>G</td>
+      <td>-</td>
+      <td>32546814</td>
+      <td>32546864</td>
+      <td>51</td>
+      <td>HLA-DRB1</td>
+      <td>32546853</td>
+      <td>32547253</td>
+      <td>0.946333</td>
+      <td>1.232565e-03</td>
+    </tr>
+    <tr>
+      <th>164</th>
+      <td>6</td>
+      <td>33036617</td>
+      <td>rs34370305</td>
+      <td>C</td>
+      <td>T</td>
+      <td>-</td>
+      <td>33036550</td>
+      <td>33036863</td>
+      <td>314</td>
+      <td>HLA-DPA1</td>
+      <td>33036417</td>
+      <td>33036817</td>
+      <td>-0.298090</td>
+      <td>4.949827e-02</td>
+    </tr>
+    <tr>
+      <th>165</th>
+      <td>6</td>
+      <td>33036630</td>
+      <td>rs73739662</td>
+      <td>G</td>
+      <td>T</td>
+      <td>-</td>
+      <td>33036550</td>
+      <td>33036863</td>
+      <td>314</td>
+      <td>HLA-DPA1</td>
+      <td>33036430</td>
+      <td>33036830</td>
+      <td>-0.298090</td>
+      <td>4.949827e-02</td>
+    </tr>
+    <tr>
+      <th>166</th>
+      <td>6</td>
+      <td>33036631</td>
+      <td>rs73739663</td>
+      <td>A</td>
+      <td>C</td>
+      <td>-</td>
+      <td>33036550</td>
+      <td>33036863</td>
+      <td>314</td>
+      <td>HLA-DPA1</td>
+      <td>33036431</td>
+      <td>33036831</td>
+      <td>-0.298090</td>
+      <td>4.949827e-02</td>
+    </tr>
+    <tr>
+      <th>167</th>
+      <td>6</td>
+      <td>33036708</td>
+      <td>rs77350016</td>
+      <td>C</td>
+      <td>T</td>
+      <td>-</td>
+      <td>33036550</td>
+      <td>33036863</td>
+      <td>314</td>
+      <td>HLA-DPA1</td>
+      <td>33036508</td>
+      <td>33036908</td>
+      <td>-0.298090</td>
+      <td>4.949827e-02</td>
+    </tr>
+    <tr>
+      <th>168</th>
+      <td>6</td>
+      <td>33036709</td>
+      <td>rs77981473</td>
+      <td>A</td>
+      <td>G</td>
+      <td>-</td>
+      <td>33036550</td>
+      <td>33036863</td>
+      <td>314</td>
+      <td>HLA-DPA1</td>
+      <td>33036509</td>
+      <td>33036909</td>
+      <td>-0.298090</td>
+      <td>4.949827e-02</td>
+    </tr>
+    <tr>
+      <th>169</th>
+      <td>6</td>
+      <td>57034781</td>
+      <td>rs16888358</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>57034674</td>
+      <td>57034774</td>
+      <td>101</td>
+      <td>ZNF451</td>
+      <td>57034581</td>
+      <td>57034981</td>
+      <td>-0.632285</td>
+      <td>6.058763e-02</td>
+    </tr>
+    <tr>
+      <th>170</th>
+      <td>7</td>
+      <td>1005018</td>
+      <td>rs10282027</td>
+      <td>G</td>
+      <td>A</td>
+      <td>-</td>
+      <td>1004960</td>
+      <td>1005309</td>
+      <td>350</td>
+      <td>COX19</td>
+      <td>1004818</td>
+      <td>1005218</td>
+      <td>0.815706</td>
+      <td>4.470871e-04</td>
+    </tr>
+    <tr>
+      <th>171</th>
+      <td>7</td>
+      <td>64437820</td>
+      <td>rs7790578</td>
+      <td>G</td>
+      <td>C</td>
+      <td>-</td>
+      <td>64437039</td>
+      <td>64437734</td>
+      <td>696</td>
+      <td>ZNF117</td>
+      <td>64437620</td>
+      <td>64438020</td>
+      <td>0.619720</td>
+      <td>2.110247e-05</td>
+    </tr>
+    <tr>
+      <th>172</th>
+      <td>7</td>
+      <td>64437832</td>
+      <td>rs7810102</td>
+      <td>A</td>
+      <td>T</td>
+      <td>-</td>
+      <td>64437039</td>
+      <td>64437734</td>
+      <td>696</td>
+      <td>ZNF117</td>
+      <td>64437632</td>
+      <td>64438032</td>
+      <td>0.619720</td>
+      <td>2.110247e-05</td>
+    </tr>
+    <tr>
+      <th>173</th>
+      <td>7</td>
+      <td>64439938</td>
+      <td>rs1852016</td>
+      <td>C</td>
+      <td>T</td>
+      <td>-</td>
+      <td>64439471</td>
+      <td>64439769</td>
+      <td>299</td>
+      <td>ZNF117</td>
+      <td>64439738</td>
+      <td>64440138</td>
+      <td>0.558413</td>
+      <td>3.193890e-02</td>
+    </tr>
+    <tr>
+      <th>174</th>
+      <td>7</td>
+      <td>76255836</td>
+      <td>rs73705109</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>76255434</td>
+      <td>76256081</td>
+      <td>648</td>
+      <td>LOC100133091</td>
+      <td>76255636</td>
+      <td>76256036</td>
+      <td>0.715343</td>
+      <td>5.477747e-02</td>
+    </tr>
+    <tr>
+      <th>175</th>
+      <td>7</td>
+      <td>134850588</td>
+      <td>rs111327468</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>134849817</td>
+      <td>134850650</td>
+      <td>834</td>
+      <td>TMEM140</td>
+      <td>134850388</td>
+      <td>134850788</td>
+      <td>-0.426385</td>
+      <td>2.250657e-03</td>
+    </tr>
+    <tr>
+      <th>176</th>
+      <td>7</td>
+      <td>150070630</td>
+      <td>rs1051760</td>
+      <td>A</td>
+      <td>G</td>
+      <td>+</td>
+      <td>150070714</td>
+      <td>150070961</td>
+      <td>248</td>
+      <td>REPIN1</td>
+      <td>150070430</td>
+      <td>150070830</td>
+      <td>0.316757</td>
+      <td>3.361276e-02</td>
+    </tr>
+    <tr>
+      <th>177</th>
+      <td>7</td>
+      <td>150070663</td>
+      <td>rs1051764</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>150070714</td>
+      <td>150070961</td>
+      <td>248</td>
+      <td>REPIN1</td>
+      <td>150070463</td>
+      <td>150070863</td>
+      <td>0.349593</td>
+      <td>6.318251e-05</td>
+    </tr>
+    <tr>
+      <th>178</th>
+      <td>7</td>
+      <td>150070814</td>
+      <td>rs1051823</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>150070714</td>
+      <td>150070961</td>
+      <td>248</td>
+      <td>REPIN1</td>
+      <td>150070614</td>
+      <td>150071014</td>
+      <td>0.349593</td>
+      <td>6.318251e-05</td>
+    </tr>
+    <tr>
+      <th>179</th>
+      <td>7</td>
+      <td>150071156</td>
+      <td>rs2021871</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>150070714</td>
+      <td>150070961</td>
+      <td>248</td>
+      <td>REPIN1</td>
+      <td>150070956</td>
+      <td>150071356</td>
+      <td>0.349593</td>
+      <td>6.318251e-05</td>
+    </tr>
+    <tr>
+      <th>180</th>
+      <td>7</td>
+      <td>150094853</td>
+      <td>rs7780011</td>
+      <td>G</td>
+      <td>A</td>
+      <td>+</td>
+      <td>150094755</td>
+      <td>150094805</td>
+      <td>51</td>
+      <td>ZNF775</td>
+      <td>150094653</td>
+      <td>150095053</td>
+      <td>0.402474</td>
+      <td>1.096456e-02</td>
+    </tr>
+    <tr>
+      <th>181</th>
+      <td>7</td>
+      <td>150095271</td>
+      <td>rs7393</td>
+      <td>T</td>
+      <td>C</td>
+      <td>+</td>
+      <td>150095101</td>
+      <td>150095596</td>
+      <td>496</td>
+      <td>ZNF775</td>
+      <td>150095071</td>
+      <td>150095471</td>
+      <td>0.205026</td>
+      <td>7.170437e-02</td>
+    </tr>
+    <tr>
+      <th>182</th>
+      <td>8</td>
+      <td>22477014</td>
+      <td>rs7825134</td>
+      <td>C</td>
+      <td>G</td>
+      <td>+</td>
+      <td>22476836</td>
+      <td>22477415</td>
+      <td>580</td>
+      <td>CCAR2</td>
+      <td>22476814</td>
+      <td>22477214</td>
+      <td>0.309681</td>
+      <td>3.667858e-02</td>
+    </tr>
+    <tr>
+      <th>183</th>
+      <td>8</td>
+      <td>22477131</td>
+      <td>rs10551411</td>
+      <td>ACAT</td>
+      <td>A</td>
+      <td>+</td>
+      <td>22476836</td>
+      <td>22477415</td>
+      <td>580</td>
+      <td>CCAR2</td>
+      <td>22476931</td>
+      <td>22477331</td>
+      <td>0.284725</td>
+      <td>2.203442e-02</td>
+    </tr>
+    <tr>
+      <th>184</th>
+      <td>8</td>
+      <td>23290304</td>
+      <td>rs60497420</td>
+      <td>C</td>
+      <td>T</td>
+      <td>-</td>
+      <td>23290337</td>
+      <td>23290437</td>
+      <td>101</td>
+      <td>ENTPD4</td>
+      <td>23290104</td>
+      <td>23290504</td>
+      <td>0.469506</td>
+      <td>4.727837e-02</td>
+    </tr>
+    <tr>
+      <th>185</th>
+      <td>8</td>
+      <td>144103435</td>
+      <td>rs4464948</td>
+      <td>C</td>
+      <td>T</td>
+      <td>+</td>
+      <td>144103263</td>
+      <td>144103607</td>
+      <td>345</td>
+      <td>LY6E</td>
+      <td>144103235</td>
+      <td>144103635</td>
+      <td>0.288879</td>
+      <td>6.539704e-08</td>
+    </tr>
+    <tr>
+      <th>186</th>
+      <td>9</td>
+      <td>91992573</td>
+      <td>rs9445</td>
+      <td>A</td>
+      <td>C,T</td>
+      <td>-</td>
+      <td>91992209</td>
+      <td>91992809</td>
+      <td>601</td>
+      <td>SEMA4D</td>
+      <td>91992373</td>
+      <td>91992773</td>
+      <td>-0.154351</td>
+      <td>7.142517e-02</td>
+    </tr>
+    <tr>
+      <th>187</th>
+      <td>9</td>
+      <td>134406131</td>
+      <td>rs3904960</td>
+      <td>G</td>
+      <td>T</td>
+      <td>-</td>
+      <td>134405962</td>
+      <td>134406490</td>
+      <td>529</td>
+      <td>UCK1</td>
+      <td>134405931</td>
+      <td>134406331</td>
+      <td>0.353740</td>
+      <td>8.690303e-02</td>
     </tr>
   </tbody>
 </table>
+<p>188 rows × 14 columns</p>
 </div>
 </div>
 
@@ -1210,29 +3077,13 @@ body {
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Use-&quot;bedtools&quot;-in-bash-under-the-depository">Use "bedtools" in bash under the depository<a class="anchor-link" href="#Use-&quot;bedtools&quot;-in-bash-under-the-depository">&#182;</a></h3><p><code>~/Documents/m6A/Data/metApeakFisher</code></p>
-
-<pre><code>bedtools intersect -a ../intron_m6AQTLs.bed -b peaks.merged.bed -s &gt; peak.merged.intron.m6AQTL.bed
-bedtools intersect -a ../exon_m6AQTLs.bed -b peaks.merged.bed -s &gt; peak.merged.exon.m6AQTL.bed</code></pre>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n2</span> <span class="o">=</span> <span class="mi">500</span>
-<span class="n">width</span> <span class="o">=</span> <span class="n">intron_m6AQTL</span><span class="p">[</span><span class="n">intron_m6AQTL</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">n2</span><span class="p">][</span><span class="s2">&quot;width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of width&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">exon_m6AQTL</span><span class="p">[</span><span class="s2">&quot;gene_symbol&quot;</span><span class="p">]))</span>
 </pre></div>
 
 </div>
@@ -1245,19 +3096,353 @@ bedtools intersect -a ../exon_m6AQTLs.bed -b peaks.merged.bed -s &gt; peak.merge
 
 <div class="output_area">
 
-<div class="prompt"></div>
+<div class="prompt output_prompt">Out[16]:</div>
 
 
 
 
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-"
->
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;DCTD&#39;,
+ &#39;NSUN4&#39;,
+ &#39;ZSCAN16&#39;,
+ &#39;ZNF775&#39;,
+ &#39;TIMELESS&#39;,
+ &#39;FNIP2&#39;,
+ &#39;RAB15&#39;,
+ &#39;MED24&#39;,
+ &#39;REPS1&#39;,
+ &#39;MS4A1&#39;,
+ &#39;SSH1&#39;,
+ &#39;PPFIA1&#39;,
+ &#39;TRIP10&#39;,
+ &#39;TOMM22&#39;,
+ &#39;CSNK1G2&#39;,
+ &#39;ENTPD4&#39;,
+ &#39;HARBI1&#39;,
+ &#39;ZC3H7B&#39;,
+ &#39;HLA-C&#39;,
+ &#39;PIP4K2B&#39;,
+ &#39;DGKD&#39;,
+ &#39;MTG2&#39;,
+ &#39;C7orf50&#39;,
+ &#39;TRIM44&#39;,
+ &#39;RNF31&#39;,
+ &#39;ANKFY1&#39;,
+ &#39;ACLY&#39;,
+ &#39;RBM47&#39;,
+ &#39;EXOC4&#39;,
+ &#39;PFKP&#39;,
+ &#39;ACSL5&#39;,
+ &#39;DHCR24&#39;,
+ &#39;BCL9L&#39;,
+ &#39;USP40&#39;,
+ &#39;EMC3-AS1&#39;,
+ &#39;HLA-DOA&#39;,
+ &#39;SCD5&#39;,
+ &#39;PIGO&#39;,
+ &#39;SLC19A1&#39;,
+ &#39;ELAC2&#39;,
+ &#39;LY6E&#39;,
+ &#39;CENPF&#39;,
+ &#39;PPIL3&#39;,
+ &#39;DAP&#39;,
+ &#39;LMAN2&#39;,
+ &#39;ZZEF1&#39;,
+ &#39;IFIT3&#39;,
+ &#39;SAMD9L&#39;,
+ &#39;PGAP2&#39;,
+ &#39;C2CD2L&#39;,
+ &#39;SOGA1&#39;,
+ &#39;KCNJ12&#39;,
+ &#39;LOC642852&#39;,
+ &#39;TBX21&#39;,
+ &#39;MED29&#39;,
+ &#39;FAM168B&#39;,
+ &#39;MCFD2&#39;,
+ &#39;THEMIS2&#39;,
+ &#39;HSD17B4&#39;,
+ &#39;SNAI3-AS1&#39;,
+ &#39;FDPS&#39;,
+ &#39;LOC100133091&#39;,
+ &#39;TMEM55B&#39;,
+ &#39;RAI1&#39;,
+ &#39;GSTT1&#39;,
+ &#39;EZH1&#39;,
+ &#39;NARF&#39;,
+ &#39;MYO15B&#39;,
+ &#39;MYO19&#39;,
+ &#39;PHLDB3&#39;,
+ &#39;REPIN1&#39;,
+ &#39;EXOSC9&#39;,
+ &#39;CD81&#39;,
+ &#39;WBP1L&#39;,
+ &#39;EFHD2&#39;,
+ &#39;LMNB2&#39;,
+ &#39;SLC25A23&#39;,
+ &#39;SFXN5&#39;,
+ &#39;PRKXP1&#39;,
+ &#39;HLA-A&#39;,
+ &#39;PYCRL&#39;,
+ &#39;FAM188B&#39;,
+ &#39;TIMM10B&#39;,
+ &#39;HPS5&#39;,
+ &#39;ATP6V0D1&#39;,
+ &#39;CLASP1&#39;,
+ &#39;REXO4&#39;,
+ &#39;RTP4&#39;,
+ &#39;SDR39U1&#39;,
+ &#39;TANC1&#39;,
+ &#39;KLHL36&#39;,
+ &#39;RNASEK&#39;,
+ &#39;HLA-DRB1&#39;,
+ &#39;AKIRIN2&#39;,
+ &#39;ZNF451&#39;,
+ &#39;TGOLN2&#39;,
+ &#39;MX1&#39;,
+ &#39;IP6K2&#39;,
+ &#39;HLA-DPA1&#39;,
+ &#39;UCK1&#39;,
+ &#39;HPS1&#39;,
+ &#39;MRPS24&#39;,
+ &#39;RDH11&#39;,
+ &#39;MTA1&#39;,
+ &#39;ENOSF1&#39;,
+ &#39;HGS&#39;,
+ &#39;RRP1B&#39;,
+ &#39;PCNT&#39;,
+ &#39;TAPBP&#39;,
+ &#39;SNRNP25&#39;,
+ &#39;SLCO5A1&#39;,
+ &#39;FAM208B&#39;,
+ &#39;DHCR7&#39;,
+ &#39;UBR1&#39;,
+ &#39;RCSD1&#39;,
+ &#39;MADD&#39;,
+ &#39;LYSMD4&#39;,
+ &#39;DCAF4&#39;,
+ &#39;ZNF213&#39;,
+ &#39;TMEM140&#39;,
+ &#39;MEF2A&#39;,
+ &#39;CCAR2&#39;,
+ &#39;RNASEK-C17orf49&#39;,
+ &#39;KLHL29&#39;,
+ &#39;GOLGB1&#39;,
+ &#39;IRF5&#39;,
+ &#39;MTMR4&#39;,
+ &#39;TMEM128&#39;,
+ &#39;ZNF117&#39;,
+ &#39;AP5Z1&#39;,
+ &#39;KHNYN&#39;,
+ &#39;PTPN23&#39;,
+ &#39;MKI67&#39;,
+ &#39;UBE2O&#39;,
+ &#39;PTBP1&#39;,
+ &#39;ERAP2&#39;,
+ &#39;SPIB&#39;,
+ &#39;TRAF3IP3&#39;,
+ &#39;LRRC20&#39;,
+ &#39;WDR11&#39;,
+ &#39;ZNF544&#39;,
+ &#39;SCIMP&#39;,
+ &#39;TLR10&#39;,
+ &#39;OAS3&#39;,
+ &#39;REC8&#39;,
+ &#39;DNAJB1&#39;,
+ &#39;NOD1&#39;,
+ &#39;CD151&#39;,
+ &#39;ZNF701&#39;,
+ &#39;HLA-DRA&#39;,
+ &#39;POLRMT&#39;,
+ &#39;ZBTB38&#39;,
+ &#39;GOSR2&#39;,
+ &#39;NUP62&#39;,
+ &#39;SLC25A37&#39;,
+ &#39;FAM111A&#39;,
+ &#39;KANK2&#39;,
+ &#39;LETMD1&#39;,
+ &#39;MDGA1&#39;,
+ &#39;PARM1&#39;,
+ &#39;TXNIP&#39;,
+ &#39;DIP2A&#39;,
+ &#39;KLHL12&#39;,
+ &#39;EIF2B2&#39;,
+ &#39;USP19&#39;,
+ &#39;ZNF266&#39;,
+ &#39;TUG1&#39;,
+ &#39;TGFBRAP1&#39;,
+ &#39;SNRNP200&#39;,
+ &#39;SEMA4D&#39;,
+ &#39;TNIP2&#39;,
+ &#39;HCLS1&#39;,
+ &#39;EBI3&#39;,
+ &#39;DGKA&#39;,
+ &#39;ZNF268&#39;,
+ &#39;TCL1A&#39;,
+ &#39;C2orf44&#39;,
+ &#39;APOPT1&#39;,
+ &#39;DDTL&#39;,
+ &#39;C15orf39&#39;,
+ &#39;CD200&#39;,
+ &#39;C22orf34&#39;,
+ &#39;MED16&#39;,
+ &#39;TNRC18&#39;,
+ &#39;EXOG&#39;,
+ &#39;ZNF558&#39;]</pre>
 </div>
 
 </div>
 
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="n">Counter</span><span class="p">(</span><span class="n">exon_m6AQTL</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Counter({51: 32,
+         100: 9,
+         101: 24,
+         140: 1,
+         147: 3,
+         149: 4,
+         150: 9,
+         151: 20,
+         171: 1,
+         198: 1,
+         199: 4,
+         200: 37,
+         201: 5,
+         248: 3,
+         249: 10,
+         250: 13,
+         251: 5,
+         263: 1,
+         291: 1,
+         296: 1,
+         297: 3,
+         298: 1,
+         299: 5,
+         300: 13,
+         301: 1,
+         314: 11,
+         345: 1,
+         347: 8,
+         348: 7,
+         350: 1,
+         351: 1,
+         377: 1,
+         379: 10,
+         387: 1,
+         396: 1,
+         397: 1,
+         398: 2,
+         399: 1,
+         400: 7,
+         401: 3,
+         406: 2,
+         445: 1,
+         447: 1,
+         448: 1,
+         449: 6,
+         450: 3,
+         486: 1,
+         490: 1,
+         495: 1,
+         496: 2,
+         497: 7,
+         499: 7,
+         500: 6,
+         529: 1,
+         531: 1,
+         533: 3,
+         545: 2,
+         549: 5,
+         580: 3,
+         598: 5,
+         599: 3,
+         601: 1,
+         648: 2,
+         649: 1,
+         680: 1,
+         689: 1,
+         695: 3,
+         696: 4,
+         697: 1,
+         700: 3,
+         719: 1,
+         726: 1,
+         738: 4,
+         743: 1,
+         744: 2,
+         745: 2,
+         747: 2,
+         748: 1,
+         749: 1,
+         795: 2,
+         800: 2,
+         834: 1,
+         843: 3,
+         880: 6,
+         882: 1,
+         896: 1,
+         909: 1,
+         911: 4})</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Intersection-of-m6A-peaks-and">Intersection of m6A peaks and<a class="anchor-link" href="#Intersection-of-m6A-peaks-and">&#182;</a></h3><p>Use "bedtools" in bash under the depository
+<code>~/Documents/m6A/Data/metApeakFisher</code></p>
+
+<pre><code>bedtools intersect -a ../intron_m6AQTLs.bed -b peaks.merged.bed -s &gt; peak.merged.intron.m6AQTL.bed
+bedtools intersect -a ../exon_m6AQTLs.bed -b peaks.merged.bed -s &gt; peak.merged.exon.m6AQTL.bed</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n2</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">width</span> <span class="o">=</span> <span class="n">intron_m6AQTL</span><span class="p">[</span><span class="n">intron_m6AQTL</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">n2</span><span class="p">][</span><span class="s2">&quot;width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of width&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
 </div>
 </div>
 
@@ -1293,7 +3478,7 @@ bedtools intersect -a ../exon_m6AQTLs.bed -b peaks.merged.bed -s &gt; peak.merge
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/1ff2568a5e398ecfc6d577fa9783531975be0d59/analysis/20180222_m6A_riboSNitch.ipynb"><code>analysis/20180222_m6A_riboSNitch.ipynb</code></a> committed by Min Qiao on Thu Apr 5 19:45:56 2018 <a href="http://github.com/gaow/m6a/commit/1ff2568a5e398ecfc6d577fa9783531975be0d59">revision 8, 1ff2568</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/6a1fdecfd6c13aff3bef541cf7b6cd9de927c5a4/analysis/20180222_m6A_riboSNitch.ipynb"><code>analysis/20180222_m6A_riboSNitch.ipynb</code></a> committed by Min Qiao on Fri Apr 6 12:44:15 2018 <a href="http://github.com/gaow/m6a/commit/6a1fdecfd6c13aff3bef541cf7b6cd9de927c5a4">revision 9, 6a1fdec</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
