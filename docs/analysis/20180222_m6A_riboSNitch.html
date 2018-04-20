@@ -1976,6 +1976,19 @@ body {
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exon_m6AQTL</span><span class="p">[[</span><span class="s2">&quot;ID&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/Data/exon_tmp.txt&quot;</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">intron_m6AQTL</span>
 </pre></div>
 
@@ -3430,6 +3443,18 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Trial</p>
+
+<pre><code>RNAsnp -f ~/Downloads/RNAsnp_datasets/dataset1/sequences.fasta -s ~/Downloads/RNAsnp_datasets/dataset1/snps.txt
+RNAsnp -f ~/Downloads/RNAsnp_datasets/dataset2/sequences.txt -s ~/Downloads/RNAsnp_datasets/dataset2/snps.txt -m 2</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Intersection-of-m6A-peaks-and">Intersection of m6A peaks and<a class="anchor-link" href="#Intersection-of-m6A-peaks-and">&#182;</a></h3><p>Use "bedtools" in bash under the depository
 <code>~/Documents/m6A/Data/metApeakFisher</code></p>
 
@@ -3487,7 +3512,7 @@ bedtools intersect -a ../exon_m6AQTLs.bed -b peaks.merged.bed -s &gt; peak.merge
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/ca5391e3344b6d9add9e09d2f2ba0c45e37130cb/analysis/20180222_m6A_riboSNitch.ipynb"><code>analysis/20180222_m6A_riboSNitch.ipynb</code></a> committed by Min Qiao on Fri Apr 6 14:41:21 2018 <a href="http://github.com/gaow/m6a/commit/ca5391e3344b6d9add9e09d2f2ba0c45e37130cb">revision 11, ca5391e</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/bd6c521a5b18324e6c7b71620e614ec7b951d867/analysis/20180222_m6A_riboSNitch.ipynb"><code>analysis/20180222_m6A_riboSNitch.ipynb</code></a> committed by Min Qiao on Fri Apr 20 17:33:20 2018 <a href="http://github.com/gaow/m6a/commit/bd6c521a5b18324e6c7b71620e614ec7b951d867">revision 12, bd6c521</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

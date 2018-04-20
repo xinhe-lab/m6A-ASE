@@ -279,8 +279,13 @@ sos run $nb default</code></pre>
 </ol>
 <h3 id="Lessons-learned:-a-retrospective-view">Lessons learned: a retrospective view<a class="anchor-link" href="#Lessons-learned:-a-retrospective-view">&#182;</a></h3><p>A list of cautions learned from running the pipeline:</p>
 <ol>
-<li>The <code>STAR</code> aligner is fast (compared to <code>tophat</code>) but requires over 30GB of memory. A desktop with 32GB of memory will not work for the <code>STAR</code> steps. I actually had to use a 64GB RAM desktop. To save memory, have to use sparse mode for <code>STAR</code> <a href="https://groups.google.com/forum/#!topic/rna-star/7FhgJodsLSQ">with caveats pointed here</a>, which works for under 16GB memory. This is implemented by global parameter <code>sparse_star = True</code>.</li>
-<li><code>STAR</code>, when it fails (memory or not), will fail silently.</li>
+<li><p>The <code>STAR</code> aligner is fast (compared to <code>tophat</code>) but requires over 30GB of memory. A desktop with 32GB of memory will not work for the <code>STAR</code> steps. I actually had to use a 64GB RAM desktop. To save memory, have to use sparse mode for <code>STAR</code> <a href="https://groups.google.com/forum/#!topic/rna-star/7FhgJodsLSQ">with caveats pointed here</a>, which works for under 16GB memory. This is implemented by global parameter <code>sparse_star = True</code>.</p>
+<ul>
+<li>Sparse mode for STAR does not work well as the normal mode. The size of align_1 step bam file is obviously smaller than normal mode.</li>
+</ul>
+</li>
+<li><p><code>STAR</code>, when it fails (memory or not), will fail silently.</p>
+</li>
 <li>Preparation of <code>STAR</code> database takes long time, but it is portable as long as one changes the absolute path in <code>genomeParameters.txt</code> to relative (ie, remove all the directories from file names only keep the basename). This is what I did. So the resource prepared by <code>[star]</code> workflow (below) can be copied to use in other machines.</li>
 </ol>
 
@@ -705,7 +710,7 @@ sos run $nb default</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/8cfae6b616a51f364182eb2ab50e000dc489db84/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Fri Mar 30 15:24:49 2018 <a href="http://github.com/gaow/m6a/commit/8cfae6b616a51f364182eb2ab50e000dc489db84">revision 21, 8cfae6b</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/bd6c521a5b18324e6c7b71620e614ec7b951d867/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Fri Apr 20 17:33:20 2018 <a href="http://github.com/gaow/m6a/commit/bd6c521a5b18324e6c7b71620e614ec7b951d867">revision 22, bd6c521</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
