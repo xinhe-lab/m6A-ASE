@@ -262,7 +262,7 @@ body {
 </ol>
 <p>The pipeline is implemented in SoS as displayed in the rest of this SoS notebook. The pipeline can be executed from this notebook directly on local or remote computer (with caveats see below). For more information see <a href="https://github.com/vatlab/SOS">SoS website</a>.</p>
 <ul>
-<li>Some NGS software used are loaded from <a href="https://hub.docker.com/u/gaow">online <code>docker</code> images</a>. This is me being lazy to avoid installing these software on a local computer (which should not take much time anyways). But some cluster system, such as UChicago RCC, does not support <code>docker</code>. Also here I did not configure cluster job queues with <code>task</code> option. So this notebook is intended to run on a local workstation as is, though involves minimal changes to get it work distributively on cluster, given required software are installed there.</li>
+<li>Some NGS software used are loaded from <a href="https://hub.docker.com/u/gaow">online <code>docker</code> images</a>. This is me being lazy to avoid installing these softwares on a local computer (which should not take much time anyways). But some cluster system, such as UChicago RCC, does not support <code>docker</code>. Also here I did not configure cluster job queues with <code>task</code> option. So this notebook is intended to run on a local workstation as is, though involves minimal changes to get it work distributively on cluster, given required software are installed there.</li>
 <li><code>bedtools</code> is needed by <code>QuASAR</code> thus cannot be loaded from a docker image. It is installed from standard software repo (Debian's <code>apt-get install bedtools</code>).</li>
 </ul>
 <p>To run the pipeline:</p>
@@ -317,13 +317,14 @@ sos run $nb default</code></pre>
 <span class="c1"># Sample files</span>
 <span class="n">sample_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/samples&quot;</span>
 <span class="n">paired_end</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="n">sparse_star</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">sparse_star</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="c1">## A list of sample names (keys) and their corresponding FASTQ files (values)</span>
-<span class="n">samples</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s1">&#39;ENCLB279NMT&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF824TZM&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF176JNE&#39;</span><span class="p">],</span>
-                       <span class="s1">&#39;IGF2BP2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF307AUO&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF563WIX&#39;</span><span class="p">],</span> 
-                       <span class="s1">&#39;FTO&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF374PSI&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF877URW&#39;</span><span class="p">],</span>
-                       <span class="s1">&#39;HNRNPC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF035QUK&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF065BIC&#39;</span><span class="p">]})</span>
+<span class="c1"># samples = OrderedDict({&#39;ENCLB279NMT&#39;: [&#39;ENCFF824TZM&#39;, &#39;ENCFF176JNE&#39;],</span>
+<span class="c1">#                        &#39;IGF2BP2&#39;: [&#39;ENCFF307AUO&#39;, &#39;ENCFF563WIX&#39;], </span>
+<span class="c1">#                        &#39;FTO&#39;: [&#39;ENCFF374PSI&#39;, &#39;ENCFF877URW&#39;],</span>
+<span class="c1">#                        &#39;HNRNPC&#39;: [&#39;ENCFF035QUK&#39;, &#39;ENCFF065BIC&#39;]})</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s2">&quot;IGF2BP2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ENCFF307AUO&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCFF563WIX&#39;</span><span class="p">]})</span>
 <span class="n">fastq</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([[</span><span class="n">f</span><span class="s2">&quot;{sample_dir}/{s}/{q}.fastq.gz&quot;</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">[</span><span class="n">s</span><span class="p">]]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">])</span>
 </pre></div>
 
@@ -710,7 +711,7 @@ sos run $nb default</code></pre>
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/bd6c521a5b18324e6c7b71620e614ec7b951d867/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Fri Apr 20 17:33:20 2018 <a href="http://github.com/gaow/m6a/commit/bd6c521a5b18324e6c7b71620e614ec7b951d867">revision 22, bd6c521</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/bd67d5874edbe3ac6a81a4299da694ca326b0247/analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb"><code>analysis/20180311_ASE_Calling_WASP_QuASAR.ipynb</code></a> committed by Min Qiao on Wed May 2 19:10:46 2018 <a href="http://github.com/gaow/m6a/commit/bd67d5874edbe3ac6a81a4299da694ca326b0247">revision 23, bd67d58</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
