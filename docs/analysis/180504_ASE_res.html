@@ -1,0 +1,1361 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.null.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>M6A</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">M6A</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../highlights.html">Highlights</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/m6a"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="k">as</span> <span class="nn">robjects</span>
+<span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="k">import</span> <span class="n">pandas2ri</span>
+<span class="n">pandas2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/Documents/m6A&quot;</span><span class="p">)</span>
+<span class="n">readRDS</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;readRDS&#39;</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">RDS2df</span><span class="p">(</span><span class="n">RBP</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{path}</span><span class="s1">/Data/ASE/samples/</span><span class="si">{RBP}</span><span class="s1">.wasp_remapped.qual10.dedup.quasar.ase.rds&#39;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pandas2ri</span><span class="o">.</span><span class="n">ri2py</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">RBP_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s2">&quot;rsID&quot;</span><span class="p">:</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;chr&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> 
+                                              <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="s2">&quot;se&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="s2">&quot;pval&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">5</span><span class="p">])}))</span>
+    <span class="k">return</span> <span class="n">RBP_df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO</span> <span class="o">=</span> <span class="n">RDS2df</span><span class="p">(</span><span class="s2">&quot;FTO&quot;</span><span class="p">)</span>
+<span class="n">HNRNPC</span> <span class="o">=</span> <span class="n">RDS2df</span><span class="p">(</span><span class="s2">&quot;HNRNPC&quot;</span><span class="p">)</span>
+<span class="n">IGF2BP2</span> <span class="o">=</span> <span class="n">RDS2df</span><span class="p">(</span><span class="s2">&quot;IGF2BP2&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;class &#39;rpy2.robjects.vectors.FactorVector&#39;&gt;
+&lt;class &#39;rpy2.robjects.vectors.FactorVector&#39;&gt;
+&lt;class &#39;rpy2.robjects.vectors.FactorVector&#39;&gt;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[29]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rsID</th>
+      <th>chr</th>
+      <th>pos</th>
+      <th>beta</th>
+      <th>se</th>
+      <th>pval</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>52</td>
+      <td>1</td>
+      <td>990983</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>49</td>
+      <td>1</td>
+      <td>11968272</td>
+      <td>-0.245987</td>
+      <td>0.621327</td>
+      <td>0.692174</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>6</td>
+      <td>1</td>
+      <td>93306316</td>
+      <td>0.929733</td>
+      <td>0.722990</td>
+      <td>0.198459</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>37</td>
+      <td>1</td>
+      <td>205683354</td>
+      <td>-0.708717</td>
+      <td>0.761321</td>
+      <td>0.351903</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>34</td>
+      <td>1</td>
+      <td>207941926</td>
+      <td>-0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>36</td>
+      <td>2</td>
+      <td>17271399</td>
+      <td>-0.106749</td>
+      <td>0.741191</td>
+      <td>0.885482</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>43</td>
+      <td>3</td>
+      <td>5269582</td>
+      <td>0.310123</td>
+      <td>0.647507</td>
+      <td>0.631975</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>4</td>
+      <td>3</td>
+      <td>5269583</td>
+      <td>0.310123</td>
+      <td>0.647507</td>
+      <td>0.631975</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>45</td>
+      <td>3</td>
+      <td>5269584</td>
+      <td>0.310123</td>
+      <td>0.647507</td>
+      <td>0.631975</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>47</td>
+      <td>3</td>
+      <td>5269585</td>
+      <td>0.310123</td>
+      <td>0.647507</td>
+      <td>0.631975</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>25</td>
+      <td>3</td>
+      <td>8707082</td>
+      <td>-0.551127</td>
+      <td>0.628788</td>
+      <td>0.380763</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>20</td>
+      <td>3</td>
+      <td>67352688</td>
+      <td>1.351097</td>
+      <td>0.783640</td>
+      <td>0.084684</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>41</td>
+      <td>3</td>
+      <td>67353969</td>
+      <td>0.546706</td>
+      <td>0.747985</td>
+      <td>0.464837</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>23</td>
+      <td>3</td>
+      <td>93464174</td>
+      <td>-0.461441</td>
+      <td>0.754252</td>
+      <td>0.540679</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>42</td>
+      <td>4</td>
+      <td>57108202</td>
+      <td>1.187061</td>
+      <td>0.708578</td>
+      <td>0.093881</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>44</td>
+      <td>5</td>
+      <td>591726</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>29</td>
+      <td>5</td>
+      <td>88724346</td>
+      <td>-0.165265</td>
+      <td>0.809792</td>
+      <td>0.838289</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>40</td>
+      <td>5</td>
+      <td>89008541</td>
+      <td>-0.165265</td>
+      <td>0.809792</td>
+      <td>0.838289</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>18</td>
+      <td>5</td>
+      <td>89023571</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>22</td>
+      <td>6</td>
+      <td>80054374</td>
+      <td>0.000000</td>
+      <td>0.793392</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>46</td>
+      <td>6</td>
+      <td>80055324</td>
+      <td>-0.624454</td>
+      <td>0.804751</td>
+      <td>0.437773</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>55</td>
+      <td>7</td>
+      <td>9117866</td>
+      <td>-1.070189</td>
+      <td>0.811626</td>
+      <td>0.187311</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>19</td>
+      <td>8</td>
+      <td>867734</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>51</td>
+      <td>8</td>
+      <td>872088</td>
+      <td>-1.223893</td>
+      <td>0.795985</td>
+      <td>0.124151</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>54</td>
+      <td>8</td>
+      <td>872254</td>
+      <td>-1.006632</td>
+      <td>0.674080</td>
+      <td>0.135347</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>16</td>
+      <td>8</td>
+      <td>2270369</td>
+      <td>-0.728732</td>
+      <td>0.794736</td>
+      <td>0.359170</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>17</td>
+      <td>8</td>
+      <td>2270385</td>
+      <td>-1.263369</td>
+      <td>0.723053</td>
+      <td>0.080590</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>14</td>
+      <td>8</td>
+      <td>2270909</td>
+      <td>-0.750163</td>
+      <td>0.664954</td>
+      <td>0.259260</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>32</td>
+      <td>8</td>
+      <td>2271180</td>
+      <td>-0.383928</td>
+      <td>0.659392</td>
+      <td>0.560402</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>26</td>
+      <td>8</td>
+      <td>2271281</td>
+      <td>-0.932944</td>
+      <td>0.659830</td>
+      <td>0.157387</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>33</td>
+      <td>8</td>
+      <td>2271322</td>
+      <td>-0.921468</td>
+      <td>0.637951</td>
+      <td>0.148621</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>1</td>
+      <td>8</td>
+      <td>28991811</td>
+      <td>0.877927</td>
+      <td>0.832469</td>
+      <td>0.291606</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>7</td>
+      <td>8</td>
+      <td>34883444</td>
+      <td>0.304640</td>
+      <td>0.796119</td>
+      <td>0.701974</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>21</td>
+      <td>8</td>
+      <td>39923951</td>
+      <td>-0.260534</td>
+      <td>0.770169</td>
+      <td>0.735151</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>27</td>
+      <td>8</td>
+      <td>49469086</td>
+      <td>0.694652</td>
+      <td>0.671977</td>
+      <td>0.301256</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>11</td>
+      <td>8</td>
+      <td>49507577</td>
+      <td>0.877927</td>
+      <td>0.832469</td>
+      <td>0.291606</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>10</td>
+      <td>9</td>
+      <td>26455126</td>
+      <td>-1.408342</td>
+      <td>0.850564</td>
+      <td>0.097768</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>9</td>
+      <td>9</td>
+      <td>99225167</td>
+      <td>-0.095484</td>
+      <td>0.727266</td>
+      <td>0.895544</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>13</td>
+      <td>10</td>
+      <td>714214</td>
+      <td>-0.877927</td>
+      <td>0.832469</td>
+      <td>0.291606</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>38</td>
+      <td>11</td>
+      <td>179049328</td>
+      <td>-0.366771</td>
+      <td>0.761545</td>
+      <td>0.630080</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>48</td>
+      <td>11</td>
+      <td>179049671</td>
+      <td>-1.048146</td>
+      <td>0.766729</td>
+      <td>0.171614</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>53</td>
+      <td>12</td>
+      <td>26056071</td>
+      <td>0.877162</td>
+      <td>0.726145</td>
+      <td>0.227059</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>28</td>
+      <td>12</td>
+      <td>26056603</td>
+      <td>-1.420418</td>
+      <td>0.661120</td>
+      <td>0.031674</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>30</td>
+      <td>12</td>
+      <td>26285682</td>
+      <td>-0.332649</td>
+      <td>0.712908</td>
+      <td>0.640780</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>3</td>
+      <td>12</td>
+      <td>38670836</td>
+      <td>0.624300</td>
+      <td>0.768037</td>
+      <td>0.416303</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>24</td>
+      <td>12</td>
+      <td>43738349</td>
+      <td>0.662938</td>
+      <td>0.640281</td>
+      <td>0.300488</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>35</td>
+      <td>12</td>
+      <td>43745576</td>
+      <td>-0.877927</td>
+      <td>0.832469</td>
+      <td>0.291606</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>5</td>
+      <td>12</td>
+      <td>166755974</td>
+      <td>-0.366771</td>
+      <td>0.761545</td>
+      <td>0.630080</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>8</td>
+      <td>12</td>
+      <td>166755978</td>
+      <td>-0.424885</td>
+      <td>0.785039</td>
+      <td>0.588351</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>2</td>
+      <td>12</td>
+      <td>167369896</td>
+      <td>0.000000</td>
+      <td>0.710646</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>15</td>
+      <td>12</td>
+      <td>170862299</td>
+      <td>-0.366771</td>
+      <td>0.761545</td>
+      <td>0.630080</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>50</td>
+      <td>13</td>
+      <td>75677503</td>
+      <td>0.106749</td>
+      <td>0.741191</td>
+      <td>0.885482</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>12</td>
+      <td>14</td>
+      <td>11710887</td>
+      <td>0.979535</td>
+      <td>0.772433</td>
+      <td>0.204756</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>31</td>
+      <td>14</td>
+      <td>98788260</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>39</td>
+      <td>15</td>
+      <td>134151862</td>
+      <td>0.121029</td>
+      <td>0.758486</td>
+      <td>0.873223</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">IGF2BP2</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">49</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+    <span>R/rpy2 DataFrame (49 x 6)</span>
+    <table>
+      <thead>
+        <tr>
+        
+          <th>annotations.rsID</th>
+        
+          <th>annotations.chr</th>
+        
+          <th>annotations.pos0</th>
+        
+          <th>betas</th>
+        
+          <th>betas.se</th>
+        
+          <th>pval2.het.ind.</th>
+        
+        </tr>
+      </thead>
+      <tbody>
+      
+      <tr>
+      
+      <td>
+        rs8014
+      </td>
+      
+      <td>
+        chr1
+      </td>
+      
+      <td>
+        990,983
+      </td>
+      
+      <td>
+        -0.163570
+      </td>
+      
+      <td>
+        0.826326
+      </td>
+      
+      <td>
+        0.843085
+      </td>
+      
+      </tr>
+      
+      <tr>
+      
+      <td>
+        rs278...
+      </td>
+      
+      <td>
+        chr1
+      </td>
+      
+      <td>
+        8,421,091
+      </td>
+      
+      <td>
+        -0.456558
+      </td>
+      
+      <td>
+        0.773028
+      </td>
+      
+      <td>
+        0.554782
+      </td>
+      
+      </tr>
+      
+      <tr>
+      
+      <td>
+        rs668...
+      </td>
+      
+      <td>
+        chr1
+      </td>
+      
+      <td>
+        11,968,272
+      </td>
+      
+      <td>
+        -0.057865
+      </td>
+      
+      <td>
+        0.702033
+      </td>
+      
+      <td>
+        0.934309
+      </td>
+      
+      </tr>
+      
+      <tr>
+      
+      <td>
+        rs7544
+      </td>
+      
+      <td>
+        chr1
+      </td>
+      
+      <td>
+        26,607,725
+      </td>
+      
+      <td>
+        -0.617739
+      </td>
+      
+      <td>
+        0.821282
+      </td>
+      
+      <td>
+        0.451953
+      </td>
+      
+      </tr>
+      
+      <tr>
+      
+      <td>
+        ...
+      </td>
+      
+      <td>
+        ...
+      </td>
+      
+      <td>
+        ...
+      </td>
+      
+      <td>
+        ...
+      </td>
+      
+      <td>
+        ...
+      </td>
+      
+      <td>
+        ...
+      </td>
+      
+      </tr>
+      
+      <tr>
+      
+      <td>
+        rs105...
+      </td>
+      
+      <td>
+        chr10
+      </td>
+      
+      <td>
+        61,552,773
+      </td>
+      
+      <td>
+        0.524183
+      </td>
+      
+      <td>
+        0.685859
+      </td>
+      
+      <td>
+        0.444705
+      </td>
+      
+      </tr>
+      
+      </tbody>
+    </table>
+    
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[73]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{path}</span><span class="s1">/Data/ASE/samples/FTO.wasp_remapped.qual10.dedup.quasar.ase.rds&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pandas2ri</span><span class="o">.</span><span class="n">ri2py</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">FTO</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[74]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">FTO</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>   annotations.rsID annotations.chr annotations.pos0       betas  betas.se
+1            rs8014            chr1           990983  0.50535040 0.8167751
+2         rs6684539            chr1         11968272 -0.24598731 0.6213273
+3        rs10874744            chr1         93306316  0.92973297 0.7229902
+4            rs3805            chr1        205683354 -0.70871668 0.7613208
+5         rs2796271            chr1        207941926 -0.50535040 0.8167751
+6         rs3758410           chr10         17271399 -0.10674884 0.7411908
+7         rs5009539           chr11          5269582  0.31012288 0.6475066
+8         rs1065686           chr11          5269583  0.31012288 0.6475066
+9        rs61893083           chr11          5269584  0.31012288 0.6475066
+10       rs62755960           chr11          5269585  0.31012288 0.6475066
+11        rs2073686           chr11          8707082 -0.55112721 0.6287877
+12           rs1695           chr11         67352688  1.35109705 0.7836400
+13           rs4891           chr11         67353969  0.54670625 0.7479854
+14        rs1944108           chr11         93464174 -0.46144054 0.7542518
+15           rs4902           chr12         57108202  1.18706054 0.7085785
+16       rs55671249           chr16           591726  0.50535040 0.8167751
+17        rs2279258           chr16         88724346 -0.16526496 0.8097924
+18        rs4782500           chr16         89008541 -0.16526496 0.8097924
+19       rs13329773           chr16         89023571  0.50535040 0.8167751
+20       rs17848934           chr17         80054374  0.00000000 0.7933921
+21       rs62078748           chr17         80055324 -0.62445390 0.8047510
+22         rs906807           chr18          9117866 -1.07018940 0.8116256
+23        rs1683593           chr19           867734  0.50535040 0.8167751
+24       rs72984031           chr19           872088 -1.22389297 0.7959851
+25         rs891206           chr19           872254 -1.00663209 0.6740796
+26       rs12979409           chr19          2270369 -0.72873156 0.7947356
+27       rs12981166           chr19          2270385 -1.26336942 0.7230526
+28       rs12461851           chr19          2270909 -0.75016279 0.6649543
+29        rs2523174           chr19          2271180 -0.38392757 0.6593918
+30        rs2074457           chr19          2271281 -0.93294353 0.6598303
+31        rs2523175           chr19          2271322 -0.92146846 0.6379507
+32       rs10427038           chr19         28991811  0.87792654 0.8324694
+33       rs11084765           chr19         34883444  0.30464012 0.7961188
+34          rs17627           chr19         39923951 -0.26053415 0.7701689
+35        rs2230267           chr19         49469086  0.69465215 0.6719766
+36       rs11558795           chr19         49507577  0.87792654 0.8324694
+37       rs11552518            chr2         26455126 -1.40834212 0.8505644
+38        rs1139829            chr2         99225167 -0.09548446 0.7272656
+39       rs12374324            chr4           714214 -0.87792654 0.8324694
+40        rs4563584            chr5        179049328 -0.36677127 0.7615447
+41       rs66479467            chr5        179049671 -1.04814622 0.7667290
+42           rs8384            chr6         26056071  0.87716191 0.7261450
+43        rs2230653            chr6         26056603 -1.42041752 0.6611195
+44        rs2393593            chr6         26285682 -0.33264920 0.7129082
+45        rs1049346            chr6         38670836  0.62429984 0.7680367
+46        rs2010963            chr6         43738349  0.66293845 0.6402808
+47        rs3024998            chr6         43745576 -0.87792654 0.8324694
+48          rs10862            chr6        166755974 -0.36677127 0.7615447
+49          rs11168            chr6        166755978 -0.42488486 0.7850390
+50        rs1044059            chr6        167369896  0.00000000 0.7106460
+51          rs12717            chr6        170862299 -0.36677127 0.7615447
+52           rs6720            chr7         75677503  0.10674884 0.7411908
+53          rs12338            chr8         11710887  0.97953508 0.7724328
+54        rs2449508            chr8         98788260  0.50535040 0.8167751
+55        rs4740427            chr9        134151862  0.12102899 0.7584863
+   pval2.het.ind.
+1      0.53610463
+2      0.69217424
+3      0.19845874
+4      0.35190318
+5      0.53610463
+6      0.88548198
+7      0.63197464
+8      0.63197464
+9      0.63197464
+10     0.63197464
+11     0.38076278
+12     0.08468444
+13     0.46483719
+14     0.54067948
+15     0.09388119
+16     0.53610463
+17     0.83828854
+18     0.83828854
+19     0.53610463
+20     1.00000000
+21     0.43777308
+22     0.18731118
+23     0.53610463
+24     0.12415065
+25     0.13534740
+26     0.35916967
+27     0.08059019
+28     0.25926000
+29     0.56040165
+30     0.15738704
+31     0.14862103
+32     0.29160593
+33     0.70197439
+34     0.73515082
+35     0.30125557
+36     0.29160593
+37     0.09776766
+38     0.89554399
+39     0.29160593
+40     0.63007955
+41     0.17161402
+42     0.22705851
+43     0.03167379
+44     0.64077981
+45     0.41630317
+46     0.30048818
+47     0.29160593
+48     0.63007955
+49     0.58835066
+50     1.00000000
+51     0.63007955
+52     0.88548198
+53     0.20475623
+54     0.53610463
+55     0.87322258
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[85]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">FTO</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[85]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39; [1] rs8014     rs6684539  rs10874744 rs3805     rs2796271  rs3758410 \n [7] rs5009539  rs1065686  rs61893083 rs62755960 rs2073686  rs1695    \n[13] rs4891     rs1944108  rs4902     rs55671249 rs2279258  rs4782500 \n[19] rs13329773 rs17848934 rs62078748 rs906807   rs1683593  rs72984031\n[25] rs891206   rs12979409 rs12981166 rs12461851 rs2523174  rs2074457 \n[31] rs2523175  rs10427038 rs11084765 rs17627    rs2230267  rs11558795\n[37] rs11552518 rs1139829  rs12374324 rs4563584  rs66479467 rs8384    \n[43] rs2230653  rs2393593  rs1049346  rs2010963  rs3024998  rs10862   \n[49] rs11168    rs1044059  rs12717    rs6720     rs12338    rs2449508 \n[55] rs4740427 \n55 Levels: rs10427038 rs1044059 rs1049346 rs1065686 rs10862 ... rs906807\n&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[64]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s2">&quot;rsID&quot;</span><span class="p">:</span> <span class="n">FTO</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;chr&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">FTO</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">FTO</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> 
+                                       <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">FTO</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="s2">&quot;beta.se&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">FTO</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="s2">&quot;pval&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">FTO</span><span class="p">[</span><span class="mi">5</span><span class="p">])}))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{path}</span><span class="s1">/Data/ASE/samples/HNRNPC.wasp_remapped.qual10.dedup.quasar.ase.rds&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pandas2ri</span><span class="o">.</span><span class="n">ri2py</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">HNRNPC</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">HNRNPC</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-4-64496a0d5b9c&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>print<span class="ansi-blue-fg">(</span>HNRNPC<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-red-fg">NameError</span>: name &#39;HNRNPC&#39; is not defined</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+&copy 2018 Min Qiao at He Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/51fd1b6ae26855ff9d4aa34be18913953d4022dc/analysis/180504_ASE_res.ipynb"><code>analysis/180504_ASE_res.ipynb</code></a> committed by Min Qiao on Fri May 4 18:57:56 2018 <a href="http://github.com/gaow/m6a/commit/51fd1b6ae26855ff9d4aa34be18913953d4022dc">revision 1, 51fd1b6</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
