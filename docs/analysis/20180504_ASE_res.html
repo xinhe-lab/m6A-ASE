@@ -1,0 +1,798 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.null.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>M6A</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">M6A</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../highlights.html">Highlights</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/m6a"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Review-ASE-results">Review ASE results<a class="anchor-link" href="#Review-ASE-results">&#182;</a></h1><p><a href="https://stackoverflow.com/questions/24152160/converting-an-rpy2-listvector-to-a-python-dictionary">rpy2 assistant</a></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="k">as</span> <span class="nn">robjects</span>
+<span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="k">import</span> <span class="n">pandas2ri</span>
+<span class="n">pandas2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">rpy2.robjects.vectors</span> <span class="k">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">FloatVector</span><span class="p">,</span> <span class="n">IntVector</span><span class="p">,</span> <span class="n">StrVector</span><span class="p">,</span> <span class="n">ListVector</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/Documents/m6A/Data/ASE/samples&quot;</span><span class="p">)</span>
+<span class="n">readRDS</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;readRDS&#39;</span><span class="p">]</span>
+<span class="n">p_cutoff</span> <span class="o">=</span> <span class="mf">0.05</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">RDS2df</span><span class="p">(</span><span class="n">RBP</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{path}</span><span class="s1">/</span><span class="si">{RBP}</span><span class="s1">.wasp_remapped.qual10.dedup.quasar.ase.rds&#39;</span><span class="p">)</span>
+<span class="c1">#     df = readRDS(f&#39;{path}/{RBP}_res_180330/{RBP}.wasp_remapped.qual10.dedup.quasar.ase.rds&#39;)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pandas2ri</span><span class="o">.</span><span class="n">ri2py</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">RBP_df</span> <span class="o">=</span> <span class="n">pandas2ri</span><span class="o">.</span><span class="n">ri2py</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+    <span class="n">RBP_df</span> <span class="o">=</span> <span class="n">RBP_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;annotations.rsID&quot;</span><span class="p">:</span> <span class="s2">&quot;rsID&quot;</span><span class="p">,</span> <span class="s2">&quot;annotations.chr&quot;</span><span class="p">:</span> <span class="s2">&quot;chr&quot;</span><span class="p">,</span> 
+                                      <span class="s2">&quot;annotations.pos0&quot;</span><span class="p">:</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="s2">&quot;betas.se&quot;</span><span class="p">:</span> <span class="s2">&quot;se&quot;</span><span class="p">,</span> 
+                                      <span class="s2">&quot;pval2.het.ind.&quot;</span><span class="p">:</span> <span class="s2">&quot;pval&quot;</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">RBP_df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO</span> <span class="o">=</span> <span class="n">RDS2df</span><span class="p">(</span><span class="s2">&quot;FTO&quot;</span><span class="p">)</span>
+<span class="n">HNRNPC</span> <span class="o">=</span> <span class="n">RDS2df</span><span class="p">(</span><span class="s2">&quot;HNRNPC&quot;</span><span class="p">)</span>
+<span class="n">IGF2BP2</span> <span class="o">=</span> <span class="n">RDS2df</span><span class="p">(</span><span class="s2">&quot;IGF2BP2&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO</span><span class="p">[</span><span class="n">FTO</span><span class="p">[</span><span class="s2">&quot;pval&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_cutoff</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rsID</th>
+      <th>chr</th>
+      <th>pos</th>
+      <th>beta</th>
+      <th>se</th>
+      <th>pval</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>43</th>
+      <td>rs2230653</td>
+      <td>chr6</td>
+      <td>26056603</td>
+      <td>-1.420418</td>
+      <td>0.66112</td>
+      <td>0.031674</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">HNRNPC</span><span class="p">[</span><span class="n">HNRNPC</span><span class="p">[</span><span class="s2">&quot;pval&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_cutoff</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rsID</th>
+      <th>chr</th>
+      <th>pos</th>
+      <th>beta</th>
+      <th>se</th>
+      <th>pval</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>23</th>
+      <td>rs2840759</td>
+      <td>chr1</td>
+      <td>28834153</td>
+      <td>-1.031958</td>
+      <td>0.519901</td>
+      <td>0.047154</td>
+    </tr>
+    <tr>
+      <th>195</th>
+      <td>rs6498107</td>
+      <td>chr16</td>
+      <td>8909289</td>
+      <td>-1.417305</td>
+      <td>0.715121</td>
+      <td>0.047489</td>
+    </tr>
+    <tr>
+      <th>198</th>
+      <td>rs7199167</td>
+      <td>chr16</td>
+      <td>8919414</td>
+      <td>-1.597556</td>
+      <td>0.653389</td>
+      <td>0.014484</td>
+    </tr>
+    <tr>
+      <th>210</th>
+      <td>rs432477</td>
+      <td>chr16</td>
+      <td>23600572</td>
+      <td>-1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+    </tr>
+    <tr>
+      <th>211</th>
+      <td>rs703773</td>
+      <td>chr16</td>
+      <td>23653268</td>
+      <td>-1.532484</td>
+      <td>0.608424</td>
+      <td>0.011776</td>
+    </tr>
+    <tr>
+      <th>219</th>
+      <td>rs62030049</td>
+      <td>chr16</td>
+      <td>50572708</td>
+      <td>-1.436739</td>
+      <td>0.575462</td>
+      <td>0.012536</td>
+    </tr>
+    <tr>
+      <th>220</th>
+      <td>rs35419407</td>
+      <td>chr16</td>
+      <td>50575018</td>
+      <td>-1.668422</td>
+      <td>0.648371</td>
+      <td>0.010075</td>
+    </tr>
+    <tr>
+      <th>271</th>
+      <td>rs28644774</td>
+      <td>chr16</td>
+      <td>89472180</td>
+      <td>1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+    </tr>
+    <tr>
+      <th>290</th>
+      <td>rs11078307</td>
+      <td>chr17</td>
+      <td>15411837</td>
+      <td>1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+    </tr>
+    <tr>
+      <th>325</th>
+      <td>rs2727320</td>
+      <td>chr17</td>
+      <td>61865324</td>
+      <td>1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+    </tr>
+    <tr>
+      <th>331</th>
+      <td>rs1177972</td>
+      <td>chr17</td>
+      <td>70563472</td>
+      <td>-1.585496</td>
+      <td>0.698833</td>
+      <td>0.023282</td>
+    </tr>
+    <tr>
+      <th>347</th>
+      <td>rs4239021</td>
+      <td>chr17</td>
+      <td>80531825</td>
+      <td>-1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+    </tr>
+    <tr>
+      <th>406</th>
+      <td>rs11692629</td>
+      <td>chr2</td>
+      <td>42498113</td>
+      <td>-1.634283</td>
+      <td>0.694294</td>
+      <td>0.018579</td>
+    </tr>
+    <tr>
+      <th>410</th>
+      <td>rs1439225</td>
+      <td>chr2</td>
+      <td>42512930</td>
+      <td>-1.242851</td>
+      <td>0.623718</td>
+      <td>0.046300</td>
+    </tr>
+    <tr>
+      <th>446</th>
+      <td>rs6720885</td>
+      <td>chr2</td>
+      <td>99971288</td>
+      <td>-1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+    </tr>
+    <tr>
+      <th>449</th>
+      <td>rs6542994</td>
+      <td>chr2</td>
+      <td>101451520</td>
+      <td>-1.417305</td>
+      <td>0.715121</td>
+      <td>0.047489</td>
+    </tr>
+    <tr>
+      <th>499</th>
+      <td>rs11651</td>
+      <td>chr2</td>
+      <td>216229691</td>
+      <td>1.597556</td>
+      <td>0.653389</td>
+      <td>0.014484</td>
+    </tr>
+    <tr>
+      <th>511</th>
+      <td>rs1250259</td>
+      <td>chr2</td>
+      <td>216300481</td>
+      <td>-1.432458</td>
+      <td>0.665643</td>
+      <td>0.031398</td>
+    </tr>
+    <tr>
+      <th>528</th>
+      <td>rs13034294</td>
+      <td>chr2</td>
+      <td>236675429</td>
+      <td>1.477490</td>
+      <td>0.709174</td>
+      <td>0.037215</td>
+    </tr>
+    <tr>
+      <th>541</th>
+      <td>rs6055809</td>
+      <td>chr20</td>
+      <td>8407790</td>
+      <td>1.533378</td>
+      <td>0.703771</td>
+      <td>0.029346</td>
+    </tr>
+    <tr>
+      <th>608</th>
+      <td>rs9838739</td>
+      <td>chr3</td>
+      <td>46137188</td>
+      <td>-1.476186</td>
+      <td>0.566418</td>
+      <td>0.009156</td>
+    </tr>
+    <tr>
+      <th>616</th>
+      <td>rs73093101</td>
+      <td>chr3</td>
+      <td>61554356</td>
+      <td>-1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+    </tr>
+    <tr>
+      <th>693</th>
+      <td>rs6896817</td>
+      <td>chr5</td>
+      <td>179267394</td>
+      <td>1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+    </tr>
+    <tr>
+      <th>708</th>
+      <td>rs9368904</td>
+      <td>chr6</td>
+      <td>36069349</td>
+      <td>1.417305</td>
+      <td>0.715121</td>
+      <td>0.047489</td>
+    </tr>
+    <tr>
+      <th>793</th>
+      <td>rs34931322</td>
+      <td>chr8</td>
+      <td>131534469</td>
+      <td>-1.326326</td>
+      <td>0.548616</td>
+      <td>0.015624</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">IGF2BP2</span><span class="p">[</span><span class="n">IGF2BP2</span><span class="p">[</span><span class="s2">&quot;pval&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_cutoff</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rsID</th>
+      <th>chr</th>
+      <th>pos</th>
+      <th>beta</th>
+      <th>se</th>
+      <th>pval</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>167</th>
+      <td>rs59267791</td>
+      <td>chr19</td>
+      <td>2248151</td>
+      <td>1.385637</td>
+      <td>0.674851</td>
+      <td>0.040048</td>
+    </tr>
+    <tr>
+      <th>214</th>
+      <td>rs11677797</td>
+      <td>chr2</td>
+      <td>97559758</td>
+      <td>1.601917</td>
+      <td>0.721375</td>
+      <td>0.026375</td>
+    </tr>
+    <tr>
+      <th>234</th>
+      <td>rs7445</td>
+      <td>chr22</td>
+      <td>21977046</td>
+      <td>-1.483447</td>
+      <td>0.672319</td>
+      <td>0.027352</td>
+    </tr>
+    <tr>
+      <th>235</th>
+      <td>rs1063311</td>
+      <td>chr22</td>
+      <td>22116466</td>
+      <td>1.704536</td>
+      <td>0.673744</td>
+      <td>0.011408</td>
+    </tr>
+    <tr>
+      <th>260</th>
+      <td>rs2010963</td>
+      <td>chr6</td>
+      <td>43738349</td>
+      <td>1.611538</td>
+      <td>0.774645</td>
+      <td>0.037493</td>
+    </tr>
+    <tr>
+      <th>282</th>
+      <td>rs1861000</td>
+      <td>chr7</td>
+      <td>120725353</td>
+      <td>-1.529486</td>
+      <td>0.725559</td>
+      <td>0.035030</td>
+    </tr>
+    <tr>
+      <th>314</th>
+      <td>rs2296710</td>
+      <td>chr9</td>
+      <td>134021629</td>
+      <td>1.435647</td>
+      <td>0.654628</td>
+      <td>0.028302</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+&copy 2018 Min Qiao at He Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/c31c4150aa72d0fac6ba89fb7b27b43a5733cae9/analysis/20180504_ASE_res.ipynb"><code>analysis/20180504_ASE_res.ipynb</code></a> committed by Min Qiao on Tue May 8 12:23:49 2018 <a href="http://github.com/gaow/m6a/commit/c31c4150aa72d0fac6ba89fb7b27b43a5733cae9">revision 1, c31c415</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
