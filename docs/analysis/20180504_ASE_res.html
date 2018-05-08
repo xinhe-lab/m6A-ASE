@@ -789,9 +789,256 @@ body {
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO_1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/FTO.wasp_remapped.qual10.dedup.quasar.genotype.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO_1</span><span class="p">[</span><span class="n">FTO_1</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;rs2230653&quot;</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1135</th>
+      <td>chr6</td>
+      <td>26056603</td>
+      <td>26056604</td>
+      <td>rs2230653</td>
+      <td>1.212364e-105</td>
+      <td>1.0</td>
+      <td>1.157798e-07</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO_1</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[16]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>chr1</td>
+      <td>990532</td>
+      <td>990533</td>
+      <td>rs4308920</td>
+      <td>9.955845e-01</td>
+      <td>0.004415</td>
+      <td>5.617994e-17</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>chr1</td>
+      <td>990805</td>
+      <td>990806</td>
+      <td>rs2799073</td>
+      <td>1.623563e-04</td>
+      <td>0.999838</td>
+      <td>2.644136e-10</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>chr1</td>
+      <td>990942</td>
+      <td>990943</td>
+      <td>rs28632009</td>
+      <td>9.987619e-01</td>
+      <td>0.001238</td>
+      <td>6.685915e-20</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>chr1</td>
+      <td>990983</td>
+      <td>990984</td>
+      <td>rs8014</td>
+      <td>1.714672e-08</td>
+      <td>1.000000</td>
+      <td>1.283906e-13</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>chr1</td>
+      <td>1152630</td>
+      <td>1152631</td>
+      <td>rs11721</td>
+      <td>9.940118e-01</td>
+      <td>0.005988</td>
+      <td>1.032281e-16</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>chr1</td>
+      <td>1181371</td>
+      <td>1181372</td>
+      <td>rs72631899</td>
+      <td>9.991179e-01</td>
+      <td>0.000882</td>
+      <td>3.448436e-20</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>chr1</td>
+      <td>1284489</td>
+      <td>1284490</td>
+      <td>rs150789461</td>
+      <td>5.742869e-26</td>
+      <td>0.000630</td>
+      <td>9.993703e-01</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>chr1</td>
+      <td>2221837</td>
+      <td>2221838</td>
+      <td>rs878093</td>
+      <td>9.959822e-01</td>
+      <td>0.004018</td>
+      <td>4.655120e-17</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>chr1</td>
+      <td>10093456</td>
+      <td>10093457</td>
+      <td>rs7528979</td>
+      <td>9.871749e-01</td>
+      <td>0.012825</td>
+      <td>7.132526e-18</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>chr1</td>
+      <td>11968229</td>
+      <td>11968230</td>
+      <td>rs6687063</td>
+      <td>4.429674e-15</td>
+      <td>0.997834</td>
+      <td>2.166235e-03</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/c31c4150aa72d0fac6ba89fb7b27b43a5733cae9/analysis/20180504_ASE_res.ipynb"><code>analysis/20180504_ASE_res.ipynb</code></a> committed by Min Qiao on Tue May 8 12:23:49 2018 <a href="http://github.com/gaow/m6a/commit/c31c4150aa72d0fac6ba89fb7b27b43a5733cae9">revision 1, c31c415</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/1eb517c9a039fd914f5bf25412b6477cdf0c997f/analysis/20180504_ASE_res.ipynb"><code>analysis/20180504_ASE_res.ipynb</code></a> committed by Min Qiao on Tue May 8 16:57:41 2018 <a href="http://github.com/gaow/m6a/commit/1eb517c9a039fd914f5bf25412b6477cdf0c997f">revision 2, 1eb517c</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
