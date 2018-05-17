@@ -272,6 +272,24 @@ body {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Import all inference on ASE for an individual, and QuASAR input.</p>
+
+<pre><code>beta: estimates of allelic imbalance
+se: standard errors
+pval: pvalues from an LRT for ASE
+rsID: SNP ID
+freq: SNP allele frequency
+#ref: Number of reads mapping to the reference allele
+#alt: Number of reads mapping to the alternate allele
+#either: Number of reads not mapping to either allele</code></pre>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
@@ -286,7 +304,11 @@ body {
     <span class="n">RBP_df</span> <span class="o">=</span> <span class="n">RBP_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;annotations.rsID&quot;</span><span class="p">:</span> <span class="s2">&quot;rsID&quot;</span><span class="p">,</span> <span class="s2">&quot;annotations.chr&quot;</span><span class="p">:</span> <span class="s2">&quot;chr&quot;</span><span class="p">,</span> 
                                       <span class="s2">&quot;annotations.pos0&quot;</span><span class="p">:</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="s2">&quot;betas.se&quot;</span><span class="p">:</span> <span class="s2">&quot;se&quot;</span><span class="p">,</span> 
                                       <span class="s2">&quot;pval2.het.ind.&quot;</span><span class="p">:</span> <span class="s2">&quot;pval&quot;</span><span class="p">})</span>
-    <span class="k">return</span> <span class="n">RBP_df</span>
+    <span class="n">RBP_input</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/</span><span class="si">{RBP}</span><span class="s2">.wasp_remapped.qual10.dedup.quasar.in.gz&quot;</span><span class="p">,</span> <span class="n">compression</span> <span class="o">=</span> <span class="s2">&quot;gzip&quot;</span><span class="p">,</span> 
+                              <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">usecols</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> 
+                              <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;ref&quot;</span><span class="p">,</span> <span class="s2">&quot;alt&quot;</span><span class="p">,</span> <span class="s2">&quot;rsID&quot;</span><span class="p">,</span> <span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="s2">&quot;#ref&quot;</span><span class="p">,</span> <span class="s2">&quot;#alt&quot;</span><span class="p">,</span> <span class="s2">&quot;#either&quot;</span><span class="p">])</span>
+    <span class="n">RBP</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">RBP_df</span><span class="p">,</span> <span class="n">RBP_input</span><span class="p">,</span> <span class="n">on</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;rsID&quot;</span><span class="p">],</span> <span class="n">how</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">RBP</span>
 </pre></div>
 
 </div>
@@ -314,7 +336,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO</span><span class="p">[</span><span class="n">FTO</span><span class="p">[</span><span class="s2">&quot;pval&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_cutoff</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO</span><span class="p">[</span><span class="n">FTO</span><span class="p">[</span><span class="s2">&quot;pval&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_cutoff</span><span class="o">*</span><span class="mi">3</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -356,17 +378,134 @@ body {
       <th>beta</th>
       <th>se</th>
       <th>pval</th>
+      <th>ref</th>
+      <th>alt</th>
+      <th>freq</th>
+      <th>#ref</th>
+      <th>#alt</th>
+      <th>#either</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>43</th>
+      <th>11</th>
+      <td>rs1695</td>
+      <td>chr11</td>
+      <td>67352688</td>
+      <td>1.351097</td>
+      <td>0.783640</td>
+      <td>0.084684</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.352636</td>
+      <td>14</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>rs4902</td>
+      <td>chr12</td>
+      <td>57108202</td>
+      <td>1.187061</td>
+      <td>0.708578</td>
+      <td>0.093881</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.607628</td>
+      <td>23</td>
+      <td>6</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>rs72984031</td>
+      <td>chr19</td>
+      <td>872088</td>
+      <td>-1.223893</td>
+      <td>0.795985</td>
+      <td>0.124151</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.176717</td>
+      <td>3</td>
+      <td>12</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>rs891206</td>
+      <td>chr19</td>
+      <td>872254</td>
+      <td>-1.006632</td>
+      <td>0.674080</td>
+      <td>0.135347</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.441693</td>
+      <td>10</td>
+      <td>31</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>rs12981166</td>
+      <td>chr19</td>
+      <td>2270385</td>
+      <td>-1.263369</td>
+      <td>0.723053</td>
+      <td>0.080590</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.293930</td>
+      <td>5</td>
+      <td>21</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>rs2523175</td>
+      <td>chr19</td>
+      <td>2271322</td>
+      <td>-0.921468</td>
+      <td>0.637951</td>
+      <td>0.148621</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.898562</td>
+      <td>21</td>
+      <td>59</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>rs11552518</td>
+      <td>chr2</td>
+      <td>26455126</td>
+      <td>-1.408342</td>
+      <td>0.850564</td>
+      <td>0.097768</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.142372</td>
+      <td>2</td>
+      <td>10</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>42</th>
       <td>rs2230653</td>
       <td>chr6</td>
       <td>26056603</td>
       <td>-1.420418</td>
-      <td>0.66112</td>
+      <td>0.661120</td>
       <td>0.031674</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.174920</td>
+      <td>10</td>
+      <td>51</td>
+      <td>0</td>
     </tr>
   </tbody>
 </table>
@@ -384,7 +523,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">HNRNPC</span><span class="p">[</span><span class="n">HNRNPC</span><span class="p">[</span><span class="s2">&quot;pval&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_cutoff</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO</span>
 </pre></div>
 
 </div>
@@ -426,233 +565,839 @@ body {
       <th>beta</th>
       <th>se</th>
       <th>pval</th>
+      <th>ref</th>
+      <th>alt</th>
+      <th>freq</th>
+      <th>#ref</th>
+      <th>#alt</th>
+      <th>#either</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>23</th>
-      <td>rs2840759</td>
+      <th>0</th>
+      <td>rs8014</td>
       <td>chr1</td>
-      <td>28834153</td>
-      <td>-1.031958</td>
-      <td>0.519901</td>
-      <td>0.047154</td>
+      <td>990983</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.922324</td>
+      <td>7</td>
+      <td>4</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>195</th>
-      <td>rs6498107</td>
+      <th>1</th>
+      <td>rs6684539</td>
+      <td>chr1</td>
+      <td>11968272</td>
+      <td>-0.245987</td>
+      <td>0.621327</td>
+      <td>0.692174</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.616813</td>
+      <td>48</td>
+      <td>63</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>rs10874744</td>
+      <td>chr1</td>
+      <td>93306316</td>
+      <td>0.929733</td>
+      <td>0.722990</td>
+      <td>0.198459</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.691893</td>
+      <td>17</td>
+      <td>6</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>rs3805</td>
+      <td>chr1</td>
+      <td>205683354</td>
+      <td>-0.708717</td>
+      <td>0.761321</td>
+      <td>0.351903</td>
+      <td>T</td>
+      <td>G</td>
+      <td>0.233626</td>
+      <td>5</td>
+      <td>11</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>rs2796271</td>
+      <td>chr1</td>
+      <td>207941926</td>
+      <td>-0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.671126</td>
+      <td>4</td>
+      <td>7</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>rs3758410</td>
+      <td>chr10</td>
+      <td>17271399</td>
+      <td>-0.106749</td>
+      <td>0.741191</td>
+      <td>0.885482</td>
+      <td>G</td>
+      <td>C</td>
+      <td>0.414936</td>
+      <td>8</td>
+      <td>9</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>rs5009539</td>
+      <td>chr11</td>
+      <td>5269582</td>
+      <td>0.310123</td>
+      <td>0.647507</td>
+      <td>0.631975</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.477436</td>
+      <td>31</td>
+      <td>22</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>rs1065686</td>
+      <td>chr11</td>
+      <td>5269583</td>
+      <td>0.310123</td>
+      <td>0.647507</td>
+      <td>0.631975</td>
+      <td>T</td>
+      <td>G</td>
+      <td>0.718450</td>
+      <td>31</td>
+      <td>22</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>rs61893083</td>
+      <td>chr11</td>
+      <td>5269584</td>
+      <td>0.310123</td>
+      <td>0.647507</td>
+      <td>0.631975</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.718450</td>
+      <td>31</td>
+      <td>22</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>rs62755960</td>
+      <td>chr11</td>
+      <td>5269585</td>
+      <td>0.310123</td>
+      <td>0.647507</td>
+      <td>0.631975</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.718450</td>
+      <td>31</td>
+      <td>22</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>rs2073686</td>
+      <td>chr11</td>
+      <td>8707082</td>
+      <td>-0.551127</td>
+      <td>0.628788</td>
+      <td>0.380763</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.183107</td>
+      <td>32</td>
+      <td>59</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>rs1695</td>
+      <td>chr11</td>
+      <td>67352688</td>
+      <td>1.351097</td>
+      <td>0.783640</td>
+      <td>0.084684</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.352636</td>
+      <td>14</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>rs4891</td>
+      <td>chr11</td>
+      <td>67353969</td>
+      <td>0.546706</td>
+      <td>0.747985</td>
+      <td>0.464837</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.356030</td>
+      <td>11</td>
+      <td>6</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>rs1944108</td>
+      <td>chr11</td>
+      <td>93464174</td>
+      <td>-0.461441</td>
+      <td>0.754252</td>
+      <td>0.540679</td>
+      <td>A</td>
+      <td>C</td>
+      <td>0.370407</td>
+      <td>6</td>
+      <td>10</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>rs4902</td>
+      <td>chr12</td>
+      <td>57108202</td>
+      <td>1.187061</td>
+      <td>0.708578</td>
+      <td>0.093881</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.607628</td>
+      <td>23</td>
+      <td>6</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>rs55671249</td>
       <td>chr16</td>
-      <td>8909289</td>
-      <td>-1.417305</td>
-      <td>0.715121</td>
-      <td>0.047489</td>
+      <td>591726</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+      <td>C</td>
+      <td>A</td>
+      <td>0.054712</td>
+      <td>7</td>
+      <td>4</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>198</th>
-      <td>rs7199167</td>
+      <th>16</th>
+      <td>rs2279258</td>
       <td>chr16</td>
-      <td>8919414</td>
-      <td>-1.597556</td>
-      <td>0.653389</td>
-      <td>0.014484</td>
+      <td>88724346</td>
+      <td>-0.165265</td>
+      <td>0.809792</td>
+      <td>0.838289</td>
+      <td>G</td>
+      <td>T</td>
+      <td>0.498403</td>
+      <td>5</td>
+      <td>6</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>210</th>
-      <td>rs432477</td>
+      <th>17</th>
+      <td>rs4782500</td>
       <td>chr16</td>
-      <td>23600572</td>
-      <td>-1.560469</td>
-      <td>0.782937</td>
-      <td>0.046251</td>
+      <td>89008541</td>
+      <td>-0.165265</td>
+      <td>0.809792</td>
+      <td>0.838289</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.229633</td>
+      <td>5</td>
+      <td>6</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>211</th>
-      <td>rs703773</td>
+      <th>18</th>
+      <td>rs13329773</td>
       <td>chr16</td>
-      <td>23653268</td>
-      <td>-1.532484</td>
-      <td>0.608424</td>
-      <td>0.011776</td>
+      <td>89023571</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+      <td>G</td>
+      <td>T</td>
+      <td>0.166134</td>
+      <td>7</td>
+      <td>4</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>219</th>
-      <td>rs62030049</td>
-      <td>chr16</td>
-      <td>50572708</td>
-      <td>-1.436739</td>
-      <td>0.575462</td>
-      <td>0.012536</td>
-    </tr>
-    <tr>
-      <th>220</th>
-      <td>rs35419407</td>
-      <td>chr16</td>
-      <td>50575018</td>
-      <td>-1.668422</td>
-      <td>0.648371</td>
-      <td>0.010075</td>
-    </tr>
-    <tr>
-      <th>271</th>
-      <td>rs28644774</td>
-      <td>chr16</td>
-      <td>89472180</td>
-      <td>1.560469</td>
-      <td>0.782937</td>
-      <td>0.046251</td>
-    </tr>
-    <tr>
-      <th>290</th>
-      <td>rs11078307</td>
+      <th>19</th>
+      <td>rs17848934</td>
       <td>chr17</td>
-      <td>15411837</td>
-      <td>1.560469</td>
-      <td>0.782937</td>
-      <td>0.046251</td>
+      <td>80054374</td>
+      <td>0.000000</td>
+      <td>0.793392</td>
+      <td>1.000000</td>
+      <td>C</td>
+      <td>A</td>
+      <td>0.177516</td>
+      <td>6</td>
+      <td>6</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>325</th>
-      <td>rs2727320</td>
+      <th>20</th>
+      <td>rs62078748</td>
       <td>chr17</td>
-      <td>61865324</td>
-      <td>1.560469</td>
-      <td>0.782937</td>
-      <td>0.046251</td>
+      <td>80055324</td>
+      <td>-0.624454</td>
+      <td>0.804751</td>
+      <td>0.437773</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.165136</td>
+      <td>4</td>
+      <td>8</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>331</th>
-      <td>rs1177972</td>
-      <td>chr17</td>
-      <td>70563472</td>
-      <td>-1.585496</td>
-      <td>0.698833</td>
-      <td>0.023282</td>
+      <th>21</th>
+      <td>rs906807</td>
+      <td>chr18</td>
+      <td>9117866</td>
+      <td>-1.070189</td>
+      <td>0.811626</td>
+      <td>0.187311</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.778954</td>
+      <td>3</td>
+      <td>10</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>347</th>
-      <td>rs4239021</td>
-      <td>chr17</td>
-      <td>80531825</td>
-      <td>-1.560469</td>
-      <td>0.782937</td>
-      <td>0.046251</td>
+      <th>22</th>
+      <td>rs1683593</td>
+      <td>chr19</td>
+      <td>867734</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.244209</td>
+      <td>7</td>
+      <td>4</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>406</th>
-      <td>rs11692629</td>
+      <th>23</th>
+      <td>rs72984031</td>
+      <td>chr19</td>
+      <td>872088</td>
+      <td>-1.223893</td>
+      <td>0.795985</td>
+      <td>0.124151</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.176717</td>
+      <td>3</td>
+      <td>12</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>rs891206</td>
+      <td>chr19</td>
+      <td>872254</td>
+      <td>-1.006632</td>
+      <td>0.674080</td>
+      <td>0.135347</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.441693</td>
+      <td>10</td>
+      <td>31</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>rs12979409</td>
+      <td>chr19</td>
+      <td>2270369</td>
+      <td>-0.728732</td>
+      <td>0.794736</td>
+      <td>0.359170</td>
+      <td>G</td>
+      <td>T</td>
+      <td>0.274561</td>
+      <td>4</td>
+      <td>9</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>rs12981166</td>
+      <td>chr19</td>
+      <td>2270385</td>
+      <td>-1.263369</td>
+      <td>0.723053</td>
+      <td>0.080590</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.293930</td>
+      <td>5</td>
+      <td>21</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>rs12461851</td>
+      <td>chr19</td>
+      <td>2270909</td>
+      <td>-0.750163</td>
+      <td>0.664954</td>
+      <td>0.259260</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.274760</td>
+      <td>13</td>
+      <td>30</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>rs2523174</td>
+      <td>chr19</td>
+      <td>2271180</td>
+      <td>-0.383928</td>
+      <td>0.659392</td>
+      <td>0.560402</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.897564</td>
+      <td>17</td>
+      <td>26</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>rs2074457</td>
+      <td>chr19</td>
+      <td>2271281</td>
+      <td>-0.932944</td>
+      <td>0.659830</td>
+      <td>0.157387</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.787939</td>
+      <td>13</td>
+      <td>37</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>rs2523175</td>
+      <td>chr19</td>
+      <td>2271322</td>
+      <td>-0.921468</td>
+      <td>0.637951</td>
+      <td>0.148621</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.898562</td>
+      <td>21</td>
+      <td>59</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>rs10427038</td>
+      <td>chr19</td>
+      <td>28991811</td>
+      <td>0.877927</td>
+      <td>0.832469</td>
+      <td>0.291606</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.369808</td>
+      <td>8</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>rs11084765</td>
+      <td>chr19</td>
+      <td>34883444</td>
+      <td>0.304640</td>
+      <td>0.796119</td>
+      <td>0.701974</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.610823</td>
+      <td>7</td>
+      <td>5</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>rs17627</td>
+      <td>chr19</td>
+      <td>39923951</td>
+      <td>-0.260534</td>
+      <td>0.770169</td>
+      <td>0.735151</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.240815</td>
+      <td>6</td>
+      <td>8</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>rs2230267</td>
+      <td>chr19</td>
+      <td>49469086</td>
+      <td>0.694652</td>
+      <td>0.671977</td>
+      <td>0.301256</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.460663</td>
+      <td>26</td>
+      <td>12</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>rs11558795</td>
+      <td>chr19</td>
+      <td>49507577</td>
+      <td>0.877927</td>
+      <td>0.832469</td>
+      <td>0.291606</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.098443</td>
+      <td>8</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>rs11552518</td>
       <td>chr2</td>
-      <td>42498113</td>
-      <td>-1.634283</td>
-      <td>0.694294</td>
-      <td>0.018579</td>
+      <td>26455126</td>
+      <td>-1.408342</td>
+      <td>0.850564</td>
+      <td>0.097768</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.142372</td>
+      <td>2</td>
+      <td>10</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>410</th>
-      <td>rs1439225</td>
+      <th>37</th>
+      <td>rs1139829</td>
       <td>chr2</td>
-      <td>42512930</td>
-      <td>-1.242851</td>
-      <td>0.623718</td>
-      <td>0.046300</td>
+      <td>99225167</td>
+      <td>-0.095484</td>
+      <td>0.727266</td>
+      <td>0.895544</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.247604</td>
+      <td>9</td>
+      <td>10</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>446</th>
-      <td>rs6720885</td>
-      <td>chr2</td>
-      <td>99971288</td>
-      <td>-1.560469</td>
-      <td>0.782937</td>
-      <td>0.046251</td>
+      <th>38</th>
+      <td>rs12374324</td>
+      <td>chr4</td>
+      <td>714214</td>
+      <td>-0.877927</td>
+      <td>0.832469</td>
+      <td>0.291606</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.198283</td>
+      <td>3</td>
+      <td>8</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>449</th>
-      <td>rs6542994</td>
-      <td>chr2</td>
-      <td>101451520</td>
-      <td>-1.417305</td>
-      <td>0.715121</td>
-      <td>0.047489</td>
-    </tr>
-    <tr>
-      <th>499</th>
-      <td>rs11651</td>
-      <td>chr2</td>
-      <td>216229691</td>
-      <td>1.597556</td>
-      <td>0.653389</td>
-      <td>0.014484</td>
-    </tr>
-    <tr>
-      <th>511</th>
-      <td>rs1250259</td>
-      <td>chr2</td>
-      <td>216300481</td>
-      <td>-1.432458</td>
-      <td>0.665643</td>
-      <td>0.031398</td>
-    </tr>
-    <tr>
-      <th>528</th>
-      <td>rs13034294</td>
-      <td>chr2</td>
-      <td>236675429</td>
-      <td>1.477490</td>
-      <td>0.709174</td>
-      <td>0.037215</td>
-    </tr>
-    <tr>
-      <th>541</th>
-      <td>rs6055809</td>
-      <td>chr20</td>
-      <td>8407790</td>
-      <td>1.533378</td>
-      <td>0.703771</td>
-      <td>0.029346</td>
-    </tr>
-    <tr>
-      <th>608</th>
-      <td>rs9838739</td>
-      <td>chr3</td>
-      <td>46137188</td>
-      <td>-1.476186</td>
-      <td>0.566418</td>
-      <td>0.009156</td>
-    </tr>
-    <tr>
-      <th>616</th>
-      <td>rs73093101</td>
-      <td>chr3</td>
-      <td>61554356</td>
-      <td>-1.560469</td>
-      <td>0.782937</td>
-      <td>0.046251</td>
-    </tr>
-    <tr>
-      <th>693</th>
-      <td>rs6896817</td>
+      <th>39</th>
+      <td>rs4563584</td>
       <td>chr5</td>
-      <td>179267394</td>
-      <td>1.560469</td>
-      <td>0.782937</td>
-      <td>0.046251</td>
+      <td>179049328</td>
+      <td>-0.366771</td>
+      <td>0.761545</td>
+      <td>0.630080</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.401158</td>
+      <td>6</td>
+      <td>9</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>708</th>
-      <td>rs9368904</td>
+      <th>40</th>
+      <td>rs66479467</td>
+      <td>chr5</td>
+      <td>179049671</td>
+      <td>-1.048146</td>
+      <td>0.766729</td>
+      <td>0.171614</td>
+      <td>A</td>
+      <td>C</td>
+      <td>0.400559</td>
+      <td>4</td>
+      <td>13</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>rs8384</td>
       <td>chr6</td>
-      <td>36069349</td>
-      <td>1.417305</td>
-      <td>0.715121</td>
-      <td>0.047489</td>
+      <td>26056071</td>
+      <td>0.877162</td>
+      <td>0.726145</td>
+      <td>0.227059</td>
+      <td>G</td>
+      <td>C</td>
+      <td>0.116214</td>
+      <td>16</td>
+      <td>6</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>793</th>
-      <td>rs34931322</td>
+      <th>42</th>
+      <td>rs2230653</td>
+      <td>chr6</td>
+      <td>26056603</td>
+      <td>-1.420418</td>
+      <td>0.661120</td>
+      <td>0.031674</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.174920</td>
+      <td>10</td>
+      <td>51</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>rs2393593</td>
+      <td>chr6</td>
+      <td>26285682</td>
+      <td>-0.332649</td>
+      <td>0.712908</td>
+      <td>0.640780</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.790535</td>
+      <td>9</td>
+      <td>13</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>rs1049346</td>
+      <td>chr6</td>
+      <td>38670836</td>
+      <td>0.624300</td>
+      <td>0.768037</td>
+      <td>0.416303</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.564696</td>
+      <td>10</td>
+      <td>5</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>rs2010963</td>
+      <td>chr6</td>
+      <td>43738349</td>
+      <td>0.662938</td>
+      <td>0.640281</td>
+      <td>0.300488</td>
+      <td>C</td>
+      <td>G</td>
+      <td>0.673922</td>
+      <td>46</td>
+      <td>22</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>rs3024998</td>
+      <td>chr6</td>
+      <td>43745576</td>
+      <td>-0.877927</td>
+      <td>0.832469</td>
+      <td>0.291606</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.331470</td>
+      <td>3</td>
+      <td>8</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>rs10862</td>
+      <td>chr6</td>
+      <td>166755974</td>
+      <td>-0.366771</td>
+      <td>0.761545</td>
+      <td>0.630080</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.824281</td>
+      <td>6</td>
+      <td>9</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>rs11168</td>
+      <td>chr6</td>
+      <td>166755978</td>
+      <td>-0.424885</td>
+      <td>0.785039</td>
+      <td>0.588351</td>
+      <td>A</td>
+      <td>C</td>
+      <td>0.824281</td>
+      <td>5</td>
+      <td>8</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>rs1044059</td>
+      <td>chr6</td>
+      <td>167369896</td>
+      <td>0.000000</td>
+      <td>0.710646</td>
+      <td>1.000000</td>
+      <td>C</td>
+      <td>A</td>
+      <td>0.673722</td>
+      <td>11</td>
+      <td>11</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>rs12717</td>
+      <td>chr6</td>
+      <td>170862299</td>
+      <td>-0.366771</td>
+      <td>0.761545</td>
+      <td>0.630080</td>
+      <td>G</td>
+      <td>C</td>
+      <td>0.450080</td>
+      <td>6</td>
+      <td>9</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>rs6720</td>
+      <td>chr7</td>
+      <td>75677503</td>
+      <td>0.106749</td>
+      <td>0.741191</td>
+      <td>0.885482</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.522165</td>
+      <td>9</td>
+      <td>8</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>rs12338</td>
       <td>chr8</td>
-      <td>131534469</td>
-      <td>-1.326326</td>
-      <td>0.548616</td>
-      <td>0.015624</td>
+      <td>11710887</td>
+      <td>0.979535</td>
+      <td>0.772433</td>
+      <td>0.204756</td>
+      <td>G</td>
+      <td>C</td>
+      <td>0.395966</td>
+      <td>12</td>
+      <td>4</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>rs2449508</td>
+      <td>chr8</td>
+      <td>98788260</td>
+      <td>0.505350</td>
+      <td>0.816775</td>
+      <td>0.536105</td>
+      <td>G</td>
+      <td>T</td>
+      <td>0.083666</td>
+      <td>7</td>
+      <td>4</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>rs4740427</td>
+      <td>chr9</td>
+      <td>134151862</td>
+      <td>0.121029</td>
+      <td>0.758486</td>
+      <td>0.873223</td>
+      <td>G</td>
+      <td>T</td>
+      <td>0.353834</td>
+      <td>8</td>
+      <td>7</td>
+      <td>0</td>
     </tr>
   </tbody>
 </table>
@@ -670,7 +1415,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">IGF2BP2</span><span class="p">[</span><span class="n">IGF2BP2</span><span class="p">[</span><span class="s2">&quot;pval&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_cutoff</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">HNRNPC</span><span class="p">[</span><span class="n">HNRNPC</span><span class="p">[</span><span class="s2">&quot;pval&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_cutoff</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -712,318 +1457,561 @@ body {
       <th>beta</th>
       <th>se</th>
       <th>pval</th>
+      <th>ref</th>
+      <th>alt</th>
+      <th>freq</th>
+      <th>#ref</th>
+      <th>#alt</th>
+      <th>#either</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>167</th>
+      <th>22</th>
+      <td>rs2840759</td>
+      <td>chr1</td>
+      <td>28834153</td>
+      <td>-1.031958</td>
+      <td>0.519901</td>
+      <td>0.047154</td>
+      <td>G</td>
+      <td>T</td>
+      <td>0.207867</td>
+      <td>29</td>
+      <td>88</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>194</th>
+      <td>rs6498107</td>
+      <td>chr16</td>
+      <td>8909289</td>
+      <td>-1.417305</td>
+      <td>0.715121</td>
+      <td>0.047489</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.885982</td>
+      <td>3</td>
+      <td>14</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>197</th>
+      <td>rs7199167</td>
+      <td>chr16</td>
+      <td>8919414</td>
+      <td>-1.597556</td>
+      <td>0.653389</td>
+      <td>0.014484</td>
+      <td>T</td>
+      <td>A</td>
+      <td>0.392572</td>
+      <td>4</td>
+      <td>23</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>209</th>
+      <td>rs432477</td>
+      <td>chr16</td>
+      <td>23600572</td>
+      <td>-1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.326278</td>
+      <td>2</td>
+      <td>11</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>210</th>
+      <td>rs703773</td>
+      <td>chr16</td>
+      <td>23653268</td>
+      <td>-1.532484</td>
+      <td>0.608424</td>
+      <td>0.011776</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.078474</td>
+      <td>6</td>
+      <td>32</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>218</th>
+      <td>rs62030049</td>
+      <td>chr16</td>
+      <td>50572708</td>
+      <td>-1.436739</td>
+      <td>0.575462</td>
+      <td>0.012536</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.150759</td>
+      <td>9</td>
+      <td>43</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>219</th>
+      <td>rs35419407</td>
+      <td>chr16</td>
+      <td>50575018</td>
+      <td>-1.668422</td>
+      <td>0.648371</td>
+      <td>0.010075</td>
+      <td>C</td>
+      <td>A</td>
+      <td>0.119409</td>
+      <td>4</td>
+      <td>25</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>270</th>
+      <td>rs28644774</td>
+      <td>chr16</td>
+      <td>89472180</td>
+      <td>1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+      <td>G</td>
+      <td>C</td>
+      <td>0.518171</td>
+      <td>11</td>
+      <td>2</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>289</th>
+      <td>rs11078307</td>
+      <td>chr17</td>
+      <td>15411837</td>
+      <td>1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.675719</td>
+      <td>11</td>
+      <td>2</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>324</th>
+      <td>rs2727320</td>
+      <td>chr17</td>
+      <td>61865324</td>
+      <td>1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.732628</td>
+      <td>11</td>
+      <td>2</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>330</th>
+      <td>rs1177972</td>
+      <td>chr17</td>
+      <td>70563472</td>
+      <td>-1.585496</td>
+      <td>0.698833</td>
+      <td>0.023282</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.389776</td>
+      <td>3</td>
+      <td>17</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>346</th>
+      <td>rs4239021</td>
+      <td>chr17</td>
+      <td>80531825</td>
+      <td>-1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.460663</td>
+      <td>2</td>
+      <td>11</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>405</th>
+      <td>rs11692629</td>
+      <td>chr2</td>
+      <td>42498113</td>
+      <td>-1.634283</td>
+      <td>0.694294</td>
+      <td>0.018579</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.232428</td>
+      <td>3</td>
+      <td>18</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>409</th>
+      <td>rs1439225</td>
+      <td>chr2</td>
+      <td>42512930</td>
+      <td>-1.242851</td>
+      <td>0.623718</td>
+      <td>0.046300</td>
+      <td>G</td>
+      <td>C</td>
+      <td>0.273163</td>
+      <td>6</td>
+      <td>23</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>445</th>
+      <td>rs6720885</td>
+      <td>chr2</td>
+      <td>99971288</td>
+      <td>-1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.407748</td>
+      <td>2</td>
+      <td>11</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>448</th>
+      <td>rs6542994</td>
+      <td>chr2</td>
+      <td>101451520</td>
+      <td>-1.417305</td>
+      <td>0.715121</td>
+      <td>0.047489</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.436102</td>
+      <td>3</td>
+      <td>14</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>498</th>
+      <td>rs11651</td>
+      <td>chr2</td>
+      <td>216229691</td>
+      <td>1.597556</td>
+      <td>0.653389</td>
+      <td>0.014484</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.282748</td>
+      <td>23</td>
+      <td>4</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>510</th>
+      <td>rs1250259</td>
+      <td>chr2</td>
+      <td>216300481</td>
+      <td>-1.432458</td>
+      <td>0.665643</td>
+      <td>0.031398</td>
+      <td>T</td>
+      <td>A</td>
+      <td>0.795128</td>
+      <td>4</td>
+      <td>19</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>527</th>
+      <td>rs13034294</td>
+      <td>chr2</td>
+      <td>236675429</td>
+      <td>1.477490</td>
+      <td>0.709174</td>
+      <td>0.037215</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.453474</td>
+      <td>15</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>540</th>
+      <td>rs6055809</td>
+      <td>chr20</td>
+      <td>8407790</td>
+      <td>1.533378</td>
+      <td>0.703771</td>
+      <td>0.029346</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.102037</td>
+      <td>16</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>607</th>
+      <td>rs9838739</td>
+      <td>chr3</td>
+      <td>46137188</td>
+      <td>-1.476186</td>
+      <td>0.566418</td>
+      <td>0.009156</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.247404</td>
+      <td>10</td>
+      <td>50</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>615</th>
+      <td>rs73093101</td>
+      <td>chr3</td>
+      <td>61554356</td>
+      <td>-1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+      <td>A</td>
+      <td>T</td>
+      <td>0.370008</td>
+      <td>2</td>
+      <td>11</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>692</th>
+      <td>rs6896817</td>
+      <td>chr5</td>
+      <td>179267394</td>
+      <td>1.560469</td>
+      <td>0.782937</td>
+      <td>0.046251</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.490216</td>
+      <td>11</td>
+      <td>2</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>707</th>
+      <td>rs9368904</td>
+      <td>chr6</td>
+      <td>36069349</td>
+      <td>1.417305</td>
+      <td>0.715121</td>
+      <td>0.047489</td>
+      <td>C</td>
+      <td>A</td>
+      <td>0.185503</td>
+      <td>14</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>792</th>
+      <td>rs34931322</td>
+      <td>chr8</td>
+      <td>131534469</td>
+      <td>-1.326326</td>
+      <td>0.548616</td>
+      <td>0.015624</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.606629</td>
+      <td>14</td>
+      <td>59</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">IGF2BP2</span><span class="p">[</span><span class="n">IGF2BP2</span><span class="p">[</span><span class="s2">&quot;pval&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_cutoff</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[7]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rsID</th>
+      <th>chr</th>
+      <th>pos</th>
+      <th>beta</th>
+      <th>se</th>
+      <th>pval</th>
+      <th>ref</th>
+      <th>alt</th>
+      <th>freq</th>
+      <th>#ref</th>
+      <th>#alt</th>
+      <th>#either</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>166</th>
       <td>rs59267791</td>
       <td>chr19</td>
       <td>2248151</td>
       <td>1.385637</td>
       <td>0.674851</td>
       <td>0.040048</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.104433</td>
+      <td>60</td>
+      <td>12</td>
+      <td>1</td>
     </tr>
     <tr>
-      <th>214</th>
+      <th>213</th>
       <td>rs11677797</td>
       <td>chr2</td>
       <td>97559758</td>
       <td>1.601917</td>
       <td>0.721375</td>
       <td>0.026375</td>
+      <td>G</td>
+      <td>A</td>
+      <td>0.428514</td>
+      <td>33</td>
+      <td>5</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>234</th>
+      <th>233</th>
       <td>rs7445</td>
       <td>chr22</td>
       <td>21977046</td>
       <td>-1.483447</td>
       <td>0.672319</td>
       <td>0.027352</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.313898</td>
+      <td>12</td>
+      <td>68</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>235</th>
+      <th>234</th>
       <td>rs1063311</td>
       <td>chr22</td>
       <td>22116466</td>
       <td>1.704536</td>
       <td>0.673744</td>
       <td>0.011408</td>
+      <td>C</td>
+      <td>T</td>
+      <td>0.332668</td>
+      <td>76</td>
+      <td>10</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>260</th>
+      <th>259</th>
       <td>rs2010963</td>
       <td>chr6</td>
       <td>43738349</td>
       <td>1.611538</td>
       <td>0.774645</td>
       <td>0.037493</td>
+      <td>C</td>
+      <td>G</td>
+      <td>0.673922</td>
+      <td>20</td>
+      <td>3</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>282</th>
+      <th>281</th>
       <td>rs1861000</td>
       <td>chr7</td>
       <td>120725353</td>
       <td>-1.529486</td>
       <td>0.725559</td>
       <td>0.035030</td>
+      <td>T</td>
+      <td>C</td>
+      <td>0.323283</td>
+      <td>5</td>
+      <td>30</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>314</th>
+      <th>313</th>
       <td>rs2296710</td>
       <td>chr9</td>
       <td>134021629</td>
       <td>1.435647</td>
       <td>0.654628</td>
       <td>0.028302</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO_1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{path}</span><span class="s2">/FTO.wasp_remapped.qual10.dedup.quasar.genotype.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO_1</span><span class="p">[</span><span class="n">FTO_1</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;rs2230653&quot;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[14]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1135</th>
-      <td>chr6</td>
-      <td>26056603</td>
-      <td>26056604</td>
-      <td>rs2230653</td>
-      <td>1.212364e-105</td>
-      <td>1.0</td>
-      <td>1.157798e-07</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">FTO_1</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[16]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>chr1</td>
-      <td>990532</td>
-      <td>990533</td>
-      <td>rs4308920</td>
-      <td>9.955845e-01</td>
-      <td>0.004415</td>
-      <td>5.617994e-17</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>chr1</td>
-      <td>990805</td>
-      <td>990806</td>
-      <td>rs2799073</td>
-      <td>1.623563e-04</td>
-      <td>0.999838</td>
-      <td>2.644136e-10</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>chr1</td>
-      <td>990942</td>
-      <td>990943</td>
-      <td>rs28632009</td>
-      <td>9.987619e-01</td>
-      <td>0.001238</td>
-      <td>6.685915e-20</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>chr1</td>
-      <td>990983</td>
-      <td>990984</td>
-      <td>rs8014</td>
-      <td>1.714672e-08</td>
-      <td>1.000000</td>
-      <td>1.283906e-13</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>chr1</td>
-      <td>1152630</td>
-      <td>1152631</td>
-      <td>rs11721</td>
-      <td>9.940118e-01</td>
-      <td>0.005988</td>
-      <td>1.032281e-16</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>chr1</td>
-      <td>1181371</td>
-      <td>1181372</td>
-      <td>rs72631899</td>
-      <td>9.991179e-01</td>
-      <td>0.000882</td>
-      <td>3.448436e-20</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>chr1</td>
-      <td>1284489</td>
-      <td>1284490</td>
-      <td>rs150789461</td>
-      <td>5.742869e-26</td>
-      <td>0.000630</td>
-      <td>9.993703e-01</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>chr1</td>
-      <td>2221837</td>
-      <td>2221838</td>
-      <td>rs878093</td>
-      <td>9.959822e-01</td>
-      <td>0.004018</td>
-      <td>4.655120e-17</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>chr1</td>
-      <td>10093456</td>
-      <td>10093457</td>
-      <td>rs7528979</td>
-      <td>9.871749e-01</td>
-      <td>0.012825</td>
-      <td>7.132526e-18</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>chr1</td>
-      <td>11968229</td>
-      <td>11968230</td>
-      <td>rs6687063</td>
-      <td>4.429674e-15</td>
-      <td>0.997834</td>
-      <td>2.166235e-03</td>
+      <td>A</td>
+      <td>G</td>
+      <td>0.346446</td>
+      <td>112</td>
+      <td>21</td>
+      <td>0</td>
     </tr>
   </tbody>
 </table>
@@ -1038,7 +2026,7 @@ body {
 </div>
 <hr>
 &copy 2018 Min Qiao at He Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/1eb517c9a039fd914f5bf25412b6477cdf0c997f/analysis/20180504_ASE_res.ipynb"><code>analysis/20180504_ASE_res.ipynb</code></a> committed by Min Qiao on Tue May 8 16:57:41 2018 <a href="http://github.com/gaow/m6a/commit/1eb517c9a039fd914f5bf25412b6477cdf0c997f">revision 2, 1eb517c</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/m6a/blob/af3d0867b9fbeefdfbc407cbb0f13372c41dece1/analysis/20180504_ASE_res.ipynb"><code>analysis/20180504_ASE_res.ipynb</code></a> committed by Min Qiao on Thu May 17 15:23:10 2018 <a href="http://github.com/gaow/m6a/commit/af3d0867b9fbeefdfbc407cbb0f13372c41dece1">revision 4, af3d086</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
