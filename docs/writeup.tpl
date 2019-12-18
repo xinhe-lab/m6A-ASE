@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="ipynb_website:version" content="0.9.7" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <link rel="stylesheet" type="text/css" href="../css/jt.css">
@@ -26,7 +26,7 @@
       href="../site_libs/highlightjs/null.min.css"
       type="text/css" />
 
-<script src="../site_libs/highlightjs/highlight.null.js"></script>
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 <script type="text/javascript">
 if (window.hljs && document.readyState && document.readyState === "complete") {
@@ -237,7 +237,7 @@ body {
         
 <ul class="nav navbar-nav navbar-right">
 <li>
-   <a href="http://github.com/gaow/m6a"> <span class="fa fa-github"></span> </a>
+   <a href="http://github.com/xinhe-lab/m6a-ASE"> <span class="fa fa-github"></span> </a>
 </li>
 </ul>
         
